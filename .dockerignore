@@ -1,0 +1,53 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+CLAUDE.md
+LICENSE
+
+# CI/CD
+.github
+
+# Docker
+docker-compose*.yml
+.dockerignore
+
+# Data
+data/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env.local
+.env.*.local
+
+# Python
+server/.venv*
+server/__pycache__
+server/.pytest_cache
+server/.mypy_cache
+server/.ruff_cache
+server/*.egg-info
+server/**/*.pyc
+server/**/__pycache__
+server/**/.mypy_cache
+server/htmlcov
+server/coverage.json
+server/tests
+
+# Node
+app/node_modules
+node_modules

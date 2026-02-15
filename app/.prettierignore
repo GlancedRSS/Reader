@@ -1,0 +1,9 @@
+/node_modules
+package.json
+package-lock.json
+eslint.config.mjs
+next.config.ts
+postcss.config.mjs
+README.md
+tailwind.config.ts
+tsconfig.json

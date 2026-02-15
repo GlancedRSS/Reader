@@ -1,0 +1,84 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      # WARNING: Change POSTGRES_PASSWORD in production
+      - POSTGRES_DB=reader
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: valkey/valkey:8-alpine
+    command: valkey-server --appendonly yes --appendfsync everysec
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  frontend:
+    image: glanced/reader:latest
+    ports:
+      - "2077:2077"
+    environment:
+      - ROLE=frontend
+      - NEXT_PUBLIC_API_URL=http://backend:2076
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  backend:
+    image: glanced/reader:latest
+    environment:
+      - ROLE=server
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-changeme}@db:5432/reader
+      - REDIS_URL=redis://redis:6379
+      - ENVIRONMENT=production
+      - COOKIE_SECURE=${COOKIE_SECURE:-true}
+      - STORAGE_PATH=/data
+      - FEED_REFRESH_INTERVAL_MINUTES=${FEED_REFRESH_INTERVAL_MINUTES:-30}
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider --timeout=5 -O /dev/null http://localhost:2076/health 2>/dev/null || exit 1"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    image: glanced/reader:latest
+    environment:
+      - ROLE=worker
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-changeme}@db:5432/reader
+      - REDIS_URL=redis://redis:6379
+      - ENVIRONMENT=production
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:

@@ -1,0 +1,56 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  commit-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Verify commitlint config exists
+        run: test -f commitlint.config.js || { echo "commitlint.config.js not found"; exit 1; }
+
+      - name: Install commitlint
+        run: npm install -g @commitlint/cli @commitlint/config-conventional
+
+      - name: Validate commits
+        run: |
+          echo "Validating commits from ${{ github.event.pull_request.base.sha }} to ${{ github.sha }}"
+          commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.sha }} --verbose
+
+  pr-title-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            chore
+            revert
+          requireScope: false
+          validateSingleCommit: false
+          subjectPattern: '^(?!Merge\s|Revert\s).+$'
+          subjectPatternError: 'Your PR title must not start with "Merge" or "Revert".'

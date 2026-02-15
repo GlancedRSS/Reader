@@ -1,0 +1,8 @@
+schemaVersion: "2.0.0"
+dockerfiles:
+  - patterns: ["Dockerfile", "Dockerfile.bundled"]
+    allow:
+      - docker.io/library/node
+      - docker.io/library/python
+      - docker.io/library/postgres
+    max-age-days: 30

@@ -1,0 +1,41 @@
+{
+  "branches": ["main"],
+  "repositoryUrl": "https://github.com/glancedrss/reader",
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "cd app && npm version ${nextRelease.version} --no-git-tag-version && cd .. && python3 -c \"import toml; data = toml.load('server/pyproject.toml'); data['project']['version'] = '${nextRelease.version}'; toml.dump(data, open('server/pyproject.toml', 'w'))\""
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "app/package.json",
+          "app/package-lock.json",
+          "server/pyproject.toml",
+          "CHANGELOG.md"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    "@semantic-release/github"
+  ],
+  "preset": "conventionalcommits",
+  "presetConfig": {
+    "types": [
+      { "type": "feat", "section": "Features" },
+      { "type": "fix", "section": "Bug Fixes" },
+      { "type": "chore", "section": "Chore" },
+      { "type": "docs", "section": "Documentation" },
+      { "type": "style", "section": "Style" },
+      { "type": "refactor", "section": "Refactor" },
+      { "type": "perf", "section": "Performance" },
+      { "type": "test", "section": "Tests" }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+export type SettingsTabs = 'account' | 'preferences'
+
+export type Theme = 'light' | 'dark' | 'system'
+export type AppLayout = 'split' | 'focus'
+export type ArticleLayout = 'grid' | 'list' | 'magazine'
+export type FontSpacing = 'compact' | 'normal' | 'comfortable'
+export type FontSize = 'xs' | 's' | 'm' | 'l' | 'xl'
+export type FeedSortOrder = 'alphabetical' | 'recent_first'
+export type DateFormat = 'relative' | 'absolute'
+export type TimeFormat = '12h' | '24h'
+export type Language = 'en'
+export type AutoRead = 'disabled' | '7_days' | '14_days' | '30_days'
