@@ -1,3 +1,7 @@
+'use client'
+
+import { useTheme } from 'next-themes'
+
 interface LogoProps {
 	size?: 'small' | 'large'
 	variant?: 'icon' | 'logo' | 'wordmark'
@@ -5,6 +9,7 @@ interface LogoProps {
 
 export function Logo(props: LogoProps) {
 	const { size = 'default', variant = 'logo' } = props
+	const { resolvedTheme } = useTheme()
 
 	const getSize = () => {
 		switch (size) {
@@ -17,19 +22,14 @@ export function Logo(props: LogoProps) {
 		}
 	}
 
-	const src = `/${variant}`
+	const src = `/assets/${variant}-${resolvedTheme === 'dark' ? 'dark' : 'light'}.svg`
 
 	return (
-		<picture className='rounded-bl-2xl overflow-hidden'>
-			<source
-				media='(prefers-color-scheme: dark)'
-				srcSet={`/assets/${src}-dark.svg`}
-			/>
-			<img
-				alt='Glanced'
-				className={getSize()}
-				src={`/assets/${src}-light.svg`}
-			/>
-		</picture>
+		// eslint-disable-next-line @next/next/no-img-element
+		<img
+			alt='Glanced'
+			className={`${getSize()} rounded-bl-xl overflow-hidden`}
+			src={src}
+		/>
 	)
 }
