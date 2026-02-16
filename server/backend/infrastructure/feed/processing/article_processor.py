@@ -54,7 +54,9 @@ class ArticleProcessor:
         created_count = 0
         relationship_count = 0
         new_article_ids: list[UUID] = []
+        existing_articles_for_assignment: list[UUID] = []
         all_fetched_article_ids: list[UUID] = []
+        articles_needing_tags: list[tuple[UUID, list[str]]] = []
 
         try:
             logger.info(
@@ -108,6 +110,9 @@ class ArticleProcessor:
                         )
                         self.db.add(relationship)
                         relationship_count += 1
+                        existing_articles_for_assignment.append(
+                            existing_article.id
+                        )
                         logger.info(
                             f"Added existing article to feed: {existing_article.title or canonical_url}"
                         )
@@ -251,9 +256,7 @@ class ArticleProcessor:
                     self.db.add(relationship)
 
                     if source_tags:
-                        await self._create_tags_for_subscribers(
-                            feed_id, article.id, source_tags
-                        )
+                        articles_needing_tags.append((article.id, source_tags))
 
                     all_fetched_article_ids.append(article.id)
                     created_count += 1
@@ -268,10 +271,22 @@ class ArticleProcessor:
                     feed_id, new_article_ids
                 )
 
+            if existing_articles_for_assignment:
+                await self._create_user_states_for_subscribers(
+                    feed_id, existing_articles_for_assignment
+                )
+
+            for article_id, source_tags in articles_needing_tags:
+                await self._create_tags_for_subscribers(
+                    feed_id, article_id, source_tags
+                )
+
             if created_count > 0 or relationship_count > 0:
                 logger.info(
                     f"Processed feed articles - Created: {created_count}, "
-                    f"Added relationships: {relationship_count}, feed_id: {feed_id}"
+                    f"Added relationships: {relationship_count}, "
+                    f"Assigned existing articles: {len(existing_articles_for_assignment)}, "
+                    f"feed_id: {feed_id}"
                 )
 
             return created_count, new_article_ids, all_fetched_article_ids
