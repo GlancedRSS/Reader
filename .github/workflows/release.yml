@@ -45,11 +45,18 @@ jobs:
             @semantic-release/github@^10 \
             conventional-changelog-conventionalcommits
 
+      - name: Generate App Token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-          GIT_AUTHOR_NAME: github-actions[bot]
-          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
-          GIT_COMMITTER_NAME: github-actions[bot]
-          GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GIT_AUTHOR_NAME: Glanced Release[bot]
+          GIT_AUTHOR_EMAIL: Glanced Release[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: Glanced Release[bot]
+          GIT_COMMITTER_EMAIL: Glanced Release[bot]@users.noreply.github.com
         run: npx semantic-release
