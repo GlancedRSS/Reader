@@ -1,3 +1,9 @@
+## [1.0.2](https://github.com/GlancedRSS/Reader/compare/v1.0.1...v1.0.2) (2026-02-16)
+
+### Bug Fixes
+
+* **ui:** use next-themes for logo to respond to manual theme toggle ([#5](https://github.com/GlancedRSS/Reader/issues/5)) ([6be06aa](https://github.com/GlancedRSS/Reader/commit/6be06aa8fd616652ecf5761bdf78a42f2d4c991c))
+
 ## [1.0.1](https://github.com/GlancedRSS/Reader/compare/v1.0.0...v1.0.1) (2026-02-16)
 
 ### Bug Fixes
