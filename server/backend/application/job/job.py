@@ -13,21 +13,10 @@ JOB_TTL = 3600
 
 
 class JobApplication:
-    """Application service for job management.
-
-    Handles job CRUD operations and status tracking via Redis.
-    """
+    """Application service for job management via Redis."""
 
     async def get_job(self, job_id: str) -> dict[str, Any] | None:
-        """Get job by ID from Redis.
-
-        Args:
-            job_id: The job ID.
-
-        Returns:
-            Job data or None if not found.
-
-        """
+        """Get job by ID from Redis."""
         cache = await get_cache()
         return await cache.get(f"job:{job_id}")
 
@@ -38,15 +27,7 @@ class JobApplication:
         result: dict[str, Any] | None = None,
         error: str | None = None,
     ) -> None:
-        """Update job status in Redis.
-
-        Args:
-            job_id: The job ID.
-            status: The new status.
-            result: Optional result data.
-            error: Optional error message.
-
-        """
+        """Update job status in Redis."""
         job = await self.get_job(job_id)
         if not job:
             logger.warning(

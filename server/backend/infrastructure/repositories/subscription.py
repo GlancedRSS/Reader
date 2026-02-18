@@ -22,25 +22,12 @@ class SubscriptionRepository:
     """Repository for subscription and article-tag relationship data access."""
 
     def __init__(self, db: AsyncSession):
-        """Initialize the subscription repository.
-
-        Args:
-            db: Async database session.
-
-        """
+        """Initialize the subscription repository."""
         self.db = db
         self.tag_repository = UserTagRepository(db)
 
     async def get_articles_for_feed(self, feed_id: UUID) -> list[Article]:
-        """Get all articles for a specific feed.
-
-        Args:
-            feed_id: The feed ID to get articles for.
-
-        Returns:
-            List of Article objects.
-
-        """
+        """Get all articles for a specific feed."""
         articles_query = (
             select(Article)
             .join(ArticleSource)
@@ -51,15 +38,7 @@ class SubscriptionRepository:
         return list(articles_result.scalars().all())
 
     async def get_article_ids_for_feed(self, feed_id: UUID) -> list[UUID]:
-        """Get all article IDs for a specific feed.
-
-        Args:
-            feed_id: The feed ID to get article IDs for.
-
-        Returns:
-            List of article UUIDs.
-
-        """
+        """Get all article IDs for a specific feed."""
         articles_query = (
             select(Article.id)
             .join(
@@ -75,21 +54,7 @@ class SubscriptionRepository:
     async def get_recent_article_ids_for_feed(
         self, feed_id: UUID, since_timestamp: datetime
     ) -> list[UUID]:
-        """Get article IDs from a feed's latest_articles array.
-
-        The latest_articles array contains article IDs from the most recent
-        feed fetch. This ensures users only see articles that were recently
-        added to the system, regardless of their published_at date.
-
-        Args:
-            feed_id: The feed ID to get article IDs for.
-            since_timestamp: Subscription timestamp (kept for logging context,
-                but not used for filtering since we use latest_articles).
-
-        Returns:
-            List of article UUIDs from the feed's latest_articles.
-
-        """
+        """Get article IDs from a feed's latest_articles array."""
         logger.info(
             "Getting recent article IDs for feed",
             feed_id=str(feed_id),
@@ -116,16 +81,7 @@ class SubscriptionRepository:
     async def bulk_upsert_user_article_states(
         self, user_id: UUID, article_ids: list[UUID]
     ) -> int:
-        """Bulk insert UserArticle records with conflict handling.
-
-        Args:
-            user_id: The user ID.
-            article_ids: List of article IDs to create states for.
-
-        Returns:
-            Number of records created.
-
-        """
+        """Bulk insert UserArticle records with conflict handling."""
         if not article_ids:
             return 0
 
@@ -146,15 +102,7 @@ class SubscriptionRepository:
     async def recalculate_subscription_unread_count(
         self, subscription_id: UUID
     ) -> int | None:
-        """Call stored procedure to recalculate subscription unread count.
-
-        Args:
-            subscription_id: The subscription ID to recalculate.
-
-        Returns:
-            The recalculated count, or None if the call fails.
-
-        """
+        """Call stored procedure to recalculate subscription unread count."""
         try:
             recalc_result = await self.db.execute(
                 text(
@@ -174,14 +122,7 @@ class SubscriptionRepository:
     async def create_article_tag_relationship(
         self, article_id: UUID, tag_id: UUID, user_id: UUID
     ) -> None:
-        """Create a junction relationship between article and tag.
-
-        Args:
-            article_id: The article ID.
-            tag_id: The tag ID.
-            user_id: The user ID.
-
-        """
+        """Create a junction relationship between article and tag."""
         await self.tag_repository.add_tags_to_article(
             article_id, [tag_id], user_id
         )
@@ -189,16 +130,7 @@ class SubscriptionRepository:
     async def get_unread_articles_for_user(
         self, user_id: UUID, older_than: datetime
     ) -> list[UserArticle]:
-        """Get unread articles for a user older than a given date.
-
-        Args:
-            user_id: The user ID.
-            older_than: Only return articles published before this date.
-
-        Returns:
-            List of unread UserArticle records.
-
-        """
+        """Get unread articles for a user older than a given date."""
         stmt = (
             select(UserArticle)
             .join(Article, UserArticle.article_id == Article.id)
@@ -215,17 +147,7 @@ class SubscriptionRepository:
         article_ids: list[UUID],
         read_at: datetime | None = None,
     ) -> int:
-        """Mark articles as read for a user.
-
-        Args:
-            user_id: The user ID.
-            article_ids: List of article IDs to mark as read.
-            read_at: Optional read timestamp. Defaults to now.
-
-        Returns:
-            Number of articles marked as read.
-
-        """
+        """Mark articles as read for a user."""
         if not article_ids:
             return 0
 
@@ -255,21 +177,7 @@ class SubscriptionRepository:
         cutoff_date_30days: datetime,
         read_at: datetime | None = None,
     ) -> dict[str, int]:
-        """Bulk mark old articles as read for all users with auto-read enabled.
-
-        This single query updates all unread articles for users who have
-        auto_mark_as_read preference enabled, using their specific cutoff date.
-
-        Args:
-            cutoff_date_7days: Cutoff date for users with 7_days preference.
-            cutoff_date_14days: Cutoff date for users with 14_days preference.
-            cutoff_date_30days: Cutoff date for users with 30_days preference.
-            read_at: Optional read timestamp. Defaults to now.
-
-        Returns:
-            Dictionary with stats: users_affected, articles_marked_read.
-
-        """
+        """Bulk mark old articles as read for all users with auto-read enabled."""
         if read_at is None:
             read_at = datetime.now(UTC)
 

@@ -56,11 +56,7 @@ class ArticleStateUpdateRequest(BaseSchema):
 
 
 class MarkAllReadRequest(BaseSchema):
-    """POST '/api/v1/articles/mark-as-read'.
-
-    Supports the same filtering parameters as GET /api/v1/articles/ to allow
-    marking filtered subsets of articles (e.g., search results, date ranges).
-    """
+    """POST '/api/v1/articles/mark-as-read'."""
 
     is_read: bool = Field(default=True)
     subscription_ids: list[UUID] | None = Field(None)

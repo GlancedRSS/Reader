@@ -16,27 +16,13 @@ class UserTagRepository:
     """Repository for tag and article-tag relationship database operations."""
 
     def __init__(self, db: AsyncSession):
-        """Initialize the tag repository.
-
-        Args:
-            db: Async database session.
-
-        """
+        """Initialize the tag repository."""
         self.db = db
 
     async def find_by_user_and_name(
         self, user_id: UUID, name: str
     ) -> UserTag | None:
-        """Find a tag by user and name.
-
-        Args:
-            user_id: The user ID.
-            name: The tag name.
-
-        Returns:
-            The UserTag if found, None otherwise.
-
-        """
+        """Find a tag by user and name."""
         query = select(UserTag).where(
             (UserTag.user_id == user_id) & (UserTag.name == name)
         )
@@ -44,16 +30,7 @@ class UserTagRepository:
         return result.scalar_one_or_none()
 
     async def find_by_id(self, tag_id: UUID, user_id: UUID) -> UserTag | None:
-        """Find a tag by ID and user.
-
-        Args:
-            tag_id: The tag ID.
-            user_id: The user ID.
-
-        Returns:
-            The Tag if found, None otherwise.
-
-        """
+        """Find a tag by ID and user."""
         query = select(UserTag).where(
             (UserTag.id == tag_id) & (UserTag.user_id == user_id)
         )
@@ -61,15 +38,7 @@ class UserTagRepository:
         return result.scalar_one_or_none()
 
     async def get_user_tags(self, user_id: UUID) -> list[UserTag]:
-        """Get tags for a user.
-
-        Args:
-            user_id: The user ID.
-
-        Returns:
-            List of Tag objects ordered by name.
-
-        """
+        """Get tags for a user ordered by name."""
         query = select(UserTag).where(UserTag.user_id == user_id)
         query = query.order_by(UserTag.name)
         result = await self.db.execute(query)
@@ -78,17 +47,7 @@ class UserTagRepository:
     async def get_user_tags_paginated(
         self, user_id: UUID, limit: int, offset: int
     ) -> tuple[list[UserTag], int]:
-        """Get tags for a user with pagination.
-
-        Args:
-            user_id: The user ID.
-            limit: Maximum number of tags to return.
-            offset: Number of tags to skip.
-
-        Returns:
-            Tuple of (list of Tag objects, total count).
-
-        """
+        """Get tags for a user with pagination."""
         count_query = select(func.count(UserTag.id)).where(
             UserTag.user_id == user_id
         )
@@ -108,16 +67,7 @@ class UserTagRepository:
         user_id: UUID,
         name: str,
     ) -> UserTag:
-        """Create a new tag.
-
-        Args:
-            user_id: The user ID.
-            name: The tag name.
-
-        Returns:
-            The created Tag.
-
-        """
+        """Create a new tag."""
         tag = UserTag(
             user_id=user_id,
             name=name,
@@ -130,13 +80,7 @@ class UserTagRepository:
     async def update_tag(
         self, tag: UserTag, update_data: dict[str, Any]
     ) -> None:
-        """Update an existing tag.
-
-        Args:
-            tag: The Tag to update.
-            update_data: Dictionary of fields to update.
-
-        """
+        """Update an existing tag."""
         for field, value in update_data.items():
             if hasattr(tag, field):
                 setattr(tag, field, value)
@@ -144,26 +88,12 @@ class UserTagRepository:
         await self.db.flush()
 
     async def delete_tag(self, tag: UserTag) -> None:
-        """Delete a tag (CASCADE will handle ArticleTag entries).
-
-        Args:
-            tag: The Tag to delete.
-
-        """
+        """Delete a tag (CASCADE will handle ArticleTag entries)."""
         await self.db.delete(tag)
         await self.db.flush()
 
     async def get_or_create_tag(self, user_id: UUID, name: str) -> UserTag:
-        """Get or create a tag.
-
-        Args:
-            user_id: The user ID.
-            name: The tag name.
-
-        Returns:
-            The existing or newly created Tag.
-
-        """
+        """Get or create a tag."""
         existing = await self.find_by_user_and_name(user_id, name)
         if existing:
             return existing
@@ -173,16 +103,7 @@ class UserTagRepository:
     async def get_article_tags(
         self, article_id: UUID, user_id: UUID
     ) -> list[UUID]:
-        """Get all tag IDs for an article, filtered by user.
-
-        Args:
-            article_id: The article ID.
-            user_id: The user ID.
-
-        Returns:
-            List of tag IDs belonging to the user.
-
-        """
+        """Get all tag IDs for an article, filtered by user."""
         user_article_query = select(UserArticle.id).where(
             (UserArticle.user_id == user_id)
             & (UserArticle.article_id == article_id)
@@ -207,20 +128,7 @@ class UserTagRepository:
     async def add_tags_to_article(
         self, article_id: UUID, tag_ids: list[UUID], user_id: UUID
     ) -> list[UUID]:
-        """Add multiple tags to an article, filtered by user.
-
-        Args:
-            article_id: The article ID.
-            tag_ids: List of tag IDs to add.
-            user_id: The user ID.
-
-        Returns:
-            List of tag IDs that were actually added (excluding existing relationships).
-
-        Raises:
-            ValueError: If any tag does not belong to the user.
-
-        """
+        """Add multiple tags to an article, filtered by user."""
         added_tags = []
 
         try:
@@ -284,17 +192,7 @@ class UserTagRepository:
     async def remove_tags_from_article(
         self, article_id: UUID, tag_ids: list[UUID], user_id: UUID
     ) -> list[UUID]:
-        """Remove multiple tags from an article, filtered by user.
-
-        Args:
-            article_id: The article ID.
-            tag_ids: List of tag IDs to remove.
-            user_id: The user ID.
-
-        Returns:
-            List of tag IDs that were actually removed.
-
-        """
+        """Remove multiple tags from an article, filtered by user."""
         if not tag_ids:
             return []
 
@@ -360,16 +258,7 @@ class UserTagRepository:
     async def remove_articles_from_all_tags(
         self, article_ids: list[UUID], user_id: UUID
     ) -> int:
-        """Remove multiple articles from all tags efficiently, filtered by user.
-
-        Args:
-            article_ids: List of article IDs to remove from all tags.
-            user_id: The user ID.
-
-        Returns:
-            The number of relationships removed.
-
-        """
+        """Remove multiple articles from all tags efficiently, filtered by user."""
         if not article_ids:
             return 0
 

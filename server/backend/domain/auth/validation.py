@@ -16,18 +16,7 @@ class AuthValidationDomain:
 
     @classmethod
     def validate_username_format(cls, username: str) -> str:
-        """Validate username format and length.
-
-        Args:
-            username: Username to validate
-
-        Returns:
-            Normalized username (lowercase)
-
-        Raises:
-            ValueError: If username format is invalid
-
-        """
+        """Validate username format and length."""
         if not username:
             raise ValueError("Username is required")
 
@@ -51,15 +40,7 @@ class AuthValidationDomain:
 
     @classmethod
     def validate_password_format(cls, password: str) -> None:
-        """Validate password format and length.
-
-        Args:
-            password: Password to validate
-
-        Raises:
-            ValueError: If password format is invalid
-
-        """
+        """Validate password format and length."""
         if not password:
             raise ValueError("Password is required")
 
@@ -81,29 +62,13 @@ class AuthValidationDomain:
 
     @classmethod
     def validate_username_unique(cls, username_exists: bool) -> None:
-        """Validate that username is unique.
-
-        Args:
-            username_exists: Whether the username already exists
-
-        Raises:
-            ValueError: If username already exists
-
-        """
+        """Validate that username is unique."""
         if username_exists:
             raise ValueError("Username already exists")
 
     @classmethod
     def validate_session_active(cls, expires_at: datetime | None) -> bool:
-        """Validate if a session is still active.
-
-        Args:
-            expires_at: Session expiration timestamp
-
-        Returns:
-            True if session is still active (not expired)
-
-        """
+        """Validate if a session is still active."""
         if expires_at is None:
             return True
         return expires_at > datetime.now(UTC)

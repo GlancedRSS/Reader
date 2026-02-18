@@ -35,15 +35,7 @@ def _normalize_path(path: str) -> str:
 
 
 def _verify_csrf_token(request: Request) -> None:
-    """Verify CSRF token from header matches cookie value.
-
-    Args:
-        request: The HTTP request containing CSRF cookie and header.
-
-    Raises:
-        HTTPException: If CSRF token is missing or invalid.
-
-    """
+    """Verify CSRF token from header matches cookie value."""
     csrf_cookie = request.cookies.get(settings.csrf_cookie_name)
     csrf_header = request.headers.get("X-CSRF-Token")
 
@@ -134,15 +126,7 @@ def add_auth_middleware(app: "FastAPI") -> None:
 
 
 async def _verify_session_cookie(request: Request) -> None:
-    """Verify httpOnly cookie session and extract user ID.
-
-    Args:
-        request: The HTTP request containing session cookie.
-
-    Raises:
-        HTTPException: If session is invalid or expired.
-
-    """
+    """Verify httpOnly cookie session and extract user ID."""
     start_time = time.time()
 
     session_token = request.cookies.get(settings.session_cookie_name)

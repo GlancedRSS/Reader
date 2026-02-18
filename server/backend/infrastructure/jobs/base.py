@@ -1,9 +1,4 @@
-"""Base job handler class with common functionality for all job handlers.
-
-This module provides the BaseJobHandler abstract class that defines the
-interface and common functionality for all job handlers. It includes error
-handling patterns, logging, and support for non-retryable errors.
-"""
+"""Base job handler class with common functionality for all job handlers."""
 
 from abc import ABC, abstractmethod
 from typing import Any, TypeVar
@@ -19,16 +14,7 @@ R = TypeVar("R", bound=BaseModel)
 
 
 class JobResult(BaseModel):
-    """Standard result type for job execution.
-
-    Attributes:
-        job_id: The unique job identifier
-        status: Job status (success, error, failed)
-        message: Human-readable message
-        data: Optional result data
-        error: Optional error message if status is error/failed
-
-    """
+    """Standard result type for job execution."""
 
     job_id: str
     status: str
@@ -38,20 +24,7 @@ class JobResult(BaseModel):
 
 
 class BaseJobHandler[T: BaseModel, R: BaseModel](ABC):
-    """Base class for all job handlers.
-
-    Provides common functionality for job execution including:
-    - Error handling with retryable vs non-retryable classification
-    - Structured logging
-    - Response creation
-
-    Subclasses must implement the execute() method which contains
-    the actual job logic.
-
-    Type Parameters:
-        T: The request type (Pydantic model)
-        R: The response type (Pydantic model)
-    """
+    """Base class for all job handlers."""
 
     NON_RETRYABLE_PATTERNS = [
         "not found",
@@ -65,49 +38,18 @@ class BaseJobHandler[T: BaseModel, R: BaseModel](ABC):
 
     @abstractmethod
     async def execute(self, request: T) -> R:
-        """Execute the job logic.
-
-        Args:
-            request: The job request payload
-
-        Returns:
-            The job response
-
-        Raises:
-            Exception: If job execution fails (retryable by default)
-
-        """
+        """Execute the job logic."""
         pass
 
     def is_non_retryable_error(self, error: Exception) -> bool:
-        """Check if an error should be treated as non-retryable.
-
-        Non-retryable errors will raise a RetryException that Arq
-        will not retry. Other exceptions will be retried according to
-        the worker's retry configuration.
-
-        Args:
-            error: The exception to check
-
-        Returns:
-            True if the error is non-retryable, False otherwise
-
-        """
+        """Check if an error should be treated as non-retryable."""
         error_str = str(error).lower()
         return any(
             pattern in error_str for pattern in self.NON_RETRYABLE_PATTERNS
         )
 
     def non_retryable_error(self, detail: str) -> Response:
-        """Create a 489 response to indicate non-retryable error.
-
-        Args:
-            detail: Error message describing the non-retryable condition
-
-        Returns:
-            FastAPI Response with 489 status code
-
-        """
+        """Create a 489 response to indicate non-retryable error."""
         return Response(
             content=detail,
             status_code=489,
@@ -115,22 +57,7 @@ class BaseJobHandler[T: BaseModel, R: BaseModel](ABC):
         )
 
     async def handle(self, request: T, job_id: str) -> Response | R:
-        """Handle a job request with error handling.
-
-        Wraps the execute() method with error handling logic that
-        distinguishes between retryable and non-retryable errors.
-
-        Args:
-            request: The job request payload
-            job_id: The job identifier for logging
-
-        Returns:
-            Either the job response or a non-retryable error response
-
-        Raises:
-            Exception: If a retryable error occurs
-
-        """
+        """Handle a job request with error handling."""
         try:
             logger.info(
                 "Job handler executing",

@@ -77,26 +77,13 @@ class ArticleRepository:
     """Repository for article state management and query operations."""
 
     def __init__(self, db: AsyncSession):
-        """Initialize the article repository.
-
-        Args:
-            db: Async database session.
-
-        """
+        """Initialize the article repository."""
         self.db = db
 
     async def get_user_article_state(
         self, article_id: UUID, current_user: User
     ) -> UserArticle:
-        """Get user article state.
-
-        State must exist for user to have access to the article.
-        Missing state indicates a data integrity issue.
-
-        Raises:
-            NotFoundError: If state record doesn't exist
-
-        """
+        """Get user article state, raising NotFoundError if missing."""
         state_query = select(UserArticle).where(
             UserArticle.user_id == current_user.id,
             UserArticle.article_id == article_id,
@@ -115,16 +102,7 @@ class ArticleRepository:
     async def find_by_id(
         self, article_id: UUID, user_id: UUID
     ) -> UserArticle | None:
-        """Get user article by ID with user filtering.
-
-        Args:
-            article_id: The article ID.
-            user_id: The user ID.
-
-        Returns:
-            The UserArticle if found and belongs to user, None otherwise.
-
-        """
+        """Get user article by ID with user filtering."""
         state_query = select(UserArticle).where(
             UserArticle.user_id == user_id,
             UserArticle.article_id == article_id,
@@ -135,16 +113,7 @@ class ArticleRepository:
     async def mark_article_as_read(
         self, article_id: UUID, current_user: User
     ) -> None:
-        """Mark an article as read if it isn't already.
-
-        Also updates user's last_active timestamp since reading articles
-        is the core activity of an RSS reader.
-
-        Args:
-            article_id: The UUID of the article to mark.
-            current_user: The user whose article state to update.
-
-        """
+        """Mark an article as read and update user's last_active timestamp."""
         state = await self.get_user_article_state(article_id, current_user)
 
         if not state.is_read:
@@ -159,17 +128,7 @@ class ArticleRepository:
         state_update_data: dict[str, Any],
         current_user: User,
     ) -> bool:
-        """Update article read state (is_read, read_later).
-
-        Args:
-            article_id: The UUID of the article to update.
-            state_update_data: The state update data as a dict (excludes tag_ids which are handled separately).
-            current_user: The user whose article state to update.
-
-        Returns:
-            True if state was updated, False if no changes were needed.
-
-        """
+        """Update article read state (is_read, read_later)."""
         if not state_update_data:
             return False
 
@@ -189,17 +148,7 @@ class ArticleRepository:
         article_ids: list[UUID],
         is_read: bool,
     ) -> int:
-        """Bulk mark articles as read or unread.
-
-        Args:
-            current_user: The user whose articles to mark.
-            article_ids: List of article IDs to mark.
-            is_read: True to mark as read, False to mark as unread.
-
-        Returns:
-            Number of articles marked.
-
-        """
+        """Bulk mark articles as read or unread."""
         if not article_ids:
             return 0
 
@@ -235,26 +184,7 @@ class ArticleRepository:
         from_date: date | None = None,
         to_date: date | None = None,
     ) -> Select[tuple[Any, ...]]:
-        """Build base query for articles with filters applied.
-
-        Uses a subquery with DISTINCT ON to deduplicate articles that appear in
-        multiple feeds, then joins back to Article for proper date-based sorting.
-
-        Args:
-            current_user: The user to fetch articles for.
-            subscription_ids: Filter by subscription IDs.
-            folder_ids: Filter by folder IDs.
-            tag_ids: Filter by tag IDs.
-            is_read: Filter by read status ('read', 'unread', or None).
-            read_later: Filter by read-later status ('true', 'false', or None).
-            q: Optional search query string for full-text search.
-            from_date: Filter articles published on or after this date.
-            to_date: Filter articles published on or before this date.
-
-        Returns:
-            SQLAlchemy Select query with all required joins and filters applied.
-
-        """
+        """Build base query for articles with filters applied."""
         has_search_query = q and q != "*"
 
         if has_search_query:
@@ -407,18 +337,7 @@ class ArticleRepository:
         has_search: bool = False,
         q: str | None = None,
     ) -> Select[tuple[Any, ...]]:
-        """Apply cursor filtering to articles query.
-
-        Args:
-            base_query: The base query to filter.
-            cursor_data: Cursor data for pagination.
-            has_search: Whether this is a search query (affects ordering).
-            q: Search query string (needed for relevance ordering in search).
-
-        Returns:
-            Query with cursor filtering and ordering applied.
-
-        """
+        """Apply cursor filtering to articles query."""
         from sqlalchemy import ClauseList
 
         if has_search and q:
@@ -584,17 +503,7 @@ class ArticleRepository:
         limit: int,
         has_search: bool = False,
     ) -> ArticlesQueryResult:
-        """Execute the articles query with cursor pagination.
-
-        Args:
-            query: The query to execute.
-            limit: Maximum number of articles to return.
-            has_search: Whether this is a search query (affects cursor creation).
-
-        Returns:
-            ArticlesQueryResult containing articles and metadata.
-
-        """
+        """Execute the articles query with cursor pagination."""
         query = query.limit(limit + 1)
         result = await self.db.execute(query)
         article_rows = result.all()
@@ -671,23 +580,7 @@ class ArticleRepository:
         from_date: date | None = None,
         to_date: date | None = None,
     ) -> int:
-        """Get total count of articles matching the criteria.
-
-        Args:
-            current_user: The user to count articles for.
-            subscription_ids: Filter by subscription IDs.
-            folder_ids: Filter by folder IDs.
-            tag_ids: Filter by tag IDs.
-            is_read: Filter by read status.
-            read_later: Filter by read-later status.
-            q: Optional search query string for full-text search.
-            from_date: Filter articles published on or after this date.
-            to_date: Filter articles published on or before this date.
-
-        Returns:
-            Total count of matching articles.
-
-        """
+        """Get total count of articles matching the criteria."""
         count_query = (
             select(func.count(distinct(Article.id)))
             .select_from(UserArticle)
@@ -770,16 +663,7 @@ class ArticleRepository:
     async def get_article_by_id(
         self, article_id: UUID, current_user: User
     ) -> tuple[Article, UUID, str, str | None] | None:
-        """Get a specific article by ID with access verification.
-
-        Args:
-            article_id: The UUID of the article to fetch.
-            current_user: The user requesting the article.
-
-        Returns:
-            Tuple of (article, subscription_id, subscription_title, subscription_website) or None if not found.
-
-        """
+        """Get a specific article by ID with access verification."""
         query = (
             select(
                 Article,
@@ -816,16 +700,7 @@ class ArticleRepository:
     async def get_article_tags(
         self, article_ids: list[UUID], current_user: User
     ) -> dict[UUID, list[UserTag]]:
-        """Get tags for multiple articles.
-
-        Args:
-            article_ids: List of article IDs to fetch tags for.
-            current_user: The user for ownership verification.
-
-        Returns:
-            Dictionary mapping article IDs to their tags.
-
-        """
+        """Get tags for multiple articles."""
         if not article_ids:
             return {}
 
@@ -880,26 +755,7 @@ class ArticleRepository:
         from_date: date | None = None,
         to_date: date | None = None,
     ) -> Select[tuple[UUID]]:
-        """Build query for mark-all operations.
-
-        Supports the same filtering as build_articles_base_query() for consistency
-        with the GET /api/v1/articles/ endpoint.
-
-        Args:
-            current_user: The user whose articles to mark.
-            subscription_ids: Filter by subscription (feed) IDs.
-            folder_ids: Filter by folder IDs.
-            tag_ids: Filter by tag IDs.
-            is_read_filter: Filter by read status ("read" or "unread").
-            read_later: Filter by read-later status ("true" or "false").
-            q: Full-text search query.
-            from_date: Filter articles published on or after this date.
-            to_date: Filter articles published on or before this date.
-
-        Returns:
-            Query returning article IDs to mark.
-
-        """
+        """Build query for mark-all operations."""
         base_query = (
             select(Article.id)
             .join(UserArticle, Article.id == UserArticle.article_id)

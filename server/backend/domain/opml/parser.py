@@ -1,8 +1,4 @@
-"""OPML parser for feed extraction and structure analysis.
-
-This module provides parsing functionality for OPML files, extracting
-feeds with their folder hierarchy and providing detailed structure analysis.
-"""
+"""OPML parser for feed extraction and structure analysis."""
 
 import re
 import xml.etree.ElementTree as ET
@@ -16,16 +12,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class OpmlFeed:
-    """Represents a single feed found in OPML.
-
-    Attributes:
-        title: Feed title (from title or text attribute).
-        url: Feed URL (from xmlUrl attribute).
-        html_url: Optional website URL (from htmlUrl attribute).
-        folder_path: List of folder names representing the hierarchy.
-        description: Optional feed description.
-
-    """
+    """Represents a single feed found in OPML."""
 
     title: str | None
     url: str
@@ -36,15 +23,7 @@ class OpmlFeed:
 
 @dataclass
 class FolderNode:
-    """Represents a folder in the OPML structure.
-
-    Attributes:
-        name: Folder name (from text or title attribute).
-        path: Full path from root (e.g., ["Tech", "Blogs"]).
-        feeds: List of feeds directly in this folder.
-        children: Child folders.
-
-    """
+    """Represents a folder in the OPML structure."""
 
     name: str
     path: list[str]
@@ -54,20 +33,7 @@ class FolderNode:
 
 @dataclass
 class OpmlValidationResult:
-    """Result of OPML validation and parsing.
-
-    Attributes:
-        is_valid: Whether the OPML is valid.
-        total_feeds: Total number of feeds found.
-        folder_structure: List of folder info dictionaries.
-        errors: List of error messages.
-        warnings: List of warning messages.
-        feeds: List of parsed feeds.
-        encoding: Detected character encoding.
-        duplicate_urls: Set of duplicate URLs found.
-        invalid_urls: List of invalid URLs.
-
-    """
+    """Result of OPML validation and parsing."""
 
     is_valid: bool
     total_feeds: int
@@ -81,16 +47,7 @@ class OpmlValidationResult:
 
 
 class OpmlParser:
-    """Parser for OPML files with structure analysis.
-
-    Handles:
-    - Character encoding detection and decoding
-    - XML parsing with error recovery
-    - Feed extraction with folder hierarchy
-    - URL validation (http/https only)
-    - Duplicate detection
-    - Folder structure analysis (flattening at max depth)
-    """
+    """OPML parser: encoding detection, XML parsing, feed extraction, URL validation, duplicate detection."""
 
     MAX_DEPTH = 9
     ENCODINGS = ["utf-8", "windows-1252", "iso-8859-1", "utf-16"]
@@ -98,18 +55,7 @@ class OpmlParser:
 
     @classmethod
     def detect_encoding(cls, content: bytes) -> tuple[str, str]:
-        """Detect character encoding of OPML content.
-
-        Args:
-            content: Raw file content as bytes.
-
-        Returns:
-            Tuple of (decoded_content_string, encoding_name).
-
-        Raises:
-            ValueError: If unable to decode with any supported encoding.
-
-        """
+        """Detect character encoding of OPML content."""
         for encoding in cls.ENCODINGS:
             try:
                 target_encoding = (
@@ -132,15 +78,7 @@ class OpmlParser:
 
     @classmethod
     def preprocess_content(cls, content: str) -> str:
-        """Preprocess OPML content to handle common issues.
-
-        Args:
-            content: Decoded OPML content string.
-
-        Returns:
-            Preprocessed content string.
-
-        """
+        """Preprocess OPML content to handle common issues."""
         return re.sub(
             r'(<outline[^>]*(?:xmlUrl|htmlUrl)="[^"]*)&(?=[a-z0-9]+)([^"]*")',
             r"\1&amp;\2",
@@ -150,15 +88,7 @@ class OpmlParser:
 
     @classmethod
     def validate_url(cls, url: str | None) -> tuple[bool, str | None]:
-        """Validate that a URL is http/https and well-formed.
-
-        Args:
-            url: URL string to validate.
-
-        Returns:
-            Tuple of (is_valid, error_message).
-
-        """
+        """Validate that a URL is http/https and well-formed."""
         if not url or not url.strip():
             return False, "URL is empty"
 
@@ -188,16 +118,7 @@ class OpmlParser:
     def parse_feeds_with_folders(
         cls, content: str, max_depth: int = MAX_DEPTH
     ) -> list[OpmlFeed]:
-        """Parse OPML content and extract feeds with folder paths.
-
-        Args:
-            content: Preprocessed OPML content string.
-            max_depth: Maximum folder depth before flattening.
-
-        Returns:
-            List of OpmlFeed objects with folder_path populated.
-
-        """
+        """Parse OPML content and extract feeds with folder paths."""
         content = (
             content.split("?>", 1)[-1] if "?>" in content[:100] else content
         )
@@ -252,16 +173,7 @@ class OpmlParser:
     def _find_parent_outline(
         cls, root: ET.Element, element: ET.Element
     ) -> ET.Element | None:
-        """Find the parent outline element of a given element.
-
-        Args:
-            root: Root element to search from.
-            element: Element to find parent for.
-
-        Returns:
-            Parent outline element or None if not found.
-
-        """
+        """Find the parent outline element of a given element."""
         for outline in root.findall(".//outline"):
             if element in list(outline):
                 return outline
@@ -271,16 +183,7 @@ class OpmlParser:
     def build_folder_structure(
         cls, feeds: list[OpmlFeed], max_depth: int = MAX_DEPTH
     ) -> list[dict[str, Any]]:
-        """Build folder structure from feeds with folder paths.
-
-        Args:
-            feeds: List of OpmlFeed objects.
-            max_depth: Maximum folder depth.
-
-        Returns:
-            List of folder info dictionaries.
-
-        """
+        """Build folder structure from feeds with folder paths."""
         root_folders: dict[str, FolderNode] = {}
 
         for feed in feeds:
@@ -309,15 +212,7 @@ class OpmlParser:
 
     @classmethod
     def _folder_node_to_dict(cls, node: FolderNode) -> dict[str, Any]:
-        """Convert FolderNode to dictionary.
-
-        Args:
-            node: FolderNode to convert.
-
-        Returns:
-            Dictionary representation.
-
-        """
+        """Convert FolderNode to dictionary."""
         return {
             "name": node.name,
             "path": "/".join(node.path),
@@ -335,26 +230,7 @@ class OpmlParser:
         filename: str,
         existing_urls: set[str] | None = None,
     ) -> OpmlValidationResult:
-        """Validate and parse OPML file content.
-
-        This is the main entry point for OPML validation. It:
-        1. Detects character encoding
-        2. Preprocesses content (fixes common issues)
-        3. Validates structure
-        4. Extracts feeds with folder paths
-        5. Validates URLs
-        6. Detects duplicates
-        7. Builds folder structure
-
-        Args:
-            file_content: Raw file content as bytes.
-            filename: Original filename.
-            existing_urls: Set of URLs the user is already subscribed to.
-
-        Returns:
-            OpmlValidationResult with detailed analysis.
-
-        """
+        """Main entry point: detect encoding, parse, validate URLs, extract feeds, build folder structure."""
         errors: list[str] = []
         warnings: list[str] = []
         feeds: list[OpmlFeed] = []

@@ -16,19 +16,7 @@ class MediaExtractor:
         self.image_extensions = IMAGE_EXTENSIONS
 
     def extract_image_from_entry(self, entry: Any) -> str | None:
-        """Extract image from RSS/ATOM entry metadata.
-
-        Checks multiple locations in priority order: media_group (MRSS),
-        media_content, media_thumbnail, thumbnail attribute, enclosures,
-        image attribute, and links with rel="image" or rel="enclosure".
-
-        Args:
-            entry: Feedparser entry object.
-
-        Returns:
-            Image URL if found, None otherwise.
-
-        """
+        """Extract image from RSS/ATOM entry metadata."""
         if hasattr(entry, "media_group") and entry.media_group:
             for group in entry.media_group:
                 if isinstance(group, dict):
@@ -103,15 +91,7 @@ class MediaExtractor:
         return None
 
     def extract_image_from_summary_description(self, entry: Any) -> str | None:
-        """Extract first image from RSS/ATOM summary and description fields.
-
-        Args:
-            entry: Feedparser entry object.
-
-        Returns:
-            Image URL if found, None otherwise.
-
-        """
+        """Extract first image from RSS/ATOM summary and description fields."""
         if hasattr(entry, "summary") and entry.summary:
             summary_content = entry.summary
             if isinstance(summary_content, str) and summary_content.strip():
@@ -132,17 +112,7 @@ class MediaExtractor:
         return None
 
     def extract_image_from_html(self, html_content: str) -> str | None:
-        """Extract first image from HTML content.
-
-        Looks for img tags first, then falls back to Open Graph meta tags.
-
-        Args:
-            html_content: HTML string to parse.
-
-        Returns:
-            Image URL if found, None otherwise.
-
-        """
+        """Extract first image from HTML content."""
         if not html_content:
             return None
 
@@ -172,18 +142,7 @@ class MediaExtractor:
             return None
 
     def extract_metadata_from_entry(self, entry: Any) -> dict[str, Any]:
-        """Extract platform-specific metadata from RSS/ATOM entry.
-
-        Extracts metadata from enclosures (podcasts) and media:group (YouTube, Vimeo, etc.)
-        including video IDs, duration, views, ratings, and other platform-specific data.
-
-        Args:
-            entry: Feedparser entry object.
-
-        Returns:
-            Dictionary of platform-specific metadata.
-
-        """
+        """Extract platform-specific metadata from RSS/ATOM entry."""
         metadata: dict[str, Any] = {}
 
         if hasattr(entry, "enclosures") and entry.enclosures:
@@ -270,18 +229,7 @@ class MediaExtractor:
         return metadata
 
     def _is_valid_image_url(self, url: str) -> bool:
-        """Check if URL is a valid image.
-
-        Validates that the URL uses HTTP/HTTPS protocol and has a known
-        image file extension.
-
-        Args:
-            url: URL string to validate.
-
-        Returns:
-            True if URL appears to be an image, False otherwise.
-
-        """
+        """Check if URL is a valid image."""
         if not url or not url.startswith(("http://", "https://")):
             return False
 

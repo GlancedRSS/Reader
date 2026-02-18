@@ -40,12 +40,7 @@ class AuthApplication:
     """Application service that orchestrates authentication operations."""
 
     def __init__(self, db: AsyncSession):
-        """Initialize the auth application with database session and services.
-
-        Args:
-            db: Async database session for repository operations.
-
-        """
+        """Initialize the auth application with database session and services."""
         from backend.infrastructure.repositories.session import (
             SessionRepository,
         )
@@ -58,18 +53,7 @@ class AuthApplication:
         self.user_repository = UserRepository(db)
 
     async def register(self, user_data: RegistrationRequest) -> ResponseMessage:
-        """Register a new user account.
-
-        Args:
-            user_data: The registration request containing username and password.
-
-        Returns:
-            Response message indicating successful account creation.
-
-        Raises:
-            HTTPException: If validation fails or username already exists.
-
-        """
+        """Register a new user account."""
         try:
             username = self.validation.validate_username_format(
                 user_data.username
@@ -118,19 +102,7 @@ class AuthApplication:
     async def login(
         self, user_data: LoginRequest, request: Request
     ) -> tuple[ResponseMessage, tuple[str, str]]:
-        """Sign in user and create session.
-
-        Args:
-            user_data: The login request containing username and password.
-            request: The HTTP request to extract IP and user agent from.
-
-        Returns:
-            Tuple of (response message, (session_token, csrf_token)).
-
-        Raises:
-            HTTPException: If credentials are invalid or account status is invalid.
-
-        """
+        """Sign in user and create session."""
         ip_utils = IPUtils()
         ip_address = ip_utils.get_client_ip(request)
 
@@ -186,15 +158,7 @@ class AuthApplication:
         return response_message, (session_token, csrf_token)
 
     async def logout(self, request: Request) -> ResponseMessage:
-        """Sign out user and clear session.
-
-        Args:
-            request: The HTTP request containing session cookie.
-
-        Returns:
-            Response message indicating successful logout.
-
-        """
+        """Sign out user and clear session."""
         session_token = request.cookies.get(settings.session_cookie_name)
 
         if session_token:
@@ -215,19 +179,7 @@ class AuthApplication:
         password_data: PasswordChangeRequest,
         current_user: User,
     ) -> ResponseMessage:
-        """Change user password.
-
-        Args:
-            password_data: The password change request with current and new password.
-            current_user: The authenticated user.
-
-        Returns:
-            Response message indicating successful password change.
-
-        Raises:
-            HTTPException: If current password is invalid.
-
-        """
+        """Change user password."""
         try:
             self.auth_domain.change_user_password(
                 current_user,
@@ -249,16 +201,7 @@ class AuthApplication:
         current_user: User,
         current_session_id: UUID | None,
     ) -> ListResponse[SessionResponse]:
-        """Get list of user sessions.
-
-        Args:
-            current_user: The authenticated user.
-            current_session_id: The ID of the current session to mark.
-
-        Returns:
-            List of user sessions.
-
-        """
+        """Get list of user sessions."""
         sessions = await self.session_repository.get_user_sessions(
             current_user.id
         )
@@ -283,19 +226,7 @@ class AuthApplication:
     async def revoke_session(
         self, session_id: UUID, current_user: User
     ) -> ResponseMessage:
-        """Revoke a specific session.
-
-        Args:
-            session_id: The ID of the session to revoke.
-            current_user: The authenticated user.
-
-        Returns:
-            Response message indicating successful session revocation.
-
-        Raises:
-            HTTPException: If session is not found (404).
-
-        """
+        """Revoke a specific session."""
         deleted_count = await self.session_repository.revoke_session_by_id(
             current_user.id, session_id
         )
@@ -309,18 +240,7 @@ class AuthApplication:
         return ResponseMessage(message="Session removed successfully")
 
     async def get_current_session_id(self, session_token: str) -> UUID:
-        """Get session ID from session token.
-
-        Args:
-            session_token: The session token to verify.
-
-        Returns:
-            The session ID.
-
-        Raises:
-            ValueError: If session is invalid or expired.
-
-        """
+        """Get session ID from session token."""
         session = await verify_session_cookie(session_token, self.db)
         if not session:
             raise ValueError("Invalid or expired session")

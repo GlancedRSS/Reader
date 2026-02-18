@@ -1,7 +1,4 @@
-"""OPML job schemas.
-
-Schemas for OPML import and export jobs.
-"""
+"""OPML job schemas."""
 
 from pydantic import Field
 

@@ -4,18 +4,7 @@ from datetime import UTC, datetime
 
 
 def parse_iso_datetime(date_string: str | None) -> datetime | None:
-    """Parse ISO 8601 datetime string with timezone support.
-
-    Handles both 'Z' suffix and '+00:00' timezone notation.
-    Converts all datetimes to UTC. Returns None for invalid inputs.
-
-    Args:
-        date_string: ISO 8601 datetime string (e.g., "2024-01-15T10:30:00Z").
-
-    Returns:
-        datetime in UTC, or None if parsing fails.
-
-    """
+    """Parse ISO 8601 datetime string with timezone support."""
     if not date_string:
         return None
 

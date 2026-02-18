@@ -122,10 +122,7 @@ async def download_opml_by_filename(
     filename: str,
     current_user: User = Depends(get_user_from_request_state),
 ) -> FileResponse:
-    """Download an exported OPML file by filename.
-
-    Verifies ownership by checking the user_id in the storage key path.
-    """
+    """Download an exported OPML file by filename, verifying user ownership."""
     if "/" in filename or "\\" in filename:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid filename"

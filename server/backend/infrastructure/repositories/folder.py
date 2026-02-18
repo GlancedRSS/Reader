@@ -19,22 +19,12 @@ class FolderRepository:
     """Repository for folder database operations."""
 
     def __init__(self, db: AsyncSession):
-        """Initialize the folder repository.
-
-        Args:
-            db: Async database session.
-
-        """
+        """Initialize the folder repository."""
         self.db = db
 
     @staticmethod
     def _get_feed_count_subquery() -> Subquery:
-        """Create subquery for counting feeds per folder.
-
-        Returns:
-            Subquery for feed counts.
-
-        """
+        """Create subquery for counting feeds per folder."""
         return (
             select(
                 UserFeed.folder_id,
@@ -48,16 +38,7 @@ class FolderRepository:
     async def get_folder_by_id_and_user(
         self, folder_id: UUID, user_id: UUID
     ) -> UserFolder | None:
-        """Get folder by ID and user.
-
-        Args:
-            folder_id: The folder ID.
-            user_id: The user ID.
-
-        Returns:
-            The UserFolder if found, None otherwise.
-
-        """
+        """Get folder by ID and user."""
         query = select(UserFolder).where(
             and_(
                 UserFolder.id == folder_id,
@@ -70,18 +51,7 @@ class FolderRepository:
     async def find_by_id(
         self, folder_id: UUID, user_id: UUID
     ) -> UserFolder | None:
-        """Get folder by ID with user filtering.
-
-        Alias for get_folder_by_id_and_user for consistency with other repositories.
-
-        Args:
-            folder_id: The folder ID.
-            user_id: The user ID.
-
-        Returns:
-            The UserFolder if found, None otherwise.
-
-        """
+        """Get folder by ID with user filtering (alias for get_folder_by_id_and_user)."""
         return await self.get_folder_by_id_and_user(folder_id, user_id)
 
     async def folder_name_exists(
@@ -91,18 +61,7 @@ class FolderRepository:
         parent_id: UUID | None,
         exclude_folder_id: UUID | None = None,
     ) -> bool:
-        """Check if a folder with the given name exists for the same parent.
-
-        Args:
-            user_id: The user ID
-            name: The folder name to check
-            parent_id: The parent folder ID (None for root folders)
-            exclude_folder_id: Optional folder ID to exclude from check (for updates)
-
-        Returns:
-            True if a folder with the name exists, False otherwise
-
-        """
+        """Check if a folder with the given name exists for the same parent."""
         query = select(UserFolder).where(
             and_(
                 UserFolder.user_id == user_id,
@@ -124,18 +83,7 @@ class FolderRepository:
         limit: int = 20,
         offset: int = 0,
     ) -> tuple[list[Any], int]:
-        """Get subfolders with pagination.
-
-        Args:
-            parent_id: The parent folder ID.
-            user_id: The user ID.
-            limit: Maximum number of subfolders to return.
-            offset: Number of subfolders to skip.
-
-        Returns:
-            Tuple of (list of subfolders with feed counts, total count).
-
-        """
+        """Get subfolders with pagination."""
         subfolders_count_query = select(func.count(UserFolder.id)).where(
             and_(
                 UserFolder.user_id == user_id,
@@ -182,17 +130,7 @@ class FolderRepository:
         name: str,
         parent_id: UUID | None = None,
     ) -> UserFolder:
-        """Create a new folder.
-
-        Args:
-            user_id: The user ID.
-            name: The folder name.
-            parent_id: Optional parent folder ID.
-
-        Returns:
-            The created UserFolder.
-
-        """
+        """Create a new folder."""
         folder = UserFolder(
             user_id=user_id,
             name=name,
@@ -207,20 +145,7 @@ class FolderRepository:
     async def update_folder(
         self, folder_id: UUID, user_id: UUID, update_data: dict[str, Any]
     ) -> UserFolder:
-        """Update folder.
-
-        Args:
-            folder_id: The folder ID to update.
-            user_id: The user ID.
-            update_data: Dictionary of fields to update.
-
-        Returns:
-            The updated UserFolder.
-
-        Raises:
-            ValueError: If folder not found.
-
-        """
+        """Update folder."""
         folder = await self.get_folder_by_id_and_user(folder_id, user_id)
         if not folder:
             raise ValueError("Folder not found")
@@ -234,16 +159,7 @@ class FolderRepository:
         return folder
 
     async def delete_folder(self, folder_id: UUID, user_id: UUID) -> None:
-        """Delete folder.
-
-        Args:
-            folder_id: The folder ID to delete.
-            user_id: The user ID.
-
-        Raises:
-            ValueError: If folder not found.
-
-        """
+        """Delete folder."""
         folder = await self.get_folder_by_id_and_user(folder_id, user_id)
         if not folder:
             raise ValueError("Folder not found")
@@ -253,16 +169,7 @@ class FolderRepository:
     async def get_folder_capacity_metrics(
         self, user_id: UUID, parent_id: UUID | None
     ) -> tuple[int, int]:
-        """Get folder capacity metrics for validation.
-
-        Args:
-            user_id: The user ID.
-            parent_id: The parent folder ID (None for root folders).
-
-        Returns:
-            Tuple of (folders_used, new_depth).
-
-        """
+        """Get folder capacity metrics for validation."""
         if parent_id:
             depth_query = select(UserFolder.depth).where(
                 and_(
@@ -300,17 +207,7 @@ class FolderRepository:
     async def check_circular_reference(
         self, folder_id: UUID, new_parent_id: UUID, user_id: UUID
     ) -> None:
-        """Check for circular references in folder hierarchy.
-
-        Args:
-            folder_id: The folder ID to check.
-            new_parent_id: The potential new parent folder ID.
-            user_id: The user ID for scoping the query.
-
-        Raises:
-            CircularReferenceError: If circular reference is detected.
-
-        """
+        """Check for circular references in folder hierarchy."""
         circular_query = text(
             """
             WITH RECURSIVE folder_tree AS (
@@ -343,15 +240,7 @@ class FolderRepository:
     async def get_recursive_unread_counts(
         self, user_id: UUID
     ) -> dict[UUID, int]:
-        """Get recursive unread counts for all user folders.
-
-        Args:
-            user_id: The user ID.
-
-        Returns:
-            Dictionary mapping folder IDs to recursive unread counts.
-
-        """
+        """Get recursive unread counts for all user folders."""
         try:
             folders_query = text(
                 """
@@ -462,16 +351,7 @@ class FolderRepository:
     async def get_folder_details_with_feed_count(
         self, folder_id: UUID, user_id: UUID
     ) -> Row[Any] | None:
-        """Get folder details with feed count.
-
-        Args:
-            folder_id: The folder ID.
-            user_id: The user ID.
-
-        Returns:
-            Folder details row with feed count, or None if not found.
-
-        """
+        """Get folder details with feed count."""
         feed_count_subq = self._get_feed_count_subquery()
 
         stmt = (
@@ -501,17 +381,7 @@ class FolderRepository:
     async def get_all_feeds_for_user(
         self, user_id: UUID, sort_order: str | None = None
     ) -> Sequence[Row[Any]]:
-        """Get all feeds for the user with folder association.
-
-        Args:
-            user_id: The user ID.
-            sort_order: Optional sort order ('alphabetical' or 'recent_first').
-                If None, defaults to pinned then alphabetical.
-
-        Returns:
-            List of feeds with folder information.
-
-        """
+        """Get all feeds for the user with folder association."""
         secondary_sort: UnaryExpression[Any]
         if sort_order == "recent_first":
             secondary_sort = Feed.last_update.desc().nullslast()
@@ -540,15 +410,7 @@ class FolderRepository:
     async def get_all_folders_for_user(
         self, user_id: UUID
     ) -> Sequence[Row[Any]]:
-        """Get all folders for the user in a single query.
-
-        Args:
-            user_id: The user ID.
-
-        Returns:
-            List of all folders with feed counts, ordered by depth and name.
-
-        """
+        """Get all folders for the user in a single query."""
         feed_count_subq = self._get_feed_count_subquery()
 
         stmt = (

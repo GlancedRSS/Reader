@@ -18,36 +18,15 @@ class FeedRepository:
     """Repository for feed database operations."""
 
     def __init__(self, db: AsyncSession):
-        """Initialize the feed repository.
-
-        Args:
-            db: Async database session.
-
-        """
+        """Initialize the feed repository."""
         self.db = db
 
     async def get_feed_by_id(self, feed_id: UUID) -> Feed | None:
-        """Get feed by ID.
-
-        Args:
-            feed_id: The UUID of the feed.
-
-        Returns:
-            The Feed object if found, None otherwise.
-
-        """
+        """Get feed by ID."""
         return await self.db.get(Feed, feed_id)
 
     async def get_feed_by_url(self, url: str) -> Feed | None:
-        """Get feed by URL.
-
-        Args:
-            url: The feed URL.
-
-        Returns:
-            The Feed object if found, None otherwise.
-
-        """
+        """Get feed by URL."""
         normalized_url = normalize_url(url)
         stmt = select(Feed).where(Feed.canonical_url == normalized_url)
         result = await self.db.execute(stmt)
@@ -63,21 +42,7 @@ class FeedRepository:
         website: str | None,
         has_articles: bool,
     ) -> Feed:
-        """Create a new feed in the database.
-
-        Args:
-            url: The feed URL.
-            title: The feed title.
-            description: The feed description.
-            feed_type: The type of feed (rss/atom).
-            language: The feed language code.
-            website: The website URL.
-            has_articles: Whether the feed has articles.
-
-        Returns:
-            The created Feed object.
-
-        """
+        """Create a new feed in the database."""
         canonical_url = normalize_url(url) if url else None
 
         feed_record = Feed(
@@ -96,27 +61,13 @@ class FeedRepository:
         return feed_record
 
     async def delete_feed(self, feed: Feed) -> None:
-        """Delete a feed record.
-
-        Args:
-            feed: The Feed object to delete.
-
-        """
+        """Delete a feed record."""
         await self.db.delete(feed)
 
     async def update_feed(
         self, feed_id: UUID, feed_data: dict[str, Any]
     ) -> Feed | None:
-        """Update feed with provided data.
-
-        Args:
-            feed_id: The UUID of the feed to update.
-            feed_data: Dictionary of fields to update.
-
-        Returns:
-            The updated Feed object, or None if not found.
-
-        """
+        """Update feed with provided data."""
         result = await self.db.execute(select(Feed).where(Feed.id == feed_id))
         feed = result.scalar_one_or_none()
 
@@ -136,15 +87,7 @@ class FeedRepository:
         return feed
 
     async def delete_feeds_bulk(self, feed_ids: list[UUID]) -> int:
-        """Delete multiple feeds in a single query.
-
-        Args:
-            feed_ids: List of feed UUIDs to delete.
-
-        Returns:
-            Number of feeds deleted.
-
-        """
+        """Delete multiple feeds in a single query."""
         if not feed_ids:
             return 0
 
@@ -165,16 +108,7 @@ class FeedRepository:
         error_count: int | None = None,
         last_error: str | None = None,
     ) -> None:
-        """Update feed statistics after a fetch attempt.
-
-        Args:
-            feed_id: The feed UUID.
-            last_fetched_at: When the feed was last fetched.
-            last_update: The last update timestamp from the feed.
-            error_count: The current error count.
-            last_error: The last error message.
-
-        """
+        """Update feed statistics after a fetch attempt."""
         result = await self.db.execute(select(Feed).where(Feed.id == feed_id))
         feed = result.scalar_one_or_none()
 
@@ -194,13 +128,7 @@ class FeedRepository:
         feed_id: UUID,
         error_message: str,
     ) -> None:
-        """Increment feed error count.
-
-        Args:
-            feed_id: The feed UUID.
-            error_message: The error message to log.
-
-        """
+        """Increment feed error count."""
         result = await self.db.execute(select(Feed).where(Feed.id == feed_id))
         feed = result.scalar_one_or_none()
 
@@ -210,12 +138,7 @@ class FeedRepository:
             feed.last_error_at = datetime.now(UTC)
 
     async def reset_feed_errors(self, feed_id: UUID) -> None:
-        """Reset error count for a successful fetch.
-
-        Args:
-            feed_id: The feed UUID.
-
-        """
+        """Reset error count for a successful fetch."""
         result = await self.db.execute(select(Feed).where(Feed.id == feed_id))
         feed = result.scalar_one_or_none()
 
@@ -225,15 +148,7 @@ class FeedRepository:
             feed.last_error_at = None
 
     async def get_active_feeds_with_subscriptions(self) -> list[Feed]:
-        """Get all active feeds that have user subscriptions.
-
-        Returns feeds that are both active and have at least one user
-        subscription (UserArticle record).
-
-        Returns:
-            List of active feeds with subscriptions.
-
-        """
+        """Get all active feeds that have user subscriptions."""
         from backend.models import ArticleSource, UserArticle
 
         stmt = (
@@ -249,14 +164,7 @@ class FeedRepository:
         return list(result.scalars().all())
 
     async def bulk_mark_orphaned_feeds_inactive(self) -> int:
-        """Mark all feeds with no subscribers as inactive in a single query.
-
-        This is much more efficient than loading and updating feeds individually.
-
-        Returns:
-            Number of feeds marked inactive.
-
-        """
+        """Mark all feeds with no subscribers as inactive in a single query."""
         query = text("""
             UPDATE content.feeds
             SET is_active = false

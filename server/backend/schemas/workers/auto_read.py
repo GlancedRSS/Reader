@@ -1,7 +1,4 @@
-"""Auto-read job schemas.
-
-Schemas for auto-mark as read jobs.
-"""
+"""Auto-read job schemas."""
 
 from pydantic import Field
 

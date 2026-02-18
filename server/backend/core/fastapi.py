@@ -12,23 +12,7 @@ from .database import get_db
 async def get_user_from_request_state(
     request: Request, db: AsyncSession = Depends(get_db)
 ) -> User:
-    """Get the authenticated user from the request state.
-
-    Extracts the user ID from the request state (set by auth middleware)
-    and fetches the corresponding active user from the database.
-
-    Args:
-        request: The FastAPI request object containing state.
-        db: The database session (injected via dependency).
-
-    Returns:
-        The authenticated User object.
-
-    Raises:
-        HTTPException: If user_id is not in request state (401).
-        HTTPException: If user is not found or inactive (401).
-
-    """
+    """Get the authenticated user from the request state."""
     user_id = getattr(request.state, "user_id", None)
     if user_id is None:
         raise HTTPException(

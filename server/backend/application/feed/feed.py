@@ -40,12 +40,7 @@ class FeedApplication:
         self,
         db: AsyncSession,
     ):
-        """Initialize the feed application with database session and services.
-
-        Args:
-            db: Async database session for repository operations.
-
-        """
+        """Initialize the feed application with database session and services."""
         self.db = db
         self.repository = UserFeedRepository(db)
         self.feed_repository = FeedRepository(db)
@@ -62,21 +57,7 @@ class FeedApplication:
         cursor: str | None = None,
         all: bool = False,
     ) -> PaginatedResponse[UserFeedListResponse]:
-        """Get user's subscriptions with filtering and pagination.
-
-        Args:
-            user_id: The ID of the user.
-            folder_id: Optional filter by folder ID.
-            order_by: Order by 'name' (alphabetical A-Z, offset-based) or 'recent' (cursor-based).
-            limit: Maximum number of subscriptions to return.
-            offset: Number of subscriptions to skip (used for name ordering).
-            cursor: Pagination cursor (used for recent ordering).
-            all: Return all feeds regardless of folder assignment. When true, folder_id is ignored.
-
-        Returns:
-            Paginated response containing user's subscriptions.
-
-        """
+        """Get user's subscriptions with filtering and pagination."""
         result = []
         total = 0
         has_more = False
@@ -156,19 +137,7 @@ class FeedApplication:
     async def get_user_feed_by_id(
         self, user_feed_id: UUID, user_id: UUID
     ) -> UserFeedResponse:
-        """Get detailed user feed information by ID.
-
-        Args:
-            user_feed_id: The ID of the user feed.
-            user_id: The ID of the user.
-
-        Returns:
-            Detailed user feed response.
-
-        Raises:
-            NotFoundError: If user feed is not found or feed not found.
-
-        """
+        """Get detailed user feed information by ID."""
         user_feed = await self.repository.get_user_feed_by_id(user_feed_id)
 
         if not user_feed or user_feed.user_id != user_id:
@@ -204,20 +173,7 @@ class FeedApplication:
         user_feed_data: UserFeedUpdateRequest,
         user_id: UUID,
     ) -> ResponseMessage:
-        """Update user's feed by user feed ID.
-
-        Args:
-            user_feed_id: The ID of the user feed to update.
-            user_feed_data: The user feed update request.
-            user_id: The ID of the user.
-
-        Returns:
-            Response message indicating successful update.
-
-        Raises:
-            ValueError: If user feed not found or folder invalid.
-
-        """
+        """Update user's feed by user feed ID."""
         user_feed = await self.repository.get_user_feed_by_id(user_feed_id)
 
         if not user_feed or user_feed.user_id != user_id:
@@ -330,22 +286,7 @@ class FeedApplication:
     async def unsubscribe_from_feed(
         self, user_feed_id: UUID, user_id: UUID
     ) -> ResponseMessage:
-        """Unsubscribe from feed.
-
-        Deletes UserFeed and UserArticles that are not accessible via other
-            user subscriptions.
-
-        Args:
-            user_feed_id: The ID of the user feed to cancel.
-            user_id: The ID of the user.
-
-        Returns:
-            Response message indicating successful unsubscription.
-
-        Raises:
-            NotFoundError: If user feed is not found.
-
-        """
+        """Unsubscribe from feed, deleting UserFeed and orphaned UserArticles."""
         user_feed = await self.repository.get_user_feed_by_id(user_feed_id)
 
         if not user_feed or user_feed.user_id != user_id:
@@ -404,19 +345,7 @@ class FeedApplication:
     async def _backfill_tags_for_articles(
         self, user_id: UUID, article_ids: list[UUID]
     ) -> int:
-        """Backfill tags for a user from specific articles.
-
-        Creates UserTag and ArticleTag records for existing articles based on
-        their source_tags field.
-
-        Args:
-            user_id: The user ID to backfill tags for.
-            article_ids: List of article IDs to backfill tags for.
-
-        Returns:
-            Number of ArticleTag records created.
-
-        """
+        """Backfill tags for a user from specific articles based on their source_tags field."""
         if not article_ids:
             return 0
 

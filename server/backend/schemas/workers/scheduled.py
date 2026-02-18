@@ -1,7 +1,4 @@
-"""Scheduled maintenance job schemas.
-
-Schemas for feed cleanup and feed refresh jobs.
-"""
+"""Scheduled maintenance job schemas."""
 
 from pydantic import Field
 

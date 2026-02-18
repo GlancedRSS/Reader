@@ -17,21 +17,7 @@ class DiscoveryPublisher(BaseJobPublisher):
         folder_id: UUID | None = None,
         delay_seconds: int = 0,
     ) -> dict[str, Any]:
-        """Create job and publish feed creation + subscription to worker.
-
-        Creates a job record in Redis for tracking and emits SSE on completion.
-        Worker will parse the feed, create it in global feeds, and subscribe user.
-
-        Args:
-            url: The feed URL to create and subscribe to.
-            user_id: The user ID subscribing to the feed.
-            folder_id: Optional folder ID to add the feed to.
-            delay_seconds: Optional delay in seconds before processing.
-
-        Returns:
-            Response dict with job_id and message_id.
-
-        """
+        """Create job and publish feed creation + subscription to worker."""
         payload = {
             "url": url,
             "user_id": str(user_id),

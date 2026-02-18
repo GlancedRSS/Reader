@@ -15,16 +15,7 @@ class NotificationApplication:
         user_id: UUID,
         is_disconnect: Callable[[], Awaitable[bool]] | None = None,
     ) -> AsyncGenerator[dict[str, Any]]:
-        """Get the SSE event stream for a user's notifications.
-
-        Args:
-            user_id: The user to stream notifications for.
-            is_disconnect: Callable that returns an awaitable bool for disconnect status.
-
-        Yields:
-            SSE event dictionaries with 'event' and 'data' keys.
-
-        """
+        """Get the SSE event stream for a user's notifications."""
         if is_disconnect is None:
 
             async def never_disconnect() -> bool:

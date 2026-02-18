@@ -28,12 +28,7 @@ class FeedProcessor:
     """Infrastructure for parsing RSS/Atom feeds and creating articles."""
 
     def __init__(self, db: AsyncSession) -> None:
-        """Initialize the feed processor.
-
-        Args:
-            db: Async database session.
-
-        """
+        """Initialize the feed processor."""
         self.db = db
         self.html_cleaner = HTMLCleaner()
         self.media_extractor = MediaExtractor()
@@ -52,17 +47,7 @@ class FeedProcessor:
         str | None,
         dict[str, Any],
     ]:
-        """Extract content, image, author, categories, and platform_metadata from RSS feed entry.
-
-        This method inlines the logic from ContentProcessor.
-
-        Args:
-            entry: RSS/Atom feed entry object.
-
-        Returns:
-            Tuple of (clean_content, search_content, image_url, author, categories, content_source, platform_metadata).
-
-        """
+        """Extract content, image, author, categories, and platform_metadata from RSS feed entry."""
         content, content_source = (
             self.entry_extractor.extract_content_from_entry(entry)
         )
@@ -117,15 +102,7 @@ class FeedProcessor:
         )
 
     async def create_feed(self, feed_data: DiscoveryFeedCreateRequest) -> Any:
-        """Create a new feed using unified feed parsing approach.
-
-        Args:
-            feed_data: The feed creation request data.
-
-        Returns:
-            The created Feed object.
-
-        """
+        """Create a new feed using unified feed parsing approach."""
         logger.info("Starting feed creation", url=feed_data.url)
         try:
             existing = await self.repository.get_feed_by_url(feed_data.url)
@@ -216,16 +193,7 @@ class FeedProcessor:
     async def update_feed(
         self, feed_id: UUID, feed_data: FeedUpdateRequest
     ) -> Any | None:
-        """Update feed metadata.
-
-        Args:
-            feed_id: The feed ID to update.
-            feed_data: The feed update request data.
-
-        Returns:
-            The updated Feed object, or None if not found.
-
-        """
+        """Update feed metadata."""
         logger.info("Starting feed update", feed_id=feed_id)
 
         try:
@@ -260,15 +228,7 @@ class FeedProcessor:
             raise
 
     async def delete_feed(self, feed_id: UUID) -> bool:
-        """Delete a feed and all its articles.
-
-        Args:
-            feed_id: The feed ID to delete.
-
-        Returns:
-            True if feed was deleted, False if not found.
-
-        """
+        """Delete a feed and all its articles."""
         logger.info("Starting feed deletion", feed_id=feed_id)
 
         try:
@@ -291,27 +251,11 @@ class FeedProcessor:
             raise
 
     async def get_feed_by_id(self, feed_id: UUID) -> Any | None:
-        """Get feed by ID.
-
-        Args:
-            feed_id: The feed ID.
-
-        Returns:
-            The Feed object if found, None otherwise.
-
-        """
+        """Get feed by ID."""
         return await self.repository.get_feed_by_id(feed_id)
 
     async def refresh_feed(self, feed_id: UUID) -> dict[str, Any]:
-        """Refresh feed articles.
-
-        Args:
-            feed_id: The feed ID to refresh.
-
-        Returns:
-            Dictionary with feed_id, articles_created, last_update, or error key if failed.
-
-        """
+        """Refresh feed articles."""
         logger.info("Starting feed refresh", feed_id=feed_id)
 
         try:
@@ -394,16 +338,7 @@ class FeedProcessor:
     async def _parse_feed_content(
         self, url: str, timeout: float | None = None
     ) -> dict[str, Any]:
-        """Parse RSS/Atom feed content and extract articles.
-
-        Args:
-            url: The feed URL to parse.
-            timeout: Optional timeout in seconds (uses default if not specified).
-
-        Returns:
-            Dictionary with feed metadata and articles list.
-
-        """
+        """Parse RSS/Atom feed content and extract articles."""
         logger.info("Parsing feed content", url=url)
 
         async with httpx.AsyncClient(
@@ -448,15 +383,7 @@ class FeedProcessor:
             }
 
     def _parse_feed_entries(self, feed: Any) -> list[dict[str, Any]]:
-        """Parse articles from feed entries.
-
-        Args:
-            feed: The parsed feed object.
-
-        Returns:
-            List of article data dictionaries.
-
-        """
+        """Parse articles from feed entries."""
         articles_data = []
         max_articles = 50
 

@@ -15,15 +15,7 @@ class IPUtils:
 
     @staticmethod
     def _validate_ip(ip_str: str) -> str | None:
-        """Validate and normalize an IP address.
-
-        Args:
-            ip_str: The IP string to validate.
-
-        Returns:
-            The normalized IP address, or None if invalid.
-
-        """
+        """Validate and normalize an IP address."""
         try:
             ip = ipaddress.ip_address(ip_str.strip())
             return str(ip)
@@ -32,18 +24,7 @@ class IPUtils:
 
     @staticmethod
     def get_client_ip(request: Any) -> str:
-        """Get the real client IP address, checking for proxy headers.
-
-        Only trusts proxy headers if the request comes from a configured
-        trusted proxy. Otherwise falls back to the direct connection IP.
-
-        Args:
-            request: The HTTP request object.
-
-        Returns:
-            The validated client IP address.
-
-        """
+        """Get the real client IP address, checking for proxy headers."""
         direct_ip = request.client.host if request.client else None
         trusted_proxies = getattr(settings, "trusted_proxies", None)
 

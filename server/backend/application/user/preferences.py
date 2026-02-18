@@ -16,27 +16,14 @@ class UserPreferencesApplication:
     """Application service for user preferences operations."""
 
     def __init__(self, db: AsyncSession):
-        """Initialize the user preferences application with database session.
-
-        Args:
-            db: Async database session for repository operations.
-
-        """
+        """Initialize the user preferences application with database session."""
         self.db = db
         self.repository = UserRepository(db)
 
     async def _ensure_preferences_exist(
         self, user: User
     ) -> UserPreferencesModel:
-        """Ensure user preferences exist, creating defaults if needed.
-
-        Args:
-            user: The user to ensure preferences for.
-
-        Returns:
-            The UserPreferencesModel, either existing or newly created.
-
-        """
+        """Ensure user preferences exist, creating defaults if needed."""
         prefs_model = await self.repository.find_preferences_by_user_id(user.id)
 
         if not prefs_model:
@@ -55,33 +42,13 @@ class UserPreferencesApplication:
         return prefs_model
 
     async def get_user_preferences(self, user: User) -> UserPreferencesModel:
-        """Get user preferences, creating defaults if needed.
-
-        Args:
-            user: The user to get preferences for.
-
-        Returns:
-            UserPreferencesModel with preferences.
-
-        """
+        """Get user preferences, creating defaults if needed."""
         return await self._ensure_preferences_exist(user)
 
     async def update_user_preferences(
         self, user: User, preferences_update: PreferencesUpdateRequest
     ) -> ResponseMessage:
-        """Update user preferences with validation.
-
-        Args:
-            user: The user to update preferences for.
-            preferences_update: The preferences update request.
-
-        Returns:
-            Response message indicating successful update.
-
-        Raises:
-            ValidationError: If preference validation fails or no fields provided.
-
-        """
+        """Update user preferences with validation."""
         prefs_model = await self._ensure_preferences_exist(user)
 
         update_data = preferences_update.model_dump(exclude_unset=True)

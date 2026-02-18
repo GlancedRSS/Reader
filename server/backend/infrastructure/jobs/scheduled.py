@@ -1,8 +1,4 @@
-"""Scheduled maintenance job handlers.
-
-This module contains handlers for scheduled background jobs including
-feed cleanup, OPML cleanup, and feed refresh cycle.
-"""
+"""Scheduled maintenance job handlers."""
 
 import asyncio
 import time
@@ -31,26 +27,12 @@ logger = get_logger(__name__)
 
 
 class FeedCleanupHandler:
-    """Handler for feed cleanup job.
-
-    Marks feeds as inactive when they have no subscribers.
-    """
+    """Handler for feed cleanup job."""
 
     async def execute(
         self, request: FeedCleanupJobRequest
     ) -> FeedCleanupJobResponse:
-        """Execute the feed cleanup job.
-
-        Finds feeds with zero UserFeed subscriptions and marks them inactive
-        using a single bulk UPDATE query.
-
-        Args:
-            request: The feed cleanup job request
-
-        Returns:
-            Response with cleanup statistics
-
-        """
+        """Execute the feed cleanup job."""
         from backend.core.database import AsyncSessionLocal
 
         logger.info("Starting feed cleanup", job_id=request.job_id)
@@ -80,21 +62,10 @@ class ScheduledFeedRefreshCycleHandler(
         ScheduledFeedRefreshCycleJobResponse,
     ]
 ):
-    """Handler for scheduled feed refresh cycle job.
-
-    Refreshes all active feeds in batches as quickly as possible.
-    Triggered by Arq cron on a recurring basis (every 15 minutes).
-    """
+    """Handler for scheduled feed refresh cycle job."""
 
     def __init__(self, _feed_application: "FeedApplication") -> None:
-        """Initialize the handler.
-
-        Args:
-            _feed_application: Unused - injected feed application has its own session
-                that won't commit until the HTTP request ends. We create our own
-                session per feed to ensure immediate commits.
-
-        """
+        """Initialize the handler."""
         from backend.core.app import settings
 
         self._settings = settings
@@ -102,21 +73,7 @@ class ScheduledFeedRefreshCycleHandler(
     async def execute(
         self, request: ScheduledFeedRefreshCycleJobRequest
     ) -> ScheduledFeedRefreshCycleJobResponse:
-        """Execute the feed refresh cycle job.
-
-        Queries all active feeds and refreshes them in batches as quickly
-        as possible, with no artificial delays between batches.
-
-        Each feed is processed in its own database session to ensure
-        immediate commits and visibility.
-
-        Args:
-            request: The feed refresh cycle job request
-
-        Returns:
-            Response with refresh statistics
-
-        """
+        """Execute the feed refresh cycle job."""
         from backend.core.app import settings
         from backend.models import Feed
 
@@ -218,18 +175,7 @@ class ScheduledFeedRefreshCycleHandler(
         )
 
     async def _process_feed_with_session(self, feed_id: UUID) -> dict[str, Any]:
-        """Process a single feed refresh with its own database session.
-
-        Each feed gets a fresh session that commits immediately, ensuring
-        articles are visible right away.
-
-        Args:
-            feed_id: The feed UUID to refresh.
-
-        Returns:
-            Dict with status, feed_id, message, and optional new_articles count.
-
-        """
+        """Process a single feed refresh with its own database session."""
         async with AsyncSessionLocal() as db:
             try:
                 from backend.infrastructure.feed.processing.feed_processor import (
@@ -246,7 +192,6 @@ class ScheduledFeedRefreshCycleHandler(
 
                 await db.commit()
 
-                # Queue notifications for subscribed users if new articles were created
                 if (
                     result.get("status") == "success"
                     and result.get("articles_created", 0) > 0

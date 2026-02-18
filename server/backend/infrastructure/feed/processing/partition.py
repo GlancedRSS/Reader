@@ -22,26 +22,13 @@ class Partition:
     """Service for managing database partitions."""
 
     def __init__(self, db: Any) -> None:
-        """Initialize the partition service.
-
-        Args:
-            db: Database session.
-
-        """
+        """Initialize the partition service."""
         self.db = db
 
     async def analyze_and_create_partitions(
         self, articles_data: list[dict[str, Any]]
     ) -> set[str]:
-        """Analyze article dates and create all necessary partitions before processing.
-
-        Args:
-            articles_data: List of article data dictionaries to analyze.
-
-        Returns:
-            Set of partition names that were created.
-
-        """
+        """Analyze article dates and create all necessary partitions before processing."""
         try:
             partition_check_sql = text(
                 """

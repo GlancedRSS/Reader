@@ -11,11 +11,7 @@ background_tasks: set[asyncio.Task[None]] = set()
 
 
 async def graceful_shutdown() -> None:
-    """Handle graceful shutdown of the application.
-
-    Cancels background tasks, waits for active requests to complete (with 10s timeout), then closes
-    Redis and database connections. Logs errors but does not raise them.
-    """
+    """Handle graceful shutdown by cancelling tasks and closing connections."""
     import structlog
 
     global logger
@@ -72,17 +68,7 @@ async def graceful_shutdown() -> None:
 
 
 async def lifespan_init() -> None:
-    """Initialize application services during startup.
-
-    Validates configuration, initializes database connection,
-    and establishes Redis connection.
-
-    Raises:
-        Exception: If configuration validation fails.
-        Exception: If database initialization fails.
-        Exception: If Redis connection fails.
-
-    """
+    """Initialize application services during startup."""
     import structlog
 
     global logger
@@ -168,10 +154,7 @@ async def lifespan_init() -> None:
 
 
 async def lifespan_shutdown() -> None:
-    """Shutdown callback for application lifespan.
-
-    Initializes logger if needed and triggers graceful shutdown.
-    """
+    """Shutdown callback for application lifespan."""
     global logger
     if logger is None:
         import structlog
