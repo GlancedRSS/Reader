@@ -23,15 +23,10 @@ from backend.infrastructure.repositories import (
 )
 from backend.schemas.workers import (
     AutoMarkReadJobRequest,
-    AutoMarkReadJobResponse,
     FeedCleanupJobRequest,
-    FeedCleanupJobResponse,
     OpmlExportJobRequest,
-    OpmlExportJobResponse,
     OpmlImportJobRequest,
-    OpmlImportJobResponse,
     ScheduledFeedRefreshCycleJobRequest,
-    ScheduledFeedRefreshCycleJobResponse,
 )
 
 logger = get_logger(__name__)
@@ -96,18 +91,7 @@ async def opml_import(
 
     handler = OpmlImportJobHandler()
     response = await handler.handle(request, job_id)
-
-    if isinstance(response, OpmlImportJobResponse):
-        return response.model_dump()
-    if hasattr(response, "status_code"):
-        return {
-            "status": "error",
-            "message": bytes(response.body).decode()
-            if hasattr(response, "body")
-            else str(response),
-            "status_code": response.status_code,
-        }
-    return {"status": "error", "message": str(response)}
+    return response.model_dump()
 
 
 async def opml_export(
@@ -134,18 +118,7 @@ async def opml_export(
 
     handler = OpmlExportJobHandler()
     response = await handler.handle(request, job_id)
-
-    if isinstance(response, OpmlExportJobResponse):
-        return response.model_dump()
-    if hasattr(response, "status_code"):
-        return {
-            "status": "error",
-            "message": bytes(response.body).decode()
-            if hasattr(response, "body")
-            else str(response),
-            "status_code": response.status_code,
-        }
-    return {"status": "error", "message": str(response)}
+    return response.model_dump()
 
 
 async def feed_create_and_subscribe(
@@ -280,21 +253,8 @@ async def scheduled_feed_refresh(
 
             handler = ScheduledFeedRefreshCycleHandler(feed_app)
             response = await handler.handle(request, job_id)
-
-            if isinstance(response, ScheduledFeedRefreshCycleJobResponse):
-                result = response.model_dump()
-            elif hasattr(response, "status_code"):
-                result = {
-                    "status": "error",
-                    "message": bytes(response.body).decode()
-                    if hasattr(response, "body")
-                    else str(response),
-                    "status_code": response.status_code,
-                }
-            else:
-                result = {"status": "error", "message": str(response)}
             await db.commit()
-            return result
+            return response.model_dump()
 
         except Exception:
             await db.rollback()
@@ -315,18 +275,7 @@ async def scheduled_feed_cleanup(
 
     handler = FeedCleanupHandler()
     response = await handler.execute(request)
-
-    if isinstance(response, FeedCleanupJobResponse):
-        return response.model_dump()
-    if hasattr(response, "status_code"):
-        return {
-            "status": "error",
-            "message": bytes(response.body).decode()
-            if hasattr(response, "body")
-            else str(response),
-            "status_code": response.status_code,
-        }
-    return {"status": "error", "message": str(response)}
+    return response.model_dump()
 
 
 async def scheduled_auto_mark_read(
@@ -350,15 +299,4 @@ async def scheduled_auto_mark_read(
             subscription_repository=sub_repo,
         )
         response = await handler.handle(request, job_id)
-
-        if isinstance(response, AutoMarkReadJobResponse):
-            return response.model_dump()
-        if hasattr(response, "status_code"):
-            return {
-                "status": "error",
-                "message": bytes(response.body).decode()
-                if hasattr(response, "body")
-                else str(response),
-                "status_code": response.status_code,
-            }
-        return {"status": "error", "message": str(response)}
+        return response.model_dump()
