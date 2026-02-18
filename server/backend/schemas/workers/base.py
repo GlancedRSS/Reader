@@ -1,7 +1,4 @@
-"""Base job request and response schemas.
-
-All job schemas inherit from these base classes.
-"""
+"""Base job request and response schemas."""
 
 import uuid
 from datetime import UTC, datetime
@@ -10,11 +7,7 @@ from pydantic import BaseModel, Field
 
 
 class BaseJobRequest(BaseModel):
-    """Base request schema for all jobs.
-
-    All job requests include a job_id for tracking purposes.
-    For scheduled jobs, job_id is auto-generated if not provided.
-    """
+    """Base request schema for all jobs."""
 
     job_id: str = Field(
         default_factory=lambda: (
@@ -25,10 +18,7 @@ class BaseJobRequest(BaseModel):
 
 
 class BaseJobResponse(BaseModel):
-    """Base response schema for all jobs.
-
-    All job responses include job_id, status, and optional message.
-    """
+    """Base response schema for all jobs."""
 
     job_id: str = Field(..., description="Job identifier echoed from request")
     status: str = Field(

@@ -1,9 +1,4 @@
-"""OPML job handlers.
-
-This module contains handlers for OPML import/export background jobs.
-These jobs handle parsing OPML XML files, creating feed subscriptions,
-and generating OPML exports from user's feeds.
-"""
+"""OPML job handlers."""
 
 from datetime import UTC, datetime
 from uuid import UUID
@@ -41,31 +36,14 @@ logger = get_logger(__name__)
 class OpmlImportJobHandler(
     BaseJobHandler[OpmlImportJobRequest, OpmlImportJobResponse]
 ):
-    """Handler for OPML import job.
-
-    Simplified implementation using FeedApplication.subscribe_feed() for unified
-    feed handling. Features:
-    - Local storage for file persistence
-    - Folder mapping with 9-level flattening
-    - Duplicate detection via DB constraints
-    - SSE progress updates every 10 feeds
-    - Rollback capability via import_id tracking
-    """
+    """Handler for OPML import job."""
 
     MAX_FOLDER_DEPTH = 9
 
     async def execute(
         self, request: OpmlImportJobRequest
     ) -> OpmlImportJobResponse:
-        """Execute the OPML import job.
-
-        Args:
-            request: The OPML import job request
-
-        Returns:
-            Response with import statistics
-
-        """
+        """Execute the OPML import job."""
         logger.info(
             "Starting OPML import",
             job_id=request.job_id,
@@ -265,25 +243,7 @@ class OpmlImportJobHandler(
         import_id: UUID,
         folder_id: UUID | None,
     ) -> str:
-        """Import a single feed using feed processor and user feed repository.
-
-        Handles both new and existing feeds, article creation, and tag backfilling.
-        After subscription, updates import_id on the UserFeed record.
-
-        Args:
-            feed_url: The feed URL.
-            feed_title: The feed title from OPML (unused, subscribed title takes precedence).
-            user_id: The user ID.
-            import_id: The import ID for rollback tracking.
-            folder_id: The folder ID.
-
-        Returns:
-            Status: "success" for new subscriptions, "exists" for duplicates.
-
-        Raises:
-            Exception: If feed subscription fails.
-
-        """
+        """Import a single feed using feed processor and user feed repository."""
         logger.info(
             "Importing feed",
             feed_url=feed_url,
@@ -350,26 +310,7 @@ class OpmlImportJobHandler(
         folder_path: list[str],
         default_parent_id: UUID | None,
     ) -> UUID | None:
-        """Resolve or create folders from path.
-
-        All folders are created as children of default_parent_id, forming a hierarchy.
-        If folder_path is empty, returns default_parent_id directly.
-
-        Args:
-            user_id: The user ID.
-            folder_path: List of folder names (e.g., ["Tech", "Blogs"]).
-            default_parent_id: Parent folder ID for the first level. All folders
-                are created as descendants of this folder.
-
-        Returns:
-            Folder ID of the deepest folder, or default_parent_id if folder_path is empty.
-
-        Example:
-            folder_path=["Tech", "Blogs"], default_parent_id=<imports-id>
-            Creates: imports → Tech → Blogs
-            Returns: Blogs folder ID
-
-        """
+        """Resolve or create folders from path."""
         if not folder_path:
             return default_parent_id
 
@@ -409,15 +350,7 @@ class OpmlImportJobHandler(
         current: int,
         total: int,
     ) -> None:
-        """Send SSE progress update via Redis pub/sub.
-
-        Args:
-            user_id: The user ID.
-            import_id: The import ID.
-            current: Current feed count.
-            total: Total feed count.
-
-        """
+        """Send SSE progress update via Redis pub/sub."""
         from backend.infrastructure.notifications.notifications import (
             publish_notification,
         )
@@ -437,23 +370,12 @@ class OpmlImportJobHandler(
 class OpmlExportJobHandler(
     BaseJobHandler[OpmlExportJobRequest, OpmlExportJobResponse]
 ):
-    """Handler for OPML export job.
-
-    Generates OPML XML from user's feed subscriptions and uploads to local storage.
-    """
+    """Handler for OPML export job."""
 
     async def execute(
         self, request: OpmlExportJobRequest
     ) -> OpmlExportJobResponse:
-        """Execute the OPML export job.
-
-        Args:
-            request: The OPML export job request
-
-        Returns:
-            Response with export data and presigned download URL
-
-        """
+        """Execute the OPML export job."""
         logger.info(
             "Starting OPML export",
             job_id=request.job_id,

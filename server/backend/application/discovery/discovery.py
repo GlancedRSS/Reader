@@ -33,14 +33,7 @@ class DiscoveryApplication:
         discovery_publisher: DiscoveryPublisher | None = None,
         feed_application: "FeedApplication | None" = None,
     ):
-        """Initialize the discovery application.
-
-        Args:
-            db: Database session.
-            discovery_publisher: Optional discovery publisher for async operations (new feeds).
-            feed_application: Optional feed application for tag backfill.
-
-        """
+        """Initialize the discovery application."""
         self.db = db
         self.feed_repository = FeedRepository(db)
         self.user_feed_repository = UserFeedRepository(db)
@@ -51,17 +44,7 @@ class DiscoveryApplication:
     async def discover_feeds(
         self, url: str, user_id: UUID, folder_id: UUID | None = None
     ) -> FeedDiscoveryResponse:
-        """Discover feeds from a URL and check subscription status.
-
-        Args:
-            url: The URL to discover feeds from.
-            user_id: The user ID.
-            folder_id: Optional folder ID for organizing subscriptions.
-
-        Returns:
-            FeedDiscoveryResponse with discovered feeds and subscription status.
-
-        """
+        """Discover feeds from a URL and check subscription status."""
         logger.info("Discovering feeds", url=url, user_id=str(user_id))
 
         existing_feed = await self.feed_repository.get_feed_by_url(url)

@@ -19,19 +19,7 @@ class EntryExtractor:
     def extract_content_from_entry(
         self, entry: Any
     ) -> tuple[str | None, str | None]:
-        """Extract content from dedicated content XML tags only.
-
-        Looks for atom:content, content:encoded, or media:description (in media:group)
-        tags. Does not include summary, description, or other summary fields as content.
-
-        Args:
-            entry: Feedparser entry object.
-
-        Returns:
-            Tuple of (content_value, source_tag_name) where source_tag_name
-            is one of: 'atom:content', 'content:encoded', 'media:description', or None.
-
-        """
+        """Extract content from dedicated content XML tags only."""
         if hasattr(entry, "media_group") and entry.media_group:
             for group in entry.media_group:
                 if isinstance(group, dict):
@@ -69,19 +57,7 @@ class EntryExtractor:
         return None, None
 
     def extract_author_from_entry(self, entry: Any) -> str | None:
-        """Extract author from RSS/ATOM entry.
-
-        Handles ATOM's complex author structures (dict with name/email/uri),
-        multiple authors as lists, and RSS simple author fields. Falls back
-        to Dublin Core creator field.
-
-        Args:
-            entry: Feedparser entry object.
-
-        Returns:
-            Author name as string, or None if not found.
-
-        """
+        """Extract author from RSS/ATOM entry."""
         if hasattr(entry, "author"):
             author = getattr(entry, "author", "")
             if author:
@@ -121,18 +97,7 @@ class EntryExtractor:
         return None
 
     def extract_categories_from_entry(self, entry: Any) -> list[str]:
-        """Extract categories from RSS/ATOM entry.
-
-        Handles RSS/ATOM category tags, direct category fields, and Dublin
-        Core subject tags. Returns deduplicated list while preserving order.
-
-        Args:
-            entry: Feedparser entry object.
-
-        Returns:
-            List of category strings from <category> or <dc:subject> tags.
-
-        """
+        """Extract categories from RSS/ATOM entry."""
         categories = []
 
         if hasattr(entry, "tags") and entry.tags:
@@ -174,16 +139,7 @@ class EntryExtractor:
         return list(dict.fromkeys(categories))
 
     def extract_publish_date(self, entry: Any) -> datetime | None:
-        """Extract publish date from RSS/ATOM entry.
-
-        Tries multiple date fields in order of preference:
-        1. published_parsed / updated_parsed (structured time)
-        2. created_parsed (for some feeds)
-        3. published / updated (string dates)
-        4. created (string date)
-
-        Returns timezone-aware datetime in UTC or None if no valid date found.
-        """
+        """Extract publish date from RSS/ATOM entry."""
         import time
 
         def time_struct_to_dt(time_struct: Any) -> datetime | None:

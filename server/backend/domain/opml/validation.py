@@ -17,24 +17,7 @@ class OpmlValidation:
 
     @classmethod
     def validate_opml_content(cls, content: str) -> None:
-        """Validate basic OPML structure and content.
-
-        This method validates:
-        - OPML root element exists and is properly closed
-        - Required head and body elements exist
-        - At least one outline element (feed) exists
-        - No potentially dangerous content (script tags, etc.)
-        - Attribute values are within length limits
-        - Nesting depth is within limits
-        - Number of outlines is within limits
-
-        Args:
-            content: OPML file content as string
-
-        Raises:
-            ValueError: If OPML content is invalid
-
-        """
+        """Validate OPML structure, security (no scripts), attribute lengths, nesting depth, outline count."""
         if not content or content.strip() == "":
             raise ValueError("OPML file is empty")
 
@@ -113,19 +96,7 @@ class OpmlValidation:
     def validate_opml_file_metadata(
         cls, file_content: bytes, filename: str
     ) -> tuple[str, int, str | None]:
-        """Validate OPML file metadata and return decoded content.
-
-        Args:
-            file_content: Raw file content as bytes
-            filename: Name of the uploaded file
-
-        Returns:
-            Tuple of (decoded content string, file size in bytes, encoding used)
-
-        Raises:
-            ValueError: If file metadata is invalid
-
-        """
+        """Validate OPML file metadata and return decoded content."""
         from backend.utils.validators import (
             validate_file_size,
             validate_opml_filename,
@@ -172,15 +143,7 @@ class OpmlValidation:
 
     @classmethod
     def validate_file_age(cls, file_age_seconds: int) -> None:
-        """Check if file has expired based on age.
-
-        Args:
-            file_age_seconds: Age of the file in seconds
-
-        Raises:
-            ValueError: If file has expired
-
-        """
+        """Check if file has expired based on age."""
         max_age = OPML_FILE_EXPIRY_HOURS * 60 * 60
         if file_age_seconds > max_age:
             raise ValueError(

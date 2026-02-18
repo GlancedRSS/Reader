@@ -55,13 +55,14 @@ class TestOpmlImport:
     async def test_opml_import_logs_info(self):
         """Should log import info."""
         with patch("backend.workers.functions.logger") as mock_logger:
-            mock_handler = MagicMock()
             mock_response = MagicMock()
             mock_response.model_dump.return_value = {"status": "success"}
+
+            mock_handler = MagicMock()
             mock_handler.handle = AsyncMock(return_value=mock_response)
 
             with patch(
-                "backend.infrastructure.jobs.opml.OpmlImportJobHandler",
+                "backend.workers.functions.OpmlImportJobHandler",
                 return_value=mock_handler,
             ):
                 await functions.opml_import(
@@ -83,13 +84,14 @@ class TestOpmlExport:
     async def test_opml_export_logs_info(self):
         """Should log export info."""
         with patch("backend.workers.functions.logger") as mock_logger:
-            mock_handler = MagicMock()
             mock_response = MagicMock()
             mock_response.model_dump.return_value = {"status": "success"}
+
+            mock_handler = MagicMock()
             mock_handler.handle = AsyncMock(return_value=mock_response)
 
             with patch(
-                "backend.infrastructure.jobs.opml.OpmlExportJobHandler",
+                "backend.workers.functions.OpmlExportJobHandler",
                 return_value=mock_handler,
             ):
                 await functions.opml_export(

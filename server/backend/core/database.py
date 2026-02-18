@@ -15,15 +15,7 @@ from .app import settings
 
 
 def get_database_url() -> str:
-    """Get the database URL with asyncpg driver and sanitized query parameters.
-
-    Converts postgresql:// to postgresql+asyncpg:// and removes unnecessary
-    query parameters like channel_binding and application_name.
-
-    Returns:
-        The formatted database URL for asyncpg.
-
-    """
+    """Get the database URL with asyncpg driver and sanitized query parameters."""
     url = settings.database_url
 
     if url.startswith("postgresql://"):
@@ -71,18 +63,7 @@ Base = declarative_base()
 
 
 async def get_db() -> AsyncGenerator[AsyncSession]:
-    """Yield a database session with automatic commit/rollback/close.
-
-    Provides a dependency-injectable database session for FastAPI endpoints.
-    Commits on success, rolls back on exception, and always closes.
-
-    Yields:
-        An async SQLAlchemy session.
-
-    Raises:
-        Exception: Any exception from the caller is re-raised after rollback.
-
-    """
+    """Yield a database session with automatic commit/rollback/close."""
     async with AsyncSessionLocal() as session:
         try:
             yield session
@@ -93,14 +74,7 @@ async def get_db() -> AsyncGenerator[AsyncSession]:
 
 
 async def init_db() -> None:
-    """Initialize database connection, create extensions, and create tables.
-
-    Tests the database connection and creates all tables defined in SQLAlchemy models.
-
-    Raises:
-        Exception: If database initialization fails.
-
-    """
+    """Initialize database connection, create extensions, and create tables."""
     import structlog
 
     logger = structlog.get_logger()
@@ -133,15 +107,7 @@ async def init_db() -> None:
 
 
 async def check_database_health() -> tuple[bool, str]:
-    """Check database connectivity and table availability.
-
-    Tests basic connectivity and verifies that expected tables exist
-    in the target schemas.
-
-    Returns:
-        A tuple of (is_healthy: bool, message: str).
-
-    """
+    """Check database connectivity and table availability."""
     import structlog
 
     logger = structlog.get_logger()

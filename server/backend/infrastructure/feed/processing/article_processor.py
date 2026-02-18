@@ -26,12 +26,7 @@ class ArticleProcessor:
     """Infrastructure for processing articles with deduplication."""
 
     def __init__(self, db: AsyncSession):
-        """Initialize the article processor.
-
-        Args:
-            db: Async database session.
-
-        """
+        """Initialize the article processor."""
         self.db = db
         self.partition_service = Partition(db)
         self.tag_repository = UserTagRepository(db)
@@ -41,16 +36,7 @@ class ArticleProcessor:
         feed_id: UUID,
         articles_data: list[dict[str, Any]],
     ) -> tuple[int, list[UUID], list[UUID]]:
-        """Process feed articles with deduplication and create junction relationships.
-
-        Args:
-            feed_id: The feed ID to process articles for.
-            articles_data: List of article data dictionaries from feed parser.
-
-        Returns:
-            Tuple of (number of articles created, list of new article IDs, list of all article IDs from this fetch).
-
-        """
+        """Process feed articles with deduplication and create junction relationships."""
         created_count = 0
         relationship_count = 0
         new_article_ids: list[UUID] = []
@@ -300,15 +286,7 @@ class ArticleProcessor:
     async def _create_user_states_for_subscribers(
         self, feed_id: UUID, article_ids: list[UUID]
     ) -> None:
-        """Create user_article_states for all active subscribers of a feed.
-
-        Note: Worker does not handle notifications. That's handled separately.
-
-        Args:
-            feed_id: The feed ID.
-            article_ids: List of new article IDs to create states for.
-
-        """
+        """Create user_article_states for all active subscribers of a feed."""
         subscribers_stmt = select(UserFeed.user_id).where(
             and_(
                 UserFeed.feed_id == feed_id,
@@ -346,14 +324,7 @@ class ArticleProcessor:
     async def _create_tags_for_subscribers(
         self, feed_id: UUID, article_id: UUID, source_tags: list[str]
     ) -> None:
-        """Create tags for all subscribers of a feed from article source_tags.
-
-        Args:
-            feed_id: The feed ID.
-            article_id: The article ID.
-            source_tags: List of already-split tag name strings.
-
-        """
+        """Create tags for all subscribers of a feed from article source_tags."""
         if not source_tags:
             return
 

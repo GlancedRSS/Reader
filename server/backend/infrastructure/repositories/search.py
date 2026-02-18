@@ -1,8 +1,4 @@
-"""Postgres-based full-text search implementation.
-
-Uses pg_trgm for fuzzy matching and tsvector for full-text search.
-No external search service required.
-"""
+"""Postgres-based full-text search using pg_trgm and tsvector."""
 
 from collections import namedtuple
 from dataclasses import dataclass
@@ -57,12 +53,7 @@ class SearchRepository:
     """Postgres-native search repository using full-text search and trigrams."""
 
     def __init__(self, db: AsyncSession) -> None:
-        """Initialize search repository.
-
-        Args:
-            db: Database session.
-
-        """
+        """Initialize search repository."""
         self.db = db
 
     async def search_feeds(
@@ -72,18 +63,7 @@ class SearchRepository:
         limit: int = 20,
         offset: int = 0,
     ) -> dict[str, Any]:
-        """Search user's feed subscriptions using trigram similarity.
-
-        Args:
-            query: Search query string.
-            user_id: User ID for access control.
-            limit: Maximum results.
-            offset: Result offset.
-
-        Returns:
-            Dict with 'hits' and 'total'.
-
-        """
+        """Search user's feed subscriptions using trigram similarity."""
         ts_vector = func.to_tsvector("simple", UserFeed.title)
 
         words = query.strip().split()
@@ -169,18 +149,7 @@ class SearchRepository:
         limit: int = 20,
         offset: int = 0,
     ) -> dict[str, Any]:
-        """Search user's tags using trigram similarity.
-
-        Args:
-            query: Search query string.
-            user_id: User ID for access control.
-            limit: Maximum results.
-            offset: Result offset.
-
-        Returns:
-            Dict with 'hits' and 'total'.
-
-        """
+        """Search user's tags using trigram similarity."""
         article_count_subq = (
             select(
                 ArticleTag.user_tag_id,
@@ -275,18 +244,7 @@ class SearchRepository:
         limit: int = 20,
         offset: int = 0,
     ) -> dict[str, Any]:
-        """Search user's folders using trigram similarity.
-
-        Args:
-            query: Search query string.
-            user_id: User ID for access control.
-            limit: Maximum results.
-            offset: Result offset.
-
-        Returns:
-            Dict with 'hits' and 'total'.
-
-        """
+        """Search user's folders using trigram similarity."""
         unread_count_subq = (
             select(
                 UserFeed.folder_id,

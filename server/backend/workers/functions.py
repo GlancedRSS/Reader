@@ -1,8 +1,4 @@
-"""Arq worker functions for background job processing.
-
-This module contains all worker functions that will be executed by Arq.
-Each function wraps an existing handler from the app/infrastructure/workers/ directory.
-"""
+"""Arq worker functions for background job processing."""
 
 import uuid
 from typing import Any
@@ -27,39 +23,22 @@ from backend.infrastructure.repositories import (
 )
 from backend.schemas.workers import (
     AutoMarkReadJobRequest,
-    AutoMarkReadJobResponse,
     FeedCleanupJobRequest,
-    FeedCleanupJobResponse,
     OpmlExportJobRequest,
-    OpmlExportJobResponse,
     OpmlImportJobRequest,
-    OpmlImportJobResponse,
     ScheduledFeedRefreshCycleJobRequest,
-    ScheduledFeedRefreshCycleJobResponse,
 )
 
 logger = get_logger(__name__)
 
 
 async def startup(ctx: dict[str, Any]) -> None:
-    """Initialize resources when Arq worker starts.
-
-    Args:
-        ctx: Arq context dictionary.
-
-    """
+    """Initialize resources when Arq worker starts."""
     logger.info("Arq worker starting up")
 
 
 async def shutdown(ctx: dict[str, Any]) -> None:
-    """Clean up resources when Arq worker shuts down.
-
-    Closes Redis and database connections. Logs errors but does not raise them.
-
-    Args:
-        ctx: Arq context dictionary.
-
-    """
+    """Clean up resources when Arq worker shuts down."""
     logger.info("Arq worker initiating graceful shutdown...")
 
     try:
@@ -91,20 +70,7 @@ async def opml_import(
     filename: str,
     folder_id: str | None = None,
 ) -> dict[str, Any]:
-    """Process OPML import job.
-
-    Args:
-        ctx: Arq context.
-        user_id: User ID (UUID string).
-        import_id: Import record ID (UUID string).
-        storage_key: Local storage key for OPML file.
-        filename: Original filename.
-        folder_id: Optional folder ID for imports.
-
-    Returns:
-        Job response dict.
-
-    """
+    """Process OPML import job."""
     job_id = str(uuid.uuid4())
     logger.info(
         "Processing OPML import",
@@ -125,18 +91,7 @@ async def opml_import(
 
     handler = OpmlImportJobHandler()
     response = await handler.handle(request, job_id)
-
-    if isinstance(response, OpmlImportJobResponse):
-        return response.model_dump()
-    if hasattr(response, "status_code"):
-        return {
-            "status": "error",
-            "message": bytes(response.body).decode()
-            if hasattr(response, "body")
-            else str(response),
-            "status_code": response.status_code,
-        }
-    return {"status": "error", "message": str(response)}
+    return response.model_dump()
 
 
 async def opml_export(
@@ -145,18 +100,7 @@ async def opml_export(
     export_id: str,
     folder_id: str | None = None,
 ) -> dict[str, Any]:
-    """Process OPML export job.
-
-    Args:
-        ctx: Arq context.
-        user_id: User ID (UUID string).
-        export_id: Export record ID (UUID string).
-        folder_id: Optional folder ID to filter.
-
-    Returns:
-        Job response dict.
-
-    """
+    """Process OPML export job."""
     job_id = str(uuid.uuid4())
     logger.info(
         "Processing OPML export",
@@ -174,18 +118,7 @@ async def opml_export(
 
     handler = OpmlExportJobHandler()
     response = await handler.handle(request, job_id)
-
-    if isinstance(response, OpmlExportJobResponse):
-        return response.model_dump()
-    if hasattr(response, "status_code"):
-        return {
-            "status": "error",
-            "message": bytes(response.body).decode()
-            if hasattr(response, "body")
-            else str(response),
-            "status_code": response.status_code,
-        }
-    return {"status": "error", "message": str(response)}
+    return response.model_dump()
 
 
 async def feed_create_and_subscribe(
@@ -194,18 +127,7 @@ async def feed_create_and_subscribe(
     user_id: str,
     folder_id: str | None = None,
 ) -> dict[str, Any]:
-    """Create feed and subscribe user.
-
-    Args:
-        ctx: Arq context.
-        url: Feed URL to create and subscribe to.
-        user_id: User ID (UUID string).
-        folder_id: Optional folder ID.
-
-    Returns:
-        Job response dict.
-
-    """
+    """Create feed and subscribe user."""
     job_id = ctx.get("job_id", "unknown")
 
     logger.info(
@@ -315,16 +237,7 @@ async def scheduled_feed_refresh(
     ctx: dict[str, Any],
     job_id: str | None = None,
 ) -> dict[str, Any]:
-    """Refresh all active feeds on a schedule.
-
-    Args:
-        ctx: Arq context.
-        job_id: Optional job ID.
-
-    Returns:
-        Job response dict.
-
-    """
+    """Refresh all active feeds on a schedule."""
     if job_id is None:
         job_id = str(uuid.uuid4())
 
@@ -340,21 +253,8 @@ async def scheduled_feed_refresh(
 
             handler = ScheduledFeedRefreshCycleHandler(feed_app)
             response = await handler.handle(request, job_id)
-
-            if isinstance(response, ScheduledFeedRefreshCycleJobResponse):
-                result = response.model_dump()
-            elif hasattr(response, "status_code"):
-                result = {
-                    "status": "error",
-                    "message": bytes(response.body).decode()
-                    if hasattr(response, "body")
-                    else str(response),
-                    "status_code": response.status_code,
-                }
-            else:
-                result = {"status": "error", "message": str(response)}
             await db.commit()
-            return result
+            return response.model_dump()
 
         except Exception:
             await db.rollback()
@@ -365,16 +265,7 @@ async def scheduled_feed_cleanup(
     ctx: dict[str, Any],
     job_id: str | None = None,
 ) -> dict[str, Any]:
-    """Mark orphaned feeds inactive on a schedule.
-
-    Args:
-        ctx: Arq context.
-        job_id: Optional job ID.
-
-    Returns:
-        Job response dict.
-
-    """
+    """Mark orphaned feeds inactive on a schedule."""
     if job_id is None:
         job_id = str(uuid.uuid4())
 
@@ -384,34 +275,14 @@ async def scheduled_feed_cleanup(
 
     handler = FeedCleanupHandler()
     response = await handler.execute(request)
-
-    if isinstance(response, FeedCleanupJobResponse):
-        return response.model_dump()
-    if hasattr(response, "status_code"):
-        return {
-            "status": "error",
-            "message": bytes(response.body).decode()
-            if hasattr(response, "body")
-            else str(response),
-            "status_code": response.status_code,
-        }
-    return {"status": "error", "message": str(response)}
+    return response.model_dump()
 
 
 async def scheduled_auto_mark_read(
     ctx: dict[str, Any],
     job_id: str | None = None,
 ) -> dict[str, Any]:
-    """Mark old articles as read on a schedule.
-
-    Args:
-        ctx: Arq context.
-        job_id: Optional job ID.
-
-    Returns:
-        Job response dict.
-
-    """
+    """Mark old articles as read on a schedule."""
     if job_id is None:
         job_id = str(uuid.uuid4())
 
@@ -428,15 +299,4 @@ async def scheduled_auto_mark_read(
             subscription_repository=sub_repo,
         )
         response = await handler.handle(request, job_id)
-
-        if isinstance(response, AutoMarkReadJobResponse):
-            return response.model_dump()
-        if hasattr(response, "status_code"):
-            return {
-                "status": "error",
-                "message": bytes(response.body).decode()
-                if hasattr(response, "body")
-                else str(response),
-                "status_code": response.status_code,
-            }
-        return {"status": "error", "message": str(response)}
+        return response.model_dump()

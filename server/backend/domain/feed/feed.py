@@ -15,20 +15,7 @@ class FeedDomain:
     def calculate_feed_status(
         feed: Any,
     ) -> Literal["healthy", "error", "stale"]:
-        """Calculate the health status of a feed.
-
-        Status determination:
-        - "error": Last error occurred after last successful fetch
-        - "stale": No successful fetch in over 1 hour, or never fetched
-        - "healthy": Recent successful fetch with no errors
-
-        Args:
-            feed: The feed object to check
-
-        Returns:
-            Literal["healthy", "stale", "error"]
-
-        """
+        """Calculate feed health: error (error after fetch), stale (no fetch >1hr), healthy."""
         now = datetime.now(UTC)
         status: Literal["healthy", "error", "stale"] = "healthy"
 

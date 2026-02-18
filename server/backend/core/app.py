@@ -23,12 +23,7 @@ load_dotenv(_base_dir / ".env.local", override=True)
 
 
 def _get_version() -> str:
-    """Read version from pyproject.toml.
-
-    Returns:
-        Version string from pyproject.toml, or fallback default.
-
-    """
+    """Read version from pyproject.toml."""
     try:
         pyproject_path = _base_dir / "pyproject.toml"
         with open(pyproject_path, "rb") as f:
@@ -39,27 +34,7 @@ def _get_version() -> str:
 
 
 class Settings(BaseSettings):
-    """Application settings loaded from environment variables.
-
-    Attributes:
-        database_url: PostgreSQL connection URL.
-        environment: Application environment (development or production).
-        version: API version string.
-        host: Host address to bind the server to.
-        port: Port number for the server.
-        api_base_url: Base URL for API (used for internal callbacks).
-        user_agent: User agent string for feed requests.
-        request_timeout: Request timeout in seconds.
-        max_concurrent_feeds: Maximum concurrent feed processing.
-        feed_refresh_interval_minutes: Minutes between feed refreshes.
-        feed_refresh_batch_size: Number of concurrent feed refreshes (flow control).
-        max_feed_size_mb: Maximum feed size in megabytes.
-        log_level: Logging level (debug, info, warning, error, critical).
-        log_format: Log format (text or json).
-        redis_url: Redis connection URL.
-        redis_max_connections: Maximum Redis connections.
-
-    """
+    """Application settings loaded from environment variables."""
 
     model_config = SettingsConfigDict(
         case_sensitive=False,
@@ -75,12 +50,7 @@ class Settings(BaseSettings):
 
     @property
     def is_development(self) -> bool:
-        """Check if the application is running in development mode.
-
-        Returns:
-            True if environment is development, False otherwise.
-
-        """
+        """Check if the application is running in development mode."""
         return self.environment.lower() == "development"
 
     version: str = Field(
@@ -96,11 +66,7 @@ class Settings(BaseSettings):
 
     @property
     def user_agent(self) -> str:
-        """Get user agent string for feed requests.
-
-        Returns:
-            User agent string with current version.
-        """
+        """Get user agent string for feed requests."""
         return f"Glanced-Reader/{self.version} (+https://github.com/glancedrss/reader)"
 
     request_timeout: int = 30
@@ -144,16 +110,7 @@ class Settings(BaseSettings):
 
     @property
     def session_cookie_secure_effective(self) -> bool:
-        """Get the effective secure flag for cookies.
-
-        Priority:
-        1. COOKIE_SECURE env var (if set)
-        2. Development mode (false) or Production mode (true)
-
-        Returns:
-            True if cookies should be secure (HTTPS only), False otherwise.
-
-        """
+        """Get the effective secure flag for cookies based on environment or override."""
         if self.cookie_secure is not None:
             return self.cookie_secure
         if self.is_development:
@@ -162,12 +119,7 @@ class Settings(BaseSettings):
 
     @property
     def session_cookie_max_age(self) -> int:
-        """Get the session cookie max age in seconds.
-
-        Returns:
-            Session lifetime in seconds.
-
-        """
+        """Get the session cookie max age in seconds."""
         return self.session_timeout_days * 24 * 60 * 60
 
     storage_path: str = Field(
@@ -190,24 +142,14 @@ class Settings(BaseSettings):
 
     @property
     def storage_config(self) -> dict[str, str]:
-        """Get storage configuration as a dictionary.
-
-        Returns:
-            Dictionary with storage configuration.
-
-        """
+        """Get storage configuration as a dictionary."""
         return {
             "path": self.storage_path,
         }
 
 
 def validate_configuration() -> tuple[bool, list[str]]:
-    """Validate all required configuration and provide helpful error messages.
-
-    Returns:
-        A tuple of (is_valid, list_of_error_messages).
-
-    """
+    """Validate all required configuration and return errors if any."""
     logger = structlog.get_logger()
     errors: list[str] = []
     warnings: list[str] = []
@@ -275,12 +217,7 @@ def validate_configuration() -> tuple[bool, list[str]]:
 
 
 def get_configuration_help() -> dict[str, str]:
-    """Get help information for common configuration issues.
-
-    Returns:
-        A dictionary mapping configuration variables to help text.
-
-    """
+    """Get help information for common configuration issues."""
     return {
         "DATABASE_URL": """
             PostgreSQL connection URL.

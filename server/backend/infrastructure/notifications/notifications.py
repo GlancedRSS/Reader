@@ -21,17 +21,7 @@ DEBOUNCE_SECONDS = 60
 async def publish_notification(
     user_id: UUID, event_type: str, data: dict[str, Any]
 ) -> bool:
-    """Publish a notification to a user's Redis channel.
-
-    Args:
-        user_id: The user ID to publish to.
-        event_type: The type of event.
-        data: The event payload.
-
-    Returns:
-        True if published successfully, False otherwise.
-
-    """
+    """Publish a notification to a user's Redis channel."""
     try:
         redis_client = await get_redis_client()
         channel = f"{CHANNEL_PREFIX}{user_id}"
@@ -67,19 +57,7 @@ async def queue_new_articles_notification(
     article_count: int,
     debounce_seconds: int = DEBOUNCE_SECONDS,
 ) -> None:
-    """Queue a notification for new articles (debounced).
-
-    During feed refresh, multiple feeds may return new articles simultaneously.
-    Instead of sending individual notifications, we aggregate them and send
-    a single 'new_articles' event after a period of inactivity.
-
-    Args:
-        user_id: The user ID to queue notification for.
-        feed_id: The feed ID that has new articles.
-        article_count: Number of new articles for this feed.
-        debounce_seconds: Seconds to wait before flushing (default 60).
-
-    """
+    """Queue a notification for new articles (debounced)."""
     redis_client = await get_redis_client()
 
     pending_key = f"{PENDING_PREFIX}{user_id}"
@@ -103,16 +81,7 @@ async def queue_new_articles_notification(
 async def event_stream(
     user_id: UUID, is_disconnect: Callable[[], Awaitable[bool]] | None = None
 ) -> AsyncIterator[dict[str, str]]:
-    """Subscribe to a user's notification channel and yield SSE events.
-
-    Args:
-        user_id: The user ID to subscribe to.
-        is_disconnect: Callable that returns an awaitable bool for disconnect status.
-
-    Yields:
-        SSE event dictionaries with 'event' and 'data' keys.
-
-    """
+    """Subscribe to a user's notification channel and yield SSE events."""
     redis_client = await get_redis_client()
     channel = f"{CHANNEL_PREFIX}{user_id}"
 
@@ -177,14 +146,7 @@ async def event_stream(
 
 
 async def flush_pending_notifications(user_id: UUID) -> None:
-    """Flush all pending notifications for a user and publish aggregated SSE event.
-
-    Called when the debounce timer expires via keyspace notification.
-
-    Args:
-        user_id: The user ID to flush notifications for.
-
-    """
+    """Flush all pending notifications for a user and publish aggregated SSE event."""
     redis_client = await get_redis_client()
 
     pending_key = f"{PENDING_PREFIX}{user_id}"
@@ -219,16 +181,7 @@ async def flush_pending_notifications(user_id: UUID) -> None:
 
 
 async def listen_for_timer_expirations() -> None:
-    """Listen for Redis keyspace expiration events and flush pending notifications.
-
-    Subscribes to Redis keyspace notifications for timer key expirations.
-    When a timer key expires, it triggers flushing of pending notifications
-    for that user.
-
-    This should be run as a background task on startup.
-
-    Note: This function will restart automatically on error (except CancelledError).
-    """
+    """Listen for Redis keyspace expiration events and flush pending notifications."""
     from backend.core.app import settings
 
     redis_client = await get_redis_client()
@@ -270,11 +223,7 @@ async def listen_for_timer_expirations() -> None:
 
 
 async def listen_for_timer_expirations_with_restart() -> None:
-    """Run the keyspace listener and restart it on crash.
-
-    This ensures the listener continues running even after unexpected errors.
-    Only stops on asyncio.CancelledError (during shutdown).
-    """
+    """Run the keyspace listener and restart it on crash."""
     import traceback
 
     while True:

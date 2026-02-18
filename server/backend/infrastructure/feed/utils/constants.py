@@ -15,17 +15,7 @@ IMAGE_EXTENSIONS = {
 
 
 def decode_html_entities(text: str) -> str:
-    """Decode HTML entities in text content with double-encoding fix.
-
-    Handles nested encoding and invalid Unicode characters.
-
-    Args:
-        text: Text potentially containing HTML entities.
-
-    Returns:
-        Decoded text with entities resolved and surrogates handled.
-
-    """
+    """Decode HTML entities in text content with double-encoding fix."""
     if not text:
         return text
 

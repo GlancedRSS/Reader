@@ -19,10 +19,7 @@ from backend.infrastructure.publishers import DiscoveryPublisher
 
 
 async def get_discovery_publisher() -> AsyncGenerator[DiscoveryPublisher]:
-    """Yield a DiscoveryPublisher instance.
-
-    Uses ArqClient internally for job queue operations.
-    """
+    """Yield a DiscoveryPublisher instance."""
     yield DiscoveryPublisher()
 
 

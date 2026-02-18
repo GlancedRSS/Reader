@@ -75,11 +75,7 @@ async def get_articles(
     article_app=Depends(get_article_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> PaginatedResponse[ArticleListResponse]:
-    """Get user's articles with optional filters and search using cursor-based pagination.
-
-    Multiple filter values can be provided (e.g., multiple subscription_ids).
-    All filters are combined with AND logic, while values within a filter use OR logic.
-    """
+    """Get user's articles with optional filters and cursor-based pagination."""
     return await article_app.get_articles(
         current_user=current_user,
         cursor=cursor,

@@ -5,12 +5,7 @@ class ApplicationException(Exception):
     """Base exception for all application errors."""
 
     def __init__(self, message: str):
-        """Initialize the exception with a message.
-
-        Args:
-            message: The error message.
-
-        """
+        """Initialize the exception with a message."""
         self.message = message
         super().__init__(message)
 

@@ -15,16 +15,7 @@ class HttpClient:
 
     @staticmethod
     def get_secure_client_config() -> dict[str, Any]:
-        """Return configuration for secure HTTP client.
-
-        Provides timeout settings, response size limits, redirect limits,
-        and default headers for feed discovery operations.
-
-        Returns:
-            Dictionary with timeout_config, max_response_size, max_redirects,
-            and default_headers.
-
-        """
+        """Return configuration for secure HTTP client with timeouts, size limits, and headers."""
         return {
             "timeout_config": httpx.Timeout(
                 connect=5.0,
@@ -56,15 +47,7 @@ class SecureHTTPClient:
         self.default_headers = config["default_headers"]
 
     def create_client(self) -> httpx.AsyncClient:
-        """Create a secure HTTP client.
-
-        Configures connection limits, timeouts, and security settings for
-        feed discovery operations.
-
-        Returns:
-            Configured httpx.AsyncClient instance.
-
-        """
+        """Create a secure HTTP client with connection limits and timeouts."""
         limits = httpx.Limits(
             max_keepalive_connections=5,
             max_connections=10,

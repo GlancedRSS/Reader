@@ -11,13 +11,7 @@ def setup_logging(
     log_level: str | None = None,
     log_format: str | None = None,
 ) -> None:
-    """Configure structlog and file logging for the application.
-
-    Args:
-        log_level: Log level (DEBUG, INFO, WARNING, ERROR). Defaults to env var or settings.
-        log_format: Log format ('text' or 'json'). Defaults to env var or settings.
-
-    """
+    """Configure structlog and file logging for the application."""
     from .app import settings
 
     log_level = (
@@ -56,12 +50,7 @@ def setup_logging(
 
 
 def _setup_file_logging(log_level: str) -> None:
-    """Set up rotating file handler for logs.
-
-    Args:
-        log_level: The log level to use for file logging.
-
-    """
+    """Set up rotating file handler for logs."""
     max_log_size_mb = int(os.getenv("MAX_LOG_SIZE_MB", "10"))
     max_log_size_bytes = max_log_size_mb * 1024 * 1024
 

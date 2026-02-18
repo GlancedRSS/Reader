@@ -36,26 +36,13 @@ class FolderApplication:
     """Application service for folder operations."""
 
     def __init__(self, db: AsyncSession):
-        """Initialize the folder application with database session.
-
-        Args:
-            db: Async database session for repository operations.
-
-        """
+        """Initialize the folder application with database session."""
         self.db = db
         self.repository = FolderRepository(db)
 
     @staticmethod
     def _calculate_total_feed_count(folder_row: Row[Any]) -> int:
-        """Calculate total feed count from folder row.
-
-        Args:
-            folder_row: Row object from repository query.
-
-        Returns:
-            Total feed count.
-
-        """
+        """Calculate total feed count from folder row."""
         return folder_row.feed_count or 0
 
     async def get_folder_details(
@@ -65,21 +52,7 @@ class FolderApplication:
         limit: int = 20,
         offset: int = 0,
     ) -> FolderResponse:
-        """Get folder details with paginated subfolders.
-
-        Args:
-            folder_id: The ID of the folder.
-            user_id: The ID of the user.
-            limit: Maximum number of subfolders to return.
-            offset: Number of subfolders to skip.
-
-        Returns:
-            Folder response with details and paginated subfolders.
-
-        Raises:
-            NotFoundError: If folder is not found.
-
-        """
+        """Get folder details with paginated subfolders."""
         folder_details = (
             await self.repository.get_folder_details_with_feed_count(
                 folder_id, user_id
@@ -138,19 +111,7 @@ class FolderApplication:
         folder_data: FolderCreateRequest,
         user_id: UUID,
     ) -> FolderListResponse:
-        """Create a new folder.
-
-        Args:
-            folder_data: The folder creation request with name and parent ID.
-            user_id: The ID of the user creating the folder.
-
-        Returns:
-            Created folder response.
-
-        Raises:
-            ValidationError: If folder name is invalid or already exists.
-
-        """
+        """Create a new folder."""
         try:
             FolderValidationDomain.validate_folder_name(folder_data.name)
 
@@ -200,21 +161,7 @@ class FolderApplication:
         folder_data: FolderUpdateRequest,
         user_id: UUID,
     ) -> ResponseMessage:
-        """Update folder.
-
-        Args:
-            folder_id: The ID of the folder to update.
-            folder_data: The folder update request.
-            user_id: The ID of the user.
-
-        Returns:
-            Response message indicating successful update.
-
-        Raises:
-            NotFoundError: If folder is not found.
-            ValidationError: If validation fails.
-
-        """
+        """Update folder."""
         folder = await self.repository.get_folder_by_id_and_user(
             folder_id, user_id
         )
@@ -282,19 +229,7 @@ class FolderApplication:
     async def delete_folder(
         self, folder_id: UUID, user_id: UUID
     ) -> ResponseMessage:
-        """Delete folder.
-
-        Args:
-            folder_id: The ID of the folder to delete.
-            user_id: The ID of the user.
-
-        Returns:
-            Response message indicating successful deletion.
-
-        Raises:
-            NotFoundError: If folder is not found.
-
-        """
+        """Delete folder."""
         folder = await self.repository.get_folder_by_id_and_user(
             folder_id, user_id
         )
@@ -308,17 +243,7 @@ class FolderApplication:
     async def get_folder_tree(
         self, user_id: UUID, max_depth: int = 3
     ) -> list[FolderTreeResponse]:
-        """Get complete folder hierarchy with feeds.
-
-        Args:
-            user_id: The user ID.
-            max_depth: Maximum depth to include (0-based: 0=root only, 1=root+children,
-                3=root+children+grandchildren). Default 3 for sidebar.
-
-        Returns:
-            List of root folders with nested feeds and subfolders.
-
-        """
+        """Get complete folder hierarchy with feeds."""
         from sqlalchemy import select
 
         from backend.models import UserPreferences
@@ -387,19 +312,7 @@ class FolderApplication:
         max_depth: int,
         user_id: UUID,
     ) -> list[FolderTreeResponse]:
-        """Build folder tree in-memory from flat folder list.
-
-        Args:
-            all_folders: List of all folders from database.
-            recursive_unread_counts: Dictionary of unread counts.
-            feeds_by_folder_id: Dictionary mapping folder IDs to feeds.
-            max_depth: Maximum depth to include (0-based: root=0, children=1, etc).
-            user_id: The user ID for ownership verification.
-
-        Returns:
-            List of root folders with nested subfolders.
-
-        """
+        """Build folder tree in-memory from flat folder list."""
         children_by_parent: dict[UUID | None, list[Row[Any]]] = {}
         for folder in all_folders:
             parent_id = folder.parent_id
@@ -455,15 +368,7 @@ class FolderApplication:
 
     @staticmethod
     def _map_feed_to_response(feed: Row[Any]) -> FeedInFolderResponse:
-        """Map a feed row to FeedInFolderResponse.
-
-        Args:
-            feed: Feed row from database query.
-
-        Returns:
-            FeedInFolderResponse with mapped fields.
-
-        """
+        """Map a feed row to FeedInFolderResponse."""
         return FeedInFolderResponse(
             id=feed.id,
             title=feed.title,

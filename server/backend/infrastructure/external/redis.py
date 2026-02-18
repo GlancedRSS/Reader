@@ -35,18 +35,7 @@ _RETRY_COOLDOWN_SECONDS = 30
 
 
 async def get_redis_client() -> redis.Redis:
-    """Get the global Redis client.
-
-    Uses redis-py async client.
-    Supports caching, pub/sub for SSE notifications.
-
-    Returns:
-        The Redis client instance.
-
-    Raises:
-        Exception: If connection fails.
-
-    """
+    """Get the global Redis client."""
     global _redis_client, _redis_pool, _last_failed_at
 
     if _last_failed_at is not None:
@@ -97,10 +86,7 @@ async def get_redis_client() -> redis.Redis:
 
 
 async def close_redis() -> None:
-    """Close the Redis client and connection pool.
-
-    This should be called during application shutdown.
-    """
+    """Close the Redis client and connection pool."""
     global _redis_client, _redis_pool
 
     if _redis_pool:
@@ -114,12 +100,7 @@ class RedisCache:
     """Redis cache wrapper."""
 
     def __init__(self, redis_client: redis.Redis) -> None:
-        """Initialize the Redis cache wrapper.
-
-        Args:
-            redis_client: Redis client instance.
-
-        """
+        """Initialize the Redis cache wrapper."""
         self.redis = redis_client
 
     async def get(self, key: str) -> Any | None:

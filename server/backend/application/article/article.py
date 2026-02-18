@@ -49,13 +49,7 @@ class ArticleApplication:
     def __init__(
         self, db: AsyncSession, tag_management: TagApplication | None = None
     ):
-        """Initialize the article application with database and optional tag service.
-
-        Args:
-            db: Async database session for repository operations.
-            tag_management: Optional TagApplication for dependency injection.
-
-        """
+        """Initialize the article application with database and optional tag service."""
         self.db = db
         self.repository = ArticleRepository(db)
         self.folder_repository = FolderRepository(db)
@@ -84,25 +78,7 @@ class ArticleApplication:
         to_date: date | None = None,
         limit: int = DEFAULT_LIMIT,
     ) -> PaginatedResponse[ArticleListResponse]:
-        """Get user's articles with optional filters using cursor-based pagination.
-
-        Args:
-            current_user: The authenticated user.
-            cursor: Optional cursor for pagination.
-            subscription_ids: Optional filter by subscription IDs.
-            is_read: Optional filter by read status.
-            tag_ids: Optional filter by tag IDs.
-            folder_ids: Optional filter by folder IDs.
-            read_later: Optional filter by read later status.
-            q: Optional search query string.
-            from_date: Optional filter articles published on or after this date.
-            to_date: Optional filter articles published on or before this date.
-            limit: Maximum number of articles to return.
-
-        Returns:
-            Paginated response containing article list and metadata.
-
-        """
+        """Get user's articles with optional filters using cursor-based pagination."""
         if folder_ids:
             for folder_id in folder_ids:
                 folder = await self.folder_repository.find_by_id(
@@ -186,16 +162,7 @@ class ArticleApplication:
     async def get_article(
         self, article_id: UUID, current_user: User
     ) -> ArticleResponse:
-        """Get specific article details and mark it as read.
-
-        Args:
-            article_id: The ID of the article to retrieve.
-            current_user: The authenticated user.
-
-        Returns:
-            Article response with details and state.
-
-        """
+        """Get specific article details and mark it as read."""
         article_result = await self.repository.get_article_by_id(
             article_id, current_user
         )
@@ -234,17 +201,7 @@ class ArticleApplication:
         state_data: ArticleStateUpdateRequest,
         current_user: User,
     ) -> ResponseMessage:
-        """Update user's article state and tags.
-
-        Args:
-            article_id: The ID of the article to update.
-            state_data: The state update data including read status and tags.
-            current_user: The authenticated user.
-
-        Returns:
-            Response message indicating the update result.
-
-        """
+        """Update user's article state and tags."""
         article_exists = await self.repository.find_by_id(
             article_id, current_user.id
         )
@@ -273,20 +230,7 @@ class ArticleApplication:
     async def mark_all_as_read(
         self, request_data: MarkAllReadRequest, current_user: User
     ) -> ResponseMessage:
-        """Mark all articles as read or unread with optional filtering.
-
-        Supports the same filtering as GET /api/v1/articles/ including
-        subscription_ids, folder_ids, tag_ids, is_read_filter, read_later,
-        search query (q), and date ranges (from_date, to_date).
-
-        Args:
-            request_data: The mark all read request with filters and status.
-            current_user: The authenticated user.
-
-        Returns:
-            Response message indicating the result.
-
-        """
+        """Mark all articles as read or unread with optional filtering."""
         user_id = current_user.id
 
         if request_data.folder_ids:
@@ -355,14 +299,7 @@ class ArticleApplication:
         state_data: ArticleStateUpdateRequest,
         current_user: User,
     ) -> None:
-        """Update article tags based on state data.
-
-        Args:
-            article_id: The ID of the article to update tags for.
-            state_data: The state data containing tag IDs to sync.
-            current_user: The authenticated user.
-
-        """
+        """Update article tags based on state data."""
         if state_data.tag_ids is None:
             return
 
@@ -376,17 +313,7 @@ class ArticleApplication:
         metadata: dict[UUID, "ArticleMetadata"],
         tags_by_article: dict[UUID, list[Any]],
     ) -> list[ArticleListResponse]:
-        """Build article list responses from raw data.
-
-        Args:
-            articles: List of ArticleRow lightweight objects.
-            metadata: Mapping of article IDs to ArticleMetadata containing subscription info and state.
-            tags_by_article: Mapping of article IDs to their tags.
-
-        Returns:
-            List of ArticleListResponse objects.
-
-        """
+        """Build article list responses from raw data."""
         from backend.schemas.domain import ArticleFeedList
 
         response = []
@@ -427,20 +354,7 @@ class ArticleApplication:
         state: "UserArticle | None",
         article_tags: list[Any],
     ) -> ArticleResponse:
-        """Build single article response.
-
-        Args:
-            article: The Article object.
-            subscription_id: The subscription ID.
-            subscription_title: The subscription title.
-            subscription_website: The subscription website.
-            state: The UserArticle for this article.
-            article_tags: List of tags for this article.
-
-        Returns:
-            ArticleResponse object.
-
-        """
+        """Build single article response."""
         from backend.models import Article
         from backend.schemas.domain import ArticleFeedList
 
@@ -494,16 +408,7 @@ class ArticleApplication:
         has_more: bool | None = None,
         next_cursor: str | None = None,
     ) -> PaginatedResponse[Any]:
-        """Build paginated response with metadata.
-
-        Args:
-            data: The response data
-            total: Total count of items
-            limit: Number of items per page
-            has_more: Whether there are more items (computed from total/limit if None)
-            next_cursor: Next cursor for cursor-based pagination
-
-        """
+        """Build paginated response with metadata."""
         if has_more is None:
             has_more = len(data) == limit and total > limit
 

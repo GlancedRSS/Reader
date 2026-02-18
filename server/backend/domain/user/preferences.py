@@ -13,33 +13,13 @@ class PreferenceField:
         default: Any = None,
         description: str = "",
     ):
-        """Initialize a preference field definition.
-
-        Args:
-            field_type: The expected type for the preference value.
-            choices: Optional tuple of allowed values for enum-like preferences.
-            default: The default value for this preference.
-            description: Human-readable description of the preference.
-
-        """
         self.field_type = field_type
         self.choices = choices
         self.default = default
         self.description = description
 
     def validate(self, value: Any) -> Any:
-        """Validate a value against this field definition.
-
-        Args:
-            value: The value to validate.
-
-        Returns:
-            The validated value.
-
-        Raises:
-            ValueError: If the value is not in the allowed choices.
-
-        """
+        """Validate a value against this field definition."""
         if self.choices and value not in self.choices:
             raise ValueError(
                 f"Value must be one of {self.choices}, got '{value}'"
@@ -134,12 +114,7 @@ class UserPreferenceConfig:
 
     @classmethod
     def get_defaults(cls) -> dict[str, Any]:
-        """Get all default preference values.
-
-        Returns:
-            Dictionary mapping field names to their default values.
-
-        """
+        """Get all default preference values."""
         return {
             field_name: field.default
             for field_name, field in cls.FIELDS.items()
@@ -147,47 +122,19 @@ class UserPreferenceConfig:
 
     @classmethod
     def get_field_names(cls) -> set[str]:
-        """Get all valid field names.
-
-        Returns:
-            Set of all valid preference field names.
-
-        """
+        """Get all valid field names."""
         return set(cls.FIELDS.keys())
 
     @classmethod
     def get_field(cls, field_name: str) -> PreferenceField:
-        """Get a specific field definition.
-
-        Args:
-            field_name: The name of the preference field.
-
-        Returns:
-            The PreferenceField definition for the given field name.
-
-        Raises:
-            ValueError: If the field name is not recognized.
-
-        """
+        """Get a specific field definition."""
         if field_name not in cls.FIELDS:
             raise ValueError(f"Unknown preference field: '{field_name}'")
         return cls.FIELDS[field_name]
 
     @classmethod
     def validate_preference(cls, field_name: str, value: Any) -> Any:
-        """Validate a single preference value.
-
-        Args:
-            field_name: The name of the preference field.
-            value: The value to validate.
-
-        Returns:
-            The validated and type-converted value.
-
-        Raises:
-            ValueError: If the field name is unknown or value is invalid.
-
-        """
+        """Validate a single preference value."""
         field = cls.get_field(field_name)
 
         if not isinstance(value, field.field_type):
@@ -205,18 +152,7 @@ class UserPreferenceConfig:
     def validate_preferences(
         cls, preferences: dict[str, Any]
     ) -> dict[str, Any]:
-        """Validate a dictionary of preferences.
-
-        Args:
-            preferences: Dictionary of preference field names to values.
-
-        Returns:
-            Dictionary of validated preference values.
-
-        Raises:
-            ValueError: If any field name is unknown or value is invalid.
-
-        """
+        """Validate a dictionary of preferences."""
         validated = {}
 
         for field_name, value in preferences.items():
@@ -229,15 +165,7 @@ class UserPreferenceConfig:
 
     @classmethod
     def merge_with_defaults(cls, updates: dict[str, Any]) -> dict[str, Any]:
-        """Merge updates with default values.
-
-        Args:
-            updates: Dictionary of preference updates to apply.
-
-        Returns:
-            Dictionary with all preference values, merging defaults with updates.
-
-        """
+        """Merge updates with default values."""
         merged = cls.get_defaults()
         validated_updates = cls.validate_preferences(updates)
         merged.update(validated_updates)

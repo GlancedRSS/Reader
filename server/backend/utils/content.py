@@ -14,18 +14,7 @@ class ContentProcessor:
         self.html_cleaner = HTMLCleaner()
 
     def _generate_frontend_html(self, html_content: str) -> str:
-        """Generate frontend-compatible HTML with Tailwind classes.
-
-        Processes raw HTML to add responsive Tailwind CSS classes, lazy loading
-        for images, and proper accessibility attributes.
-
-        Args:
-            html_content: Raw HTML content from RSS feed.
-
-        Returns:
-            Frontend-ready HTML string with proper classes and attributes.
-
-        """
+        """Generate frontend-compatible HTML with Tailwind classes."""
         if not html_content:
             return ""
 
@@ -65,12 +54,7 @@ class ContentProcessor:
             return clean_html
 
     def _process_images_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process images with Tailwind classes matching frontend styling.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process images with Tailwind classes matching frontend styling."""
         for img in soup.find_all("img"):
             existing_classes = img.get("class", [])
             if isinstance(existing_classes, str):
@@ -93,12 +77,7 @@ class ContentProcessor:
                 img["alt"] = ""
 
     def _process_links_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process links with Tailwind classes and security attributes.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process links with Tailwind classes and security attributes."""
         for link in soup.find_all("a"):
             href = link.get("href", "")
 
@@ -117,12 +96,7 @@ class ContentProcessor:
                 link["rel"] = "noopener noreferrer"
 
     def _process_headings_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process headings with proper typography classes.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process headings with proper typography classes."""
         heading_classes = {
             "h1": ["font-semibold", "my-4", "text-3xl"],
             "h2": ["font-semibold", "my-4", "text-2xl"],
@@ -141,12 +115,7 @@ class ContentProcessor:
                 heading["class"] = existing_classes + classes
 
     def _process_paragraphs_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process paragraphs with proper spacing.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process paragraphs with proper spacing."""
         for p in soup.find_all("p"):
             existing_classes = p.get("class", [])
             if isinstance(existing_classes, str):
@@ -155,12 +124,7 @@ class ContentProcessor:
             p["class"] = [*existing_classes, "my-4"]
 
     def _process_lists_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process lists with proper styling.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process lists with proper styling."""
         for ul in soup.find_all("ul"):
             existing_classes = ul.get("class", [])
             if isinstance(existing_classes, str):
@@ -197,12 +161,7 @@ class ContentProcessor:
             li["class"] = [*existing_classes, "my-1"]
 
     def _process_code_blocks_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process code blocks with syntax highlighting appearance.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process code blocks with syntax highlighting appearance."""
         for code in soup.find_all("code"):
             parent = code.parent
             if parent and parent.name != "pre":
@@ -235,12 +194,7 @@ class ContentProcessor:
             ]
 
     def _process_blockquotes_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process blockquotes with proper styling.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process blockquotes with proper styling."""
         for blockquote in soup.find_all("blockquote"):
             existing_classes = blockquote.get("class", [])
             if isinstance(existing_classes, str):
@@ -257,12 +211,7 @@ class ContentProcessor:
             ]
 
     def _process_tables_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process tables with responsive styling.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process tables with responsive styling."""
         for table in soup.find_all("table"):
             existing_classes = table.get("class", [])
             if isinstance(existing_classes, str):
@@ -309,12 +258,7 @@ class ContentProcessor:
             ]
 
     def _process_videos_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process videos with responsive styling.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process videos with responsive styling."""
         for video in soup.find_all("video"):
             existing_classes = video.get("class", [])
             if isinstance(existing_classes, str):
@@ -333,15 +277,7 @@ class ContentProcessor:
                 video["controls"] = ""
 
     def _process_iframes_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process iframe embeds with responsive sizing.
-
-        Wraps iframes in divs with appropriate sizing classes based on the
-        iframe source (video platforms get aspect ratio, audio gets fixed height).
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process iframe embeds with responsive sizing."""
         for iframe in soup.find_all("iframe"):
             src = iframe.get("src", "")
             if not src:
@@ -400,12 +336,7 @@ class ContentProcessor:
                 iframe.wrap(wrapper)
 
     def _process_audio_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process audio elements with styling.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process audio elements with styling."""
         for audio in soup.find_all("audio"):
             existing_classes = audio.get("class", [])
             if isinstance(existing_classes, str):
@@ -417,14 +348,7 @@ class ContentProcessor:
                 audio["controls"] = ""
 
     def _strip_all_attributes(self, soup: BeautifulSoup) -> None:
-        """Strip all existing attributes to ensure clean styling.
-
-        Preserves essential attributes for functionality (src, href, alt, etc).
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Strip all existing attributes to ensure clean styling."""
         preserve_attrs = {
             "img": ["src", "alt", "width", "height"],
             "a": ["href"],
@@ -462,12 +386,7 @@ class ContentProcessor:
     def _remove_empty_and_unnecessary_elements(
         self, soup: BeautifulSoup
     ) -> None:
-        """Remove empty elements, unnecessary wrappers, and clutter.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Remove empty elements, unnecessary wrappers, and clutter."""
         empty_meaningless_tags = [
             "p",
             "div",
@@ -515,15 +434,7 @@ class ContentProcessor:
             comment.extract()
 
     def _has_meaningful_content(self, element) -> bool:
-        """Check if an element has meaningful content worth preserving.
-
-        Args:
-            element: BeautifulSoup element to check.
-
-        Returns:
-            True if element has text content or meaningful child elements.
-
-        """
+        """Check if an element has meaningful content worth preserving."""
         if not element:
             return False
 
@@ -561,12 +472,7 @@ class ContentProcessor:
     def _process_text_formatting_for_frontend(
         self, soup: BeautifulSoup
     ) -> None:
-        """Process text formatting elements.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process text formatting elements."""
         for sup in soup.find_all("sup"):
             sup["class"] = ["text-sm"]
 
@@ -576,12 +482,7 @@ class ContentProcessor:
     def _process_semantic_elements_for_frontend(
         self, soup: BeautifulSoup
     ) -> None:
-        """Process HTML5 semantic and structural elements.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process HTML5 semantic and structural elements."""
         for mark in soup.find_all("mark"):
             mark["class"] = [
                 "bg-yellow-200/50",
@@ -669,12 +570,7 @@ class ContentProcessor:
             svg["class"] = ["max-w-full", "h-auto", "my-4"]
 
     def _process_other_elements_for_frontend(self, soup: BeautifulSoup) -> None:
-        """Process remaining elements like horizontal rules and breaks.
-
-        Args:
-            soup: BeautifulSoup object containing parsed HTML.
-
-        """
+        """Process remaining elements like horizontal rules and breaks."""
         for hr in soup.find_all("hr"):
             hr["class"] = ["border-border", "my-4"]
 

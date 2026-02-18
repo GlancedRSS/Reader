@@ -1,7 +1,4 @@
-"""Search application service using Postgres full-text search.
-
-Native Postgres search using tsvector and pg_trgm.
-"""
+"""Search application service using Postgres full-text search."""
 
 import asyncio
 from typing import Any, Literal, cast
@@ -33,19 +30,10 @@ logger = structlog.get_logger()
 
 
 class SearchApplication:
-    """Application service for Postgres-based universal search.
-
-    Provides methods for searching across articles, feeds, tags, and folders
-    with full-text search and fuzzy matching.
-    """
+    """Application service for Postgres-based universal search."""
 
     def __init__(self, db: AsyncSession) -> None:
-        """Initialize the search application.
-
-        Args:
-            db: Database session.
-
-        """
+        """Initialize the search application."""
         self.db = db
         self.repository = SearchRepository(db)
 
@@ -54,19 +42,7 @@ class SearchApplication:
         request: UnifiedSearchRequest,
         current_user: User,
     ) -> UnifiedSearchResponse:
-        """Execute union search across all content types.
-
-        Searches all types and merges results with custom type weights.
-        Returns up to 20 results total, ranked by relevance.
-
-        Args:
-            request: Universal search request with query.
-            current_user: Authenticated user.
-
-        Returns:
-            Unified search response with up to 20 mixed, ranked results.
-
-        """
+        """Execute union search across all content types with custom type weights."""
         query = request.query
 
         type_weights = {
@@ -147,16 +123,7 @@ class SearchApplication:
         request: FeedSearchRequest,
         current_user: User,
     ) -> FeedSearchResponse:
-        """Search feeds.
-
-        Args:
-            request: Feed search request.
-            current_user: Authenticated user.
-
-        Returns:
-            Feed search response with hits and pagination.
-
-        """
+        """Search feeds."""
         raw_result = await self.repository.search_feeds(
             query=request.query,
             user_id=current_user.id,
@@ -184,16 +151,7 @@ class SearchApplication:
         request: TagSearchRequest,
         current_user: User,
     ) -> TagSearchResponse:
-        """Search tags.
-
-        Args:
-            request: Tag search request.
-            current_user: Authenticated user.
-
-        Returns:
-            Tag search response with hits and pagination.
-
-        """
+        """Search tags."""
         raw_result = await self.repository.search_tags(
             query=request.query,
             user_id=current_user.id,
@@ -221,16 +179,7 @@ class SearchApplication:
         request: FolderSearchRequest,
         current_user: User,
     ) -> FolderSearchResponse:
-        """Search folders.
-
-        Args:
-            request: Folder search request.
-            current_user: Authenticated user.
-
-        Returns:
-            Folder search response with hits and pagination.
-
-        """
+        """Search folders."""
         raw_result = await self.repository.search_folders(
             query=request.query,
             user_id=current_user.id,
@@ -409,16 +358,7 @@ class SearchApplication:
     def _dict_to_unified_hit(
         self, hit_dict: dict[str, Any], result_type: str
     ) -> UnifiedSearchHit:
-        """Convert a dict result to UnifiedSearchHit.
-
-        Args:
-            hit_dict: Dictionary with 'data' key containing the hit data.
-            result_type: Type of result ('article', 'feed', 'tag', 'folder').
-
-        Returns:
-            UnifiedSearchHit with type and data (no score, id, or title at top level).
-
-        """
+        """Convert a dict result to UnifiedSearchHit."""
         data = hit_dict.get("data", {})
 
         if result_type == "article":
@@ -449,15 +389,7 @@ class SearchApplication:
     def _normalize_scores(
         self, hits: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
-        """Normalize relevance scores to 0-1 range using min-max normalization.
-
-        Args:
-            hits: List of hits with '_relevance' field.
-
-        Returns:
-            List of hits with normalized 'score' field (0-1 range).
-
-        """
+        """Normalize relevance scores to 0-1 range using min-max normalization."""
         if not hits:
             return []
 

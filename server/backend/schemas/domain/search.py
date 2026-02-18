@@ -27,11 +27,7 @@ MAX_SEARCH_PER_TYPE = 20
 
 
 class UnifiedSearchRequest(BaseSchema):
-    """Request for universal search across all content types.
-
-    Used by GET /api/v1/search?q={query}
-    Returns up to 20 results total, no pagination.
-    """
+    """Request for universal search across all content types."""
 
     query: str = Field(
         ...,
@@ -41,10 +37,7 @@ class UnifiedSearchRequest(BaseSchema):
 
 
 class FeedSearchRequest(BaseSchema):
-    """Request for feed-specific search.
-
-    Used by GET /api/v1/search/feeds
-    """
+    """Request for feed-specific search."""
 
     query: str = Field(
         ...,
@@ -56,10 +49,7 @@ class FeedSearchRequest(BaseSchema):
 
 
 class TagSearchRequest(BaseSchema):
-    """Request for tag-specific search.
-
-    Used by GET /api/v1/search/tags
-    """
+    """Request for tag-specific search."""
 
     query: str = Field(
         ...,
@@ -71,10 +61,7 @@ class TagSearchRequest(BaseSchema):
 
 
 class FolderSearchRequest(BaseSchema):
-    """Request for folder-specific search.
-
-    Used by GET /api/v1/search/folders
-    """
+    """Request for folder-specific search."""
 
     query: str = Field(
         ...,
@@ -114,14 +101,7 @@ class FolderSearchHit(BaseSchema):
 
 
 class UnifiedSearchHit(BaseSchema):
-    """Single hit from universal search with type discriminator.
-
-    The 'type' field indicates the structure of 'data':
-    - article: data is ArticleListResponse
-    - feed: data is FeedSearchHit
-    - tag: data is TagSearchHit
-    - folder: data is FolderSearchHit
-    """
+    """Single hit from universal search with type discriminator."""
 
     type: Literal["article", "feed", "tag", "folder"] = Field(...)
     data: (
@@ -130,11 +110,7 @@ class UnifiedSearchHit(BaseSchema):
 
 
 class UnifiedSearchResponse(ListResponse[UnifiedSearchHit]):
-    """Response from universal search endpoint.
-
-    Contains top 20 results mixed together, ranked by relevance.
-    No pagination - always returns up to 20 results.
-    """
+    """Response from universal search endpoint."""
 
 
 class FeedSearchResponse(PaginatedResponse[FeedSearchHit]):

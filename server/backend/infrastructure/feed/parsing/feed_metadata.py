@@ -1,8 +1,4 @@
-"""RSS/ATOM feed metadata extraction utilities.
-
-This module handles feed-level extraction (not entry-level).
-For entry-level extraction, use entry_content.py.
-"""
+"""RSS/ATOM feed metadata extraction utilities."""
 
 from typing import Any
 
@@ -16,15 +12,7 @@ class FeedExtractor:
 
     @staticmethod
     def detect_feed_type(feed: Any) -> str:
-        """Detect feed type (RSS, Atom, RDF) from feedparser feed object.
-
-        Args:
-            feed: feedparser feed object.
-
-        Returns:
-            Feed type: 'rss', 'atom', or 'rdf'.
-
-        """
+        """Detect feed type (RSS, Atom, RDF) from feedparser feed object."""
         feed_type = "rss"
         if hasattr(feed, "version") and feed.version:
             if "atom" in feed.version.lower():
@@ -38,32 +26,13 @@ class FeedExtractor:
 
     @staticmethod
     def extract_title(feed: Any) -> str:
-        """Extract feed title with fallback handling.
-
-        Args:
-            feed: feedparser feed object.
-
-        Returns:
-            Feed title or empty string.
-
-        """
+        """Extract feed title with fallback handling."""
         title = feed.feed.get("title", "")
         return str(title) if title else ""
 
     @staticmethod
     def extract_description(feed: Any) -> str | None:
-        """Extract feed description with reasonable length limit.
-
-        Returns None if description is too long (>500 chars) to avoid
-        storing excessive content as metadata.
-
-        Args:
-            feed: feedparser feed object.
-
-        Returns:
-            Feed description or None.
-
-        """
+        """Extract feed description with reasonable length limit."""
         raw_description = feed.feed.get("description", "")
 
         if raw_description and len(str(raw_description)) < 500:
@@ -73,21 +42,7 @@ class FeedExtractor:
 
     @staticmethod
     def extract_language(feed: Any) -> str | None:
-        """Extract feed language with Dublin Core support.
-
-        Priority order:
-        1. RSS language tag
-        2. Dublin Core language tag
-        3. Other language fields
-
-        Args:
-            feed: feedparser feed object
-
-        Returns:
-            Language code string (ISO 639-1) or None
-            Format: xx or xx-XX (lowercase language, optional uppercase country)
-
-        """
+        """Extract feed language with Dublin Core support."""
         try:
             if hasattr(feed, "feed") and feed.feed:
                 if hasattr(feed.feed, "language") and feed.feed.language:
@@ -117,17 +72,7 @@ class FeedExtractor:
 
     @staticmethod
     def _normalize_language_code(language: str) -> str:
-        """Normalize language code to match database constraint.
-
-        Converts en-gb to en-GB format (lowercase language, uppercase country).
-
-        Args:
-            language: Raw language code (e.g., 'en-gb', 'EN-GB', 'en-US')
-
-        Returns:
-            Normalized language code (e.g., 'en-GB', 'en')
-
-        """
+        """Normalize language code to match database constraint."""
         if not language:
             return language
 
@@ -141,15 +86,7 @@ class FeedExtractor:
 
     @staticmethod
     def extract_website(feed: Any) -> str | None:
-        """Extract the website URL from the feed.
-
-        Args:
-            feed: feedparser feed object.
-
-        Returns:
-            Website URL or None.
-
-        """
+        """Extract the website URL from the feed."""
         try:
             if hasattr(feed, "feed") and feed.feed:
                 if hasattr(feed.feed, "link") and feed.feed.link:
@@ -173,15 +110,7 @@ class FeedExtractor:
 
     @staticmethod
     def extract_feed_metadata(feed: Any) -> dict[str, str | None]:
-        """Extract all feed metadata in a single call.
-
-        Args:
-            feed: feedparser feed object.
-
-        Returns:
-            Dictionary with title, description, language, and feed_type.
-
-        """
+        """Extract all feed metadata in a single call."""
         return {
             "title": FeedExtractor.extract_title(feed),
             "description": FeedExtractor.extract_description(feed),
@@ -191,19 +120,7 @@ class FeedExtractor:
 
     @staticmethod
     def validate_feed_structure(feed: Any) -> tuple[bool, str | None]:
-        """Validate that a feed has the minimum required structure.
-
-        Checks:
-        - Feed object exists
-        - Feed has at least one entry
-
-        Args:
-            feed: feedparser feed object.
-
-        Returns:
-            Tuple of (is_valid, error_message).
-
-        """
+        """Validate that a feed has the minimum required structure."""
         if not feed.feed:
             return False, "no_feed_data"
 
@@ -214,15 +131,7 @@ class FeedExtractor:
 
     @staticmethod
     def check_bozo_flags(feed: Any) -> tuple[bool, str | None]:
-        """Check feedparser bozo flags for parsing errors.
-
-        Args:
-            feed: feedparser feed object.
-
-        Returns:
-            Tuple of (has_errors, error_message).
-
-        """
+        """Check feedparser bozo flags for parsing errors."""
         if feed.bozo and feed.bozo_exception:
             error_msg = str(feed.bozo_exception)
             logger.debug(

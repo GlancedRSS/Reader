@@ -1,8 +1,4 @@
-"""Auto-mark read job handlers.
-
-This module contains handlers for auto-marking articles as read
-based on user preferences (7/14/30 days).
-"""
+"""Auto-mark read job handlers."""
 
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -24,39 +20,21 @@ logger = get_logger(__name__)
 class AutoMarkReadJobHandler(
     BaseJobHandler[AutoMarkReadJobRequest, AutoMarkReadJobResponse]
 ):
-    """Handler for auto-mark as read job.
-
-    Marks old articles as read based on user preferences.
-    Supports both all-users (bulk) and single-user modes.
-    """
+    """Handler for auto-mark as read job."""
 
     def __init__(
         self,
         user_repository: Any,
         subscription_repository: SubscriptionRepository,
     ) -> None:
-        """Initialize the handler.
-
-        Args:
-            user_repository: User repository for data access (single-user mode).
-            subscription_repository: Subscription repository for article operations.
-
-        """
+        """Initialize the handler."""
         self._user_repo = user_repository
         self._subscription_repo = subscription_repository
 
     async def execute(
         self, request: AutoMarkReadJobRequest
     ) -> AutoMarkReadJobResponse:
-        """Execute the auto-mark as read job.
-
-        Args:
-            request: The auto-mark read job request
-
-        Returns:
-            Response with processing statistics
-
-        """
+        """Execute the auto-mark as read job."""
         logger.info(
             "Starting auto-mark as read",
             job_id=request.job_id,

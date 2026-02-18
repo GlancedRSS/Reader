@@ -36,27 +36,14 @@ class TagApplication:
     """Application service for tag management and article-tag relationships."""
 
     def __init__(self, db: AsyncSession):
-        """Initialize the tag application with database session.
-
-        Args:
-            db: Async database session for repository operations.
-
-        """
+        """Initialize the tag application with database session."""
         self.db = db
 
         self.repository = UserTagRepository(db)
 
     @staticmethod
     def _build_tag_response(tag: "UserTag") -> TagListResponse:
-        """Build TagListResponse from tag model.
-
-        Args:
-            tag: Tag model instance.
-
-        Returns:
-            TagListResponse.
-
-        """
+        """Build TagListResponse from tag model."""
         return TagListResponse(
             id=tag.id,
             name=tag.name,
@@ -66,19 +53,7 @@ class TagApplication:
     async def get_user_tag(
         self, user_id: UUID, tag_id: UUID
     ) -> TagListResponse:
-        """Get a specific tag for a user.
-
-        Args:
-            user_id: The ID of the user.
-            tag_id: The ID of the tag.
-
-        Returns:
-            Tag response.
-
-        Raises:
-            NotFoundError: If tag is not found.
-
-        """
+        """Get a specific tag for a user."""
         tag = await self.repository.find_by_id(tag_id, user_id)
         if not tag:
             raise NotFoundError("Tag not found")
@@ -91,17 +66,7 @@ class TagApplication:
         limit: int = DEFAULT_LIMIT,
         offset: int = 0,
     ) -> PaginatedResponse[TagListResponse]:
-        """Get tags for a user with pagination.
-
-        Args:
-            user_id: The ID of the user.
-            limit: Maximum number of tags to return.
-            offset: Number of tags to skip.
-
-        Returns:
-            Paginated response containing user's tags.
-
-        """
+        """Get tags for a user with pagination."""
         tags, total = await self.repository.get_user_tags_paginated(
             user_id, limit, offset
         )
@@ -124,19 +89,7 @@ class TagApplication:
     async def create_user_tag(
         self, user_id: UUID, tag_data: TagCreateRequest
     ) -> TagListResponse:
-        """Create a new user tag with validation and business rules.
-
-        Args:
-            user_id: The ID of the user creating the tag.
-            tag_data: The tag creation request with name.
-
-        Returns:
-            Created or existing tag response.
-
-        Raises:
-            ValidationError: If tag validation fails.
-
-        """
+        """Create a new user tag with validation and business rules."""
         try:
             sanitized_name = TagValidationDomain.validate_tag_name(
                 tag_data.name
@@ -172,22 +125,7 @@ class TagApplication:
     async def update_user_tag(
         self, user_id: UUID, tag_id: UUID, tag_data: TagUpdateRequest
     ) -> ResponseMessage:
-        """Update a user tag with validation.
-
-        Args:
-            user_id: The ID of the user.
-            tag_id: The ID of the tag to update.
-            tag_data: The tag update request.
-
-        Returns:
-            Response message indicating successful update.
-
-        Raises:
-            NotFoundError: If tag is not found.
-            ValidationError: If tag validation fails.
-            ConflictError: If tag name already exists for another tag.
-
-        """
+        """Update a user tag with validation."""
         tag = await self.repository.find_by_id(tag_id, user_id)
         if not tag:
             raise NotFoundError("Tag not found")
@@ -215,19 +153,7 @@ class TagApplication:
     async def delete_user_tag(
         self, user_id: UUID, tag_id: UUID
     ) -> ResponseMessage:
-        """Delete a user tag with business rule validation.
-
-        Args:
-            user_id: The ID of the user.
-            tag_id: The ID of the tag to delete.
-
-        Returns:
-            Response message indicating successful deletion.
-
-        Raises:
-            NotFoundError: If tag is not found.
-
-        """
+        """Delete a user tag."""
         tag = await self.repository.find_by_id(tag_id, user_id)
         if not tag:
             raise NotFoundError("Tag not found")
@@ -239,24 +165,7 @@ class TagApplication:
     async def sync_article_tags(
         self, user_id: UUID, article_id: UUID, desired_tag_ids: list[UUID]
     ) -> dict[str, list[UUID]]:
-        """Sync article tags to match desired state.
-
-        Adds tags that are in desired list but not current,
-        and removes tags that are current but not in desired.
-
-        Args:
-            user_id: The ID of the user (for access control).
-            article_id: The article to sync tags for.
-            desired_tag_ids: The desired tag IDs.
-
-        Returns:
-            Dictionary with 'added' and 'removed' tag lists.
-
-        Raises:
-            NotFoundError: If user doesn't have access to the article.
-            ValueError: If user doesn't own all tags in desired_tag_ids.
-
-        """
+        """Sync article tags to match desired state, adding missing and removing extra tags."""
         current_tags = await self.repository.get_article_tags(
             article_id, user_id
         )

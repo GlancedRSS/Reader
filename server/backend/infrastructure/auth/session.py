@@ -12,16 +12,7 @@ class CookieManager:
     def generate_session_cookies(
         self, session_token: str, csrf_token: str
     ) -> dict[str, Any]:
-        """Generate cookie settings for session and CSRF tokens.
-
-        Args:
-            session_token: The session token to set in the cookie.
-            csrf_token: The CSRF token to set in the cookie.
-
-        Returns:
-            Dictionary containing session_cookie, csrf_cookie, and csrf_token.
-
-        """
+        """Generate cookie settings for session and CSRF tokens."""
         expiration = datetime.now(UTC) + timedelta(
             seconds=settings.session_cookie_max_age
         )
@@ -57,12 +48,7 @@ class CookieManager:
         }
 
     def generate_clear_cookies(self) -> dict[str, Any]:
-        """Generate cookie settings to clear session and CSRF cookies.
-
-        Returns:
-            Dictionary containing session_cookie and csrf_cookie with cleared values.
-
-        """
+        """Generate cookie settings to clear session and CSRF cookies."""
         session_cookie = {
             "key": settings.session_cookie_name,
             "path": "/",

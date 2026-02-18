@@ -24,37 +24,14 @@ class AuthDomain:
     FIRST_USER_IS_ADMIN = True
 
     def __init__(self, password_hasher: "PasswordHasher") -> None:
-        """Initialize AuthDomain with a password hasher.
-
-        Args:
-            password_hasher: PasswordHasher instance with verify_password
-                and hash_password methods.
-
-        """
         self.password_hasher = password_hasher
 
     def update_last_login(self, user: "User") -> None:
-        """Update user's last login timestamp (in-memory only).
-
-        The application layer is responsible for persisting this change.
-
-        Args:
-            user: User model to update
-
-        """
+        """Update user's last login timestamp (in-memory only; application layer persists)."""
         user.last_login = datetime.now(UTC)
 
     def verify_credentials(self, user: "User", password: str) -> None:
-        """Verify user credentials.
-
-        Args:
-            user: User model with password_hash
-            password: Plain text password to verify
-
-        Raises:
-            InvalidCredentialsError: If password doesn't match
-
-        """
+        """Verify user credentials."""
         if not user.password_hash:
             raise InvalidCredentialsError()
 
@@ -66,20 +43,7 @@ class AuthDomain:
     def change_user_password(
         self, user: "User", current_password: str, new_password: str
     ) -> None:
-        """Change user password after verifying current password.
-
-        This method updates the user model in-memory only.
-        The application layer is responsible for persisting the change.
-
-        Args:
-            user: User model to update
-            current_password: Current password for verification
-            new_password: New password to set
-
-        Raises:
-            InvalidPasswordError: If current password is invalid
-
-        """
+        """Change user password after verifying current password (in-memory only; application layer persists)."""
         if not self.password_hasher.verify_password(
             current_password, user.password_hash
         ):
@@ -88,13 +52,5 @@ class AuthDomain:
         user.password_hash = self.password_hasher.hash_password(new_password)
 
     def check_session_limit(self, active_session_count: int) -> bool:
-        """Check if session limit has been exceeded.
-
-        Args:
-            active_session_count: Current number of active sessions
-
-        Returns:
-            True if limit exceeded (oldest session should be revoked)
-
-        """
+        """Check if session limit exceeded (returns True if oldest session should be revoked)."""
         return active_session_count >= MAX_ACTIVE_SESSIONS

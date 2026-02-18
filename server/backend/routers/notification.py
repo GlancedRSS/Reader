@@ -27,11 +27,7 @@ async def notifications_stream(
     request: Request,
     notification_app=Depends(get_notification_application),
 ) -> EventSourceResponse:
-    """Server-Sent Events endpoint for real-time notifications.
-
-    Returns an SSE stream that pushes notifications to the client.
-    The client should keep this connection open to receive updates.
-    """
+    """SSE endpoint for real-time notifications."""
     user_id = getattr(request.state, "user_id", None)
     if not user_id:
         return EventSourceResponse(

@@ -8,15 +8,7 @@ from bs4 import BeautifulSoup
 
 
 def decode_html_entities(text: str) -> str:
-    """Decode HTML entities in text.
-
-    Args:
-        text: Text with HTML entities.
-
-    Returns:
-        Text with decoded entities.
-
-    """
+    """Decode HTML entities in text."""
     return unescape(text)
 
 
@@ -155,15 +147,7 @@ class HTMLCleaner:
         )
 
     def _is_trusted_iframe_domain(self, src: str) -> bool:
-        """Check if iframe src URL is from a trusted domain.
-
-        Args:
-            src: The iframe src URL.
-
-        Returns:
-            True if the domain is in the trusted list, False otherwise.
-
-        """
+        """Check if iframe src URL is from a trusted domain."""
         if not src or not isinstance(src, str):
             return False
 
@@ -182,18 +166,7 @@ class HTMLCleaner:
             return False
 
     def clean_html(self, html_content: str) -> str:
-        """Clean HTML content while preserving safe structure and formatting.
-
-        Uses BeautifulSoup to remove dangerous elements, then bleach for
-        sanitization. Falls back to stripping all tags if sanitization fails.
-
-        Args:
-            html_content: Raw HTML content to sanitize.
-
-        Returns:
-            Sanitized HTML string with dangerous elements removed.
-
-        """
+        """Clean HTML content while preserving safe structure and formatting."""
         if not html_content:
             return ""
 
@@ -315,18 +288,7 @@ class HTMLCleaner:
             return re.sub(r"\s+", " ", text).strip()
 
     def html_to_text(self, html_content: str) -> str:
-        """Clean HTML content to plain text for search indexing.
-
-        Removes all HTML tags and entities, leaving only plain text content.
-        Falls back to regex-based stripping if BeautifulSoup fails.
-
-        Args:
-            html_content: Raw HTML content to convert.
-
-        Returns:
-            Plain text content with HTML removed.
-
-        """
+        """Clean HTML content to plain text for search indexing."""
         if not html_content:
             return ""
 
@@ -353,15 +315,7 @@ class HTMLCleaner:
             return re.sub(r"\s+", " ", text).strip()
 
     def clean_html_content(self, html_content: str) -> tuple[str, str | None]:
-        """Clean HTML content and extract first image.
-
-        Args:
-            html_content: Raw HTML content.
-
-        Returns:
-            Tuple of (clean_text, first_image_url).
-
-        """
+        """Clean HTML content and extract first image."""
         if not html_content or not html_content.strip():
             return "", None
 
