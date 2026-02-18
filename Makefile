@@ -227,14 +227,14 @@ lint:
 	@echo "   Backend..."
 	@if [ -d "server" ]; then \
 		if [ -d "server/.venv" ]; then \
-			cd server && .venv/bin/python -m ruff check .; \
+			cd server && .venv/bin/ruff check . && .venv/bin/mypy; \
 		else \
 			echo "   ⚠️  venv not found, skipping backend lint"; \
 		fi \
 	fi
 	@echo "   App..."
 	@if [ -d "app" ]; then \
-		cd app && npx eslint .; \
+		cd app && npm run lint; \
 	fi
 
 format:
@@ -249,7 +249,7 @@ format:
 	fi
 	@echo "   App..."
 	@if [ -d "app" ]; then \
-		cd app && npx prettier --write .; \
+		cd app && npm run lint:fix; \
 	fi
 
 # Maintenance
