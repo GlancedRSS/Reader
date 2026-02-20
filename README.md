@@ -6,7 +6,7 @@ A modern, self-hosted RSS/Atom feed reader.
 
 [![CI](https://github.com/glancedrss/reader/actions/workflows/ci.yml/badge.svg)](https://github.com/glancedrss/reader/actions/workflows/ci.yml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/glanced/reader)](https://hub.docker.com/r/glanced/reader)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](./LICENSE)
 
 </div>
 

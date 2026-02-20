@@ -3,7 +3,7 @@
 	"version": "1.0.2",
 	"main": "index.js",
 	"private": true,
-	"license": "MIT",
+	"license": "AGPL-3.0",
 	"config": {
 		"commitizen": {
 			"path": "./node_modules/cz-conventional-changelog"
