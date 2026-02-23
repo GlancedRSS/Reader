@@ -87,7 +87,7 @@ const DropdownMenuContent = React.forwardRef<
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
 const dropdownMenuItemVariants = cva(
-	'relative flex cursor-default select-none items-center px-4 py-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 sm:px-2 sm:py-1.5 sm:text-xs',
+	'relative flex cursor-default select-none items-center px-4 py-2 text-sm! outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 sm:px-2 sm:py-1.5 sm:text-xs',
 	{
 		defaultVariants: {
 			variant: 'default'

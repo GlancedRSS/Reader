@@ -28,7 +28,7 @@ export function Logo(props: LogoProps) {
 		// eslint-disable-next-line @next/next/no-img-element
 		<img
 			alt='Glanced'
-			className={`${getSize()} rounded-bl-xl overflow-hidden`}
+			className={`${getSize()} rounded-lg overflow-hidden`}
 			src={src}
 		/>
 	)

@@ -46,7 +46,7 @@ const variants = {
 	default: {
 		background: 'top-1 bottom-1 left-1 rounded-lg',
 		container: 'gap-0.5 p-1',
-		tab: 'h-7 px-3 text-base font-semibold sm:h-7 sm:px-2 sm:text-xs sm:font-medium'
+		tab: 'h-7 px-3 text-base! font-semibold sm:h-7 sm:px-2 sm:text-xs sm:font-medium'
 	},
 	icon: {
 		background: 'top-1 bottom-1 left-1 rounded-lg',
@@ -216,7 +216,7 @@ export function Tabs({
 						{option.badge ? (
 							<span
 								className={cn(
-									'ml-2 min-w-[20px] h-5 rounded-full text-sm font-medium flex items-center justify-center px-1.5 sm:min-w-[16px] sm:h-4 sm:text-xs sm:px-1',
+									'ml-2 min-w-5 h-5 rounded-full text-sm font-medium flex items-center justify-center px-1.5 sm:min-w-[16px] sm:h-4 sm:text-xs sm:px-1',
 									isActive
 										? 'bg-primary text-primary-foreground'
 										: 'bg-destructive text-destructive-foreground'

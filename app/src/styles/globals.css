@@ -1,78 +1,47 @@
-/*
-================================================================================
-GLOBALS.CSS
-================================================================================
-
-PURPOSE:
-  Main entry point for the application's styling system. This file imports
-  all organized CSS modules and contains only essential base styles that
-  cannot be logically separated into specialized files.
-
-CONTENTS:
-  1. Framework imports (Tailwind CSS and animation libraries)
-  2. Design system module imports in proper cascade order
-  3. Base layer styles that apply globally to all elements
-
-USAGE:
-  - This is the main CSS file imported by the application
-  - All other styling is organized in the styles/ directory
-  - Import order is critical for proper CSS cascade and specificity
-
-DEPENDENCIES:
-  - All files in /app/src/styles/ directory
-  - Tailwind CSS framework
-  - tw-animate-css for additional animation utilities
-
-MAINTENANCE:
-  - Keep this file minimal and focused on being an entry point
-  - Add new base styles here only if they truly belong globally
-  - Import order should not be changed without understanding CSS cascade
-================================================================================
-*/
-
-/* ==========================================================================
-   FRAMEWORK IMPORTS
-   ==========================================================================
-
-   Core CSS frameworks that provide the foundation for our styling system.
-   These must be imported first to establish base functionality.
-*/
-
 @import 'tailwindcss';
 @import 'tw-animate-css';
-
-/* ==========================================================================
-   DESIGN SYSTEM IMPORTS
-   ==========================================================================
-
-   Import our organized CSS modules in proper cascade order.
-   Order is critical: tokens → animations → utilities → responsive
-*/
-
-@import '../styles/variables.css'; /* Design tokens and theme configuration */
-@import '../styles/animations.css'; /* Keyframe animations and motion effects */
-@import '../styles/utilities.css'; /* Utility classes and component styles */
-@import '../styles/responsive.css'; /* Mobile-first responsive styles */
-
-/* ==========================================================================
-   BASE LAYER STYLES
-   ==========================================================================
-
-   Global base styles that apply to all elements.
-   These are fundamental styles that cannot be moved to utility files.
-*/
+@import './variables.css';
 
 @layer base {
-	/* Universal base styles */
 	* {
 		border-color: var(--border);
 		outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
 	}
 
-	/* Body and document base styles */
 	body {
 		background-color: var(--background);
 		color: var(--foreground);
 		width: 100%;
 	}
+
+	* {
+		scrollbar-color: var(--border) transparent;
+	}
+
+	*::-webkit-scrollbar {
+		width: 7px;
+		height: 7px;
+	}
+
+	*::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	*::-webkit-scrollbar-thumb {
+		background-color: var(--border);
+		border-radius: 4px;
+	}
+
+	*::-webkit-scrollbar-thumb:hover {
+		background-color: var(--muted-foreground);
+	}
+}
+
+.scrollbar-hide {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
 }
