@@ -16,7 +16,7 @@ function GridLoading() {
 	}
 
 	return (
-		<Card className='group relative overflow-hidden transition-all duration-300 ease-out py-0 gap-0 border hover:border-accent dark:hover:border-accent shadow-lg shadow-black/5 dark:shadow-white/10 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-white/20'>
+		<Card className='group relative overflow-hidden transition-all duration-300 ease-out py-0 gap-0 border hover:border-accent dark:hover:border-accent shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10'>
 			{preferences?.show_article_thumbnails ? (
 				<div className='relative'>
 					<Skeleton className='relative h-48 rounded-none' />
