@@ -110,7 +110,19 @@
 }
 
 .font-ui {
-	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	font-family:
+		'Inter',
+		-apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		'Roboto',
+		'Oxygen',
+		'Ubuntu',
+		'Cantarell',
+		'Fira Sans',
+		'Droid Sans',
+		'Helvetica Neue',
+		sans-serif;
 }
 
 .font-reading {
@@ -149,17 +161,17 @@
 }
 
 @layer utilities {
-  .line-clamp-2 {
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    display: -webkit-box;
-    overflow: hidden;
-  }
+	.line-clamp-2 {
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		display: -webkit-box;
+		overflow: hidden;
+	}
 
-  .line-clamp-3 {
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    display: -webkit-box;
-    overflow: hidden;
-  }
+	.line-clamp-3 {
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		display: -webkit-box;
+		overflow: hidden;
+	}
 }
