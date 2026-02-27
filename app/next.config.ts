@@ -38,7 +38,10 @@ const nextConfig: NextConfig = {
 		localPatterns: [
 			{
 				pathname: '/api/image-proxy/**'
-			}
+			},
+      {
+				pathname: '/assets/icons/**'
+			},
 		],
 		remotePatterns: [
 			{

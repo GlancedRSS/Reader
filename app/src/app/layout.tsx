@@ -20,7 +20,7 @@ const playfairDisplay = Playfair_Display({
 	display: 'swap',
 	subsets: ['latin'],
 	variable: '--font-playfair-display',
-	weight: ['400', '700']
+	weight: ['400', '600', '700']
 })
 
 const atkinsonHyperlegible = Atkinson_Hyperlegible({

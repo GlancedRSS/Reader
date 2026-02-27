@@ -2,6 +2,8 @@
 @import 'tw-animate-css';
 @import './variables.css';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
 	* {
 		border-color: var(--border);
