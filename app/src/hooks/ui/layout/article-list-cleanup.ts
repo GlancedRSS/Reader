@@ -79,7 +79,7 @@ export function useArticleListCleanup() {
 			return
 		}
 
-		if (wasArticleDetail && !isNowArticleList) {
+		if (wasArticleDetail && !isNowArticleList && !isNowArticleDetail) {
 			resetArticles()
 			resetLayout()
 			sessionStorage.removeItem('scroll-to-article-id')
