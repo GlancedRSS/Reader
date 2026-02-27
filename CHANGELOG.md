@@ -1,3 +1,18 @@
+## [1.0.3](https://github.com/GlancedRSS/Reader/compare/v1.0.2...v1.0.3) (2026-02-27)
+
+### Bug Fixes
+
+* ui polish and dark mode fixes ([#9](https://github.com/GlancedRSS/Reader/issues/9)) ([5e5b07a](https://github.com/GlancedRSS/Reader/commit/5e5b07a8f5d1173a4972fe5439943e00b5877182))
+
+### Chore
+
+* switch from MIT to AGPL-3.0 license ([#7](https://github.com/GlancedRSS/Reader/issues/7)) ([33fc18e](https://github.com/GlancedRSS/Reader/commit/33fc18e1d4cf8bbd9f50101670d8e00e1e1f2d8d))
+
+### Refactor
+
+* backend cleanup ([#6](https://github.com/GlancedRSS/Reader/issues/6)) ([5ec42ab](https://github.com/GlancedRSS/Reader/commit/5ec42abb29292d06b3c7bfa040eac62bc9ae4611))
+* styles consolidation ([#8](https://github.com/GlancedRSS/Reader/issues/8)) ([8c53baf](https://github.com/GlancedRSS/Reader/commit/8c53bafb8c6c1b7b5ae7e429fab6f96c733b9de1))
+
 ## [1.0.2](https://github.com/GlancedRSS/Reader/compare/v1.0.1...v1.0.2) (2026-02-16)
 
 ### Bug Fixes

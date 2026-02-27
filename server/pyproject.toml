@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "glanced-reader-server"
-version = "1.0.2"
+version = "1.0.3"
 description = "Glanced Reader server"
 requires-python = ">=3.13"
 dependencies = [ "fastapi>=0.128.2", "uvicorn[standard]>=0.40.0", "sqlalchemy>=2.0.46", "asyncpg>=0.31.0", "greenlet>=3.3.1", "psycopg2-binary>=2.9.11", "pydantic>=2.12.5", "pydantic-settings>=2.12.0", "python-multipart>=0.0.22", "httpx>=0.28.1", "structlog>=25.5.0", "feedparser>=6.0.12", "bleach>=6.3.0", "beautifulsoup4>=4.14.3", "redis>=5.3.1,<6", "sse-starlette>=3.2.0", "arq>=0.27.0", "alembic>=1.18.3", "passlib[bcrypt]>=1.7.4",]
