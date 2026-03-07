@@ -165,14 +165,14 @@ function MagazineArticle({
 				>
 					{shouldShowSplitLayout ? (
 						<div
-							className={`group-hover/link:text-accent-foreground hover:underline block leading-snug text-ellipsis line-clamp-2 cursor-pointer ${titleClass}`}
+							className={`group-hover/link:text-accent-foreground text-base hover:underline block leading-snug text-ellipsis line-clamp-2 cursor-pointer ${titleClass}`}
 							onClick={() => setSelectedArticle(article.id)}
 						>
 							{article.title}
 						</div>
 					) : (
 						<Link
-							className={`group-hover/link:text-accent-foreground hover:underline block leading-snug text-ellipsis line-clamp-2 ${titleClass}`}
+							className={`group-hover/link:text-accent-foreground text-base hover:underline block leading-snug text-ellipsis line-clamp-2 ${titleClass}`}
 							href={`/articles/${article.id}`}
 							onClick={() => {
 								sessionStorage.setItem('scroll-to-article-id', article.id)
