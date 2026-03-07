@@ -154,7 +154,7 @@ export function Filters() {
 	}
 
 	const formContent = (
-		<ScrollArea className='max-md:h-40 px-4 md:px-0'>
+		<ScrollArea className='max-md:h-96 px-4 md:px-0'>
 			<div className='space-y-3'>
 				<div className='space-y-2'>
 					<Label htmlFor='search'>Search</Label>

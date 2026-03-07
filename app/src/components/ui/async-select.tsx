@@ -81,7 +81,7 @@ const defaultClassNames = {
 			isFocused && 'border-primary/20! bg-accent! text-accent-foreground!',
 			isSelected && 'bg-accent! text-accent-foreground!'
 		),
-	placeholder: () => 'text-muted-foreground sm:text-sm',
+	placeholder: () => 'text-muted-foreground! pl-2 sm:text-sm',
 	singleValue: () => 'text-foreground!',
 	valueContainer: () => 'flex! flex-wrap! gap-1.5! p-1!'
 }
@@ -126,7 +126,7 @@ export function GenericAsyncSelect({
 		classNames: {
 			...defaultClassNames,
 			control: () =>
-				`bg-transparent! rounded-lg! border-border! shadow-xs! transition-[color,box-shadow]! text-base sm:text-sm ${isMulti ? 'py-1.5 overflow-x-auto!' : 'h-11 sm:h-10'}`,
+				`bg-transparent! rounded-lg! border-border! shadow-xs! transition-[color,box-shadow]! text-base sm:text-sm ${isMulti ? 'py-.5 overflow-x-auto!' : 'h-11 sm:h-10'}`,
 			...classNames
 		},
 		components,

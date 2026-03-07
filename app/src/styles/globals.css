@@ -4,6 +4,30 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Safe area insets for iOS - fallback to 0 on other platforms */
+:root {
+	--safe-area-inset-top: env(safe-area-inset-top, 0px);
+	--safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+	--safe-area-inset-left: env(safe-area-inset-left, 0px);
+	--safe-area-inset-right: env(safe-area-inset-right, 0px);
+}
+
+/* Fix sticky hover on touch devices - (pointer: coarse) reliably detects touch input */
+@media (pointer: coarse) {
+	button:not(:disabled):hover,
+	[data-slot='button']:not(:disabled):hover,
+	[role='button']:not(:disabled):hover,
+	a:not(:disabled):hover {
+		background-color: unset !important;
+		box-shadow: unset !important;
+		transform: unset !important;
+		opacity: unset !important;
+		filter: unset !important;
+		color: unset !important;
+		border-color: var(--border) !important;
+	}
+}
+
 @layer base {
 	* {
 		border-color: var(--border);
@@ -46,4 +70,35 @@
 
 .scrollbar-hide::-webkit-scrollbar {
 	display: none;
+}
+
+/* Tab content slide animations */
+@keyframes slide-in-from-right {
+	from {
+		opacity: 0;
+		transform: translateX(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes slide-in-from-left {
+	from {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+.tab-slide-right {
+	animation: slide-in-from-right 0.2s ease-out;
+}
+
+.tab-slide-left {
+	animation: slide-in-from-left 0.2s ease-out;
 }

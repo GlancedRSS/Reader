@@ -81,15 +81,9 @@ function DrawerContent({
 					className
 				)}
 				data-slot='drawer-content'
-				style={{
-					backgroundImage:
-						'radial-gradient(ellipse 60% 2px at 50% 0%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 50%, transparent 80%)',
-					backgroundPosition: 'top center',
-					backgroundRepeat: 'no-repeat'
-				}}
 				{...props}
 			>
-				<div className='bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block' />
+				<div className='bg-muted mx-auto mt-4 hidden h-2 w-25 shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block' />
 				{children}
 			</DrawerPrimitive.Content>
 		</DrawerPortal>

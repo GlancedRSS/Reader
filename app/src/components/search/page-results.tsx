@@ -258,7 +258,7 @@ export function PageResults({
 
 	return (
 		<Command
-			className='border-none'
+			className='border-none shadow-none'
 			style={{
 				backgroundImage: 'unset'
 			}}

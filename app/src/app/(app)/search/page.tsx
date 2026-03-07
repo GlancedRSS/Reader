@@ -152,7 +152,7 @@ export default function SearchPage() {
 				/>
 			</div>
 
-			<ScrollArea className='h-[calc(100dvh-8rem-2.25rem-1.5rem-2.75rem)] md:h-[calc(100dvh-6rem-2rem-2.75rem)]'>
+			<ScrollArea className='h-[calc(100dvh-8rem-2.25rem-1.5rem-2.25rem)] md:h-[calc(100dvh-6rem-2rem-2.25rem)]'>
 				<SearchStatus
 					error={error}
 					isLoading={isLoading}
