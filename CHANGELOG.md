@@ -1,3 +1,9 @@
+## [1.0.4](https://github.com/GlancedRSS/Reader/compare/v1.0.3...v1.0.4) (2026-03-07)
+
+### Bug Fixes
+
+* refine component styling and mobile layout ([#10](https://github.com/GlancedRSS/Reader/issues/10)) ([d54f914](https://github.com/GlancedRSS/Reader/commit/d54f91416e59e26da2566545e8f41a8af7e2f59d))
+
 ## [1.0.3](https://github.com/GlancedRSS/Reader/compare/v1.0.2...v1.0.3) (2026-02-27)
 
 ### Bug Fixes
