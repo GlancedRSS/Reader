@@ -65,7 +65,7 @@ class FeedProcessor:
         )
 
         if image_url:
-            logger.info(
+            logger.debug(
                 "Extracted media_url from feed entry",
                 link=entry.get("link", ""),
                 media_url=image_url,
