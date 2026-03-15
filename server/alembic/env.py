@@ -74,9 +74,7 @@ def run_migrations_online() -> None:
     connectable = create_engine(
         configuration["sqlalchemy.url"],
         poolclass=pool.NullPool,
-        connect_args={
-            "options": "-c search_path=public"
-        },
+        connect_args={"options": "-c search_path=public"},
     )
 
     with connectable.connect() as connection:
