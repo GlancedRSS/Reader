@@ -1,3 +1,13 @@
+## [1.0.5](https://github.com/GlancedRSS/Reader/compare/v1.0.4...v1.0.5) (2026-03-15)
+
+### Bug Fixes
+
+* **workers:** handle passwords in Redis URLs for arq ([#13](https://github.com/GlancedRSS/Reader/issues/13)) ([4a321fd](https://github.com/GlancedRSS/Reader/commit/4a321fda9e14c16b7e0e34d58a8d411bf8aaae53))
+
+### Refactor
+
+* backend cleanup ([#12](https://github.com/GlancedRSS/Reader/issues/12)) ([76502f7](https://github.com/GlancedRSS/Reader/commit/76502f74f9df045fb1f31ccf7854fa58b3e7a6c1))
+
 ## [1.0.4](https://github.com/GlancedRSS/Reader/compare/v1.0.3...v1.0.4) (2026-03-07)
 
 ### Bug Fixes
