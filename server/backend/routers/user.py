@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.core.app import settings
 from backend.core.database import get_db
 from backend.core.dependencies import get_user_preferences_application
 from backend.core.fastapi import get_user_from_request_state
@@ -15,16 +14,6 @@ from backend.schemas.domain import (
 )
 
 router = APIRouter()
-
-
-@router.get(
-    "/version",
-    summary="Get API version",
-    description="Retrieve the current API version.",
-    tags=["User"],
-)
-async def get_version() -> dict[str, str]:
-    return {"version": settings.version}
 
 
 @router.get(
