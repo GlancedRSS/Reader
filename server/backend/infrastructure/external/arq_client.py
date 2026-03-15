@@ -14,16 +14,6 @@ logger = get_logger(__name__)
 JOB_TTL = 3600
 
 
-def _parse_redis_url(redis_url: str) -> tuple[str, int]:
-    if redis_url.startswith("redis://"):
-        redis_url = redis_url[8:]
-
-    if ":" in redis_url:
-        host, port = redis_url.split(":")
-        return host, int(port)
-    return redis_url, 6379
-
-
 class ArqClient:
     _pool: Any | None
 
@@ -33,8 +23,7 @@ class ArqClient:
 
     def _get_redis_settings(self) -> RedisSettings:
         redis_url = settings.redis_url or "redis://localhost:6379"
-        host, port = _parse_redis_url(redis_url)
-        return RedisSettings(host=host, port=port)
+        return RedisSettings.from_dsn(redis_url)
 
     async def _get_pool(self) -> Any:
         if self._pool is None:

@@ -25,18 +25,13 @@ class TestGetRedisSettings:
     @pytest.mark.asyncio
     async def test_parses_custom_redis_url(self):
         """Should parse custom Redis URL."""
-        with (
-            patch("backend.workers.settings.settings") as mock_settings,
-            patch("backend.workers.settings._parse_redis_url") as mock_parse,
-        ):
+        with patch("backend.workers.settings.settings") as mock_settings:
             mock_settings.redis_url = "redis://custom-redis:6380"
-            mock_parse.return_value = ("custom-redis", 6380)
 
             result = get_redis_settings()
 
             assert result.host == "custom-redis"
             assert result.port == 6380
-            mock_parse.assert_called_once_with("redis://custom-redis:6380")
 
 
 class TestWorkerSettings:

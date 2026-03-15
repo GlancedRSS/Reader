@@ -3,7 +3,6 @@ from arq.cron import CronJob
 from arq.worker import func
 
 from backend.core.app import settings
-from backend.infrastructure.external.arq_client import _parse_redis_url
 from backend.workers.functions import (
     scheduled_auto_mark_read,
     scheduled_feed_cleanup,
@@ -15,8 +14,7 @@ from backend.workers.functions import (
 
 def get_redis_settings() -> RedisSettings:
     redis_url = settings.redis_url or "redis://localhost:6379"
-    host, port = _parse_redis_url(redis_url)
-    return RedisSettings(host=host, port=port, database=0)
+    return RedisSettings.from_dsn(redis_url)
 
 
 class WorkerSettings:
