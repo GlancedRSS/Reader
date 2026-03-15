@@ -85,8 +85,6 @@ class OpmlValidation:
                 f"OPML file has too many feeds ({outline_count}). Maximum allowed: {MAX_OPML_OUTLINES}"
             )
 
-        return
-
     @classmethod
     def validate_opml_file_metadata(
         cls, file_content: bytes, filename: str

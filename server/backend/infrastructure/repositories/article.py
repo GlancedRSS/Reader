@@ -398,29 +398,28 @@ class ArticleRepository:
                             ),
                         )
                     )
-            else:
-                if article_id:
-                    cursor_conditions.append(
-                        and_(
-                            col_relevance == cursor_relevance,
-                            col_published_at.is_(None),
-                            or_(
-                                col_created_at < cursor_timestamp_naive,
-                                and_(
-                                    col_created_at == cursor_timestamp_naive,
-                                    col_id < article_id,
-                                ),
-                            ),
-                        )
-                    )
-                else:
-                    cursor_conditions.append(
-                        and_(
-                            col_relevance == cursor_relevance,
-                            col_published_at.is_(None),
+            elif article_id:
+                cursor_conditions.append(
+                    and_(
+                        col_relevance == cursor_relevance,
+                        col_published_at.is_(None),
+                        or_(
                             col_created_at < cursor_timestamp_naive,
-                        )
+                            and_(
+                                col_created_at == cursor_timestamp_naive,
+                                col_id < article_id,
+                            ),
+                        ),
                     )
+                )
+            else:
+                cursor_conditions.append(
+                    and_(
+                        col_relevance == cursor_relevance,
+                        col_published_at.is_(None),
+                        col_created_at < cursor_timestamp_naive,
+                    )
+                )
 
             base_query = base_query.where(or_(*cursor_conditions))
         else:
@@ -457,27 +456,26 @@ class ArticleRepository:
                             col_published_at.is_(None),
                         )
                     )
-            else:
-                if article_id:
-                    base_query = base_query.where(
-                        and_(
-                            col_published_at.is_(None),
-                            or_(
-                                col_created_at < cursor_timestamp_naive,
-                                and_(
-                                    col_created_at == cursor_timestamp_naive,
-                                    col_id < article_id,
-                                ),
-                            ),
-                        )
-                    )
-                else:
-                    base_query = base_query.where(
-                        and_(
-                            col_published_at.is_(None),
+            elif article_id:
+                base_query = base_query.where(
+                    and_(
+                        col_published_at.is_(None),
+                        or_(
                             col_created_at < cursor_timestamp_naive,
-                        )
+                            and_(
+                                col_created_at == cursor_timestamp_naive,
+                                col_id < article_id,
+                            ),
+                        ),
                     )
+                )
+            else:
+                base_query = base_query.where(
+                    and_(
+                        col_published_at.is_(None),
+                        col_created_at < cursor_timestamp_naive,
+                    )
+                )
 
         return base_query.order_by(*order_clause)
 
