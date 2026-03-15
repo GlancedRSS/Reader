@@ -1,5 +1,3 @@
-"""Media extraction utilities for RSS feed content."""
-
 from typing import Any
 from urllib.parse import urlparse
 
@@ -9,14 +7,10 @@ from backend.infrastructure.feed.utils.constants import IMAGE_EXTENSIONS
 
 
 class MediaExtractor:
-    """Extracts media references from HTML content and RSS feed entries."""
-
     def __init__(self) -> None:
-        """Initialize the media extractor with supported image extensions."""
         self.image_extensions = IMAGE_EXTENSIONS
 
     def extract_image_from_entry(self, entry: Any) -> str | None:
-        """Extract image from RSS/ATOM entry metadata."""
         if hasattr(entry, "media_group") and entry.media_group:
             for group in entry.media_group:
                 if isinstance(group, dict):
@@ -91,7 +85,6 @@ class MediaExtractor:
         return None
 
     def extract_image_from_summary_description(self, entry: Any) -> str | None:
-        """Extract first image from RSS/ATOM summary and description fields."""
         if hasattr(entry, "summary") and entry.summary:
             summary_content = entry.summary
             if isinstance(summary_content, str) and summary_content.strip():
@@ -112,7 +105,6 @@ class MediaExtractor:
         return None
 
     def extract_image_from_html(self, html_content: str) -> str | None:
-        """Extract first image from HTML content."""
         if not html_content:
             return None
 
@@ -142,7 +134,6 @@ class MediaExtractor:
             return None
 
     def extract_metadata_from_entry(self, entry: Any) -> dict[str, Any]:
-        """Extract platform-specific metadata from RSS/ATOM entry."""
         metadata: dict[str, Any] = {}
 
         if hasattr(entry, "enclosures") and entry.enclosures:
@@ -229,7 +220,6 @@ class MediaExtractor:
         return metadata
 
     def _is_valid_image_url(self, url: str) -> bool:
-        """Check if URL is a valid image."""
         if not url or not url.startswith(("http://", "https://")):
             return False
 

@@ -1,5 +1,3 @@
-"""Application service for OPML import/export operations."""
-
 import uuid
 from uuid import UUID
 
@@ -29,10 +27,7 @@ logger = structlog.get_logger()
 
 
 class OpmlApplication:
-    """Application service for OPML import/export operations."""
-
     def __init__(self, db: AsyncSession):
-        """Initialize the OPML application with database session."""
         self.db = db
         self.repository = OpmlRepository(db)
         self.folder_repo = FolderRepository(db)
@@ -40,13 +35,11 @@ class OpmlApplication:
         self.tag_repo = UserTagRepository(db)
 
     def _get_storage_client(self) -> LocalStorageClient:
-        """Get local storage client."""
         return LocalStorageClient()
 
     async def validate_folder_ownership(
         self, folder_id: UUID, user_id: UUID
     ) -> bool:
-        """Validate that the user owns the folder."""
         folder = await self.folder_repo.get_folder_by_id_and_user(
             folder_id, user_id
         )
@@ -55,7 +48,6 @@ class OpmlApplication:
     async def export_opml(
         self, request: OpmlExportRequest, user_id: UUID
     ) -> ResponseMessage:
-        """Export user's feeds as OPML using background processing via Arq."""
         job_id = uuid.uuid4()
 
         client = ArqClient()
@@ -93,7 +85,6 @@ class OpmlApplication:
     async def upload_opml_file(
         self, file_content: bytes, filename: str, user_id: UUID
     ) -> OpmlUploadResponse:
-        """Upload and validate OPML file to local storage."""
         file_content_str, file_size, _encoding = (
             OpmlValidation.validate_opml_file_metadata(file_content, filename)
         )
@@ -127,7 +118,6 @@ class OpmlApplication:
     async def import_opml(
         self, request: OpmlImport, user_id: UUID
     ) -> ResponseMessage:
-        """Import feeds from previously uploaded OPML file using background processing."""
         opml_import = await self.repository.get_import_by_id(request.import_id)
 
         if not opml_import or opml_import.user_id != user_id:
@@ -186,7 +176,6 @@ class OpmlApplication:
     async def get_opml_status_by_id(
         self, job_id: UUID, user_id: UUID
     ) -> OpmlOperationResponse:
-        """Get detailed OPML import operation info by ID."""
         record = await self.repository.get_opml_by_id(job_id, user_id)
         if not record:
             raise HTTPException(
@@ -209,7 +198,6 @@ class OpmlApplication:
         )
 
     async def rollback_import(self, import_id: UUID, user_id: UUID) -> int:
-        """Rollback an OPML import by deleting all subscriptions and orphaned articles."""
         opml_import = await self.repository.get_import_by_id(import_id)
         if not opml_import or opml_import.user_id != user_id:
             raise HTTPException(

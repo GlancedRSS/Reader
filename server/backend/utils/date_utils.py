@@ -1,10 +1,7 @@
-"""Date parsing utilities for article and feed processing."""
-
 from datetime import UTC, datetime
 
 
 def parse_iso_datetime(date_string: str | None) -> datetime | None:
-    """Parse ISO 8601 datetime string with timezone support."""
     if not date_string:
         return None
 

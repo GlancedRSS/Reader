@@ -1,5 +1,3 @@
-"""Repository for subscription-related data access operations."""
-
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -19,15 +17,11 @@ logger = structlog.get_logger()
 
 
 class SubscriptionRepository:
-    """Repository for subscription and article-tag relationship data access."""
-
     def __init__(self, db: AsyncSession):
-        """Initialize the subscription repository."""
         self.db = db
         self.tag_repository = UserTagRepository(db)
 
     async def get_articles_for_feed(self, feed_id: UUID) -> list[Article]:
-        """Get all articles for a specific feed."""
         articles_query = (
             select(Article)
             .join(ArticleSource)
@@ -38,7 +32,6 @@ class SubscriptionRepository:
         return list(articles_result.scalars().all())
 
     async def get_article_ids_for_feed(self, feed_id: UUID) -> list[UUID]:
-        """Get all article IDs for a specific feed."""
         articles_query = (
             select(Article.id)
             .join(
@@ -54,7 +47,6 @@ class SubscriptionRepository:
     async def get_recent_article_ids_for_feed(
         self, feed_id: UUID, since_timestamp: datetime
     ) -> list[UUID]:
-        """Get article IDs from a feed's latest_articles array."""
         logger.info(
             "Getting recent article IDs for feed",
             feed_id=str(feed_id),
@@ -81,7 +73,6 @@ class SubscriptionRepository:
     async def bulk_upsert_user_article_states(
         self, user_id: UUID, article_ids: list[UUID]
     ) -> int:
-        """Bulk insert UserArticle records with conflict handling."""
         if not article_ids:
             return 0
 
@@ -102,7 +93,6 @@ class SubscriptionRepository:
     async def recalculate_subscription_unread_count(
         self, subscription_id: UUID
     ) -> int | None:
-        """Call stored procedure to recalculate subscription unread count."""
         try:
             recalc_result = await self.db.execute(
                 text(
@@ -122,7 +112,6 @@ class SubscriptionRepository:
     async def create_article_tag_relationship(
         self, article_id: UUID, tag_id: UUID, user_id: UUID
     ) -> None:
-        """Create a junction relationship between article and tag."""
         await self.tag_repository.add_tags_to_article(
             article_id, [tag_id], user_id
         )
@@ -130,7 +119,6 @@ class SubscriptionRepository:
     async def get_unread_articles_for_user(
         self, user_id: UUID, older_than: datetime
     ) -> list[UserArticle]:
-        """Get unread articles for a user older than a given date."""
         stmt = (
             select(UserArticle)
             .join(Article, UserArticle.article_id == Article.id)
@@ -147,7 +135,6 @@ class SubscriptionRepository:
         article_ids: list[UUID],
         read_at: datetime | None = None,
     ) -> int:
-        """Mark articles as read for a user."""
         if not article_ids:
             return 0
 
@@ -177,7 +164,6 @@ class SubscriptionRepository:
         cutoff_date_30days: datetime,
         read_at: datetime | None = None,
     ) -> dict[str, int]:
-        """Bulk mark old articles as read for all users with auto-read enabled."""
         if read_at is None:
             read_at = datetime.now(UTC)
 

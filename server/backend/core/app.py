@@ -1,5 +1,3 @@
-"""Application configuration with environment variable support."""
-
 import os
 import tomllib
 from pathlib import Path
@@ -23,7 +21,6 @@ load_dotenv(_base_dir / ".env.local", override=True)
 
 
 def _get_version() -> str:
-    """Read version from pyproject.toml."""
     try:
         pyproject_path = _base_dir / "pyproject.toml"
         with open(pyproject_path, "rb") as f:
@@ -34,8 +31,6 @@ def _get_version() -> str:
 
 
 class Settings(BaseSettings):
-    """Application settings loaded from environment variables."""
-
     model_config = SettingsConfigDict(
         case_sensitive=False,
         extra="ignore",
@@ -50,7 +45,6 @@ class Settings(BaseSettings):
 
     @property
     def is_development(self) -> bool:
-        """Check if the application is running in development mode."""
         return self.environment.lower() == "development"
 
     version: str = Field(
@@ -66,7 +60,6 @@ class Settings(BaseSettings):
 
     @property
     def user_agent(self) -> str:
-        """Get user agent string for feed requests."""
         return f"Glanced-Reader/{self.version} (+https://github.com/glancedrss/reader)"
 
     request_timeout: int = 30
@@ -110,7 +103,6 @@ class Settings(BaseSettings):
 
     @property
     def session_cookie_secure_effective(self) -> bool:
-        """Get the effective secure flag for cookies based on environment or override."""
         if self.cookie_secure is not None:
             return self.cookie_secure
         if self.is_development:
@@ -119,7 +111,6 @@ class Settings(BaseSettings):
 
     @property
     def session_cookie_max_age(self) -> int:
-        """Get the session cookie max age in seconds."""
         return self.session_timeout_days * 24 * 60 * 60
 
     storage_path: str = Field(
@@ -142,14 +133,12 @@ class Settings(BaseSettings):
 
     @property
     def storage_config(self) -> dict[str, str]:
-        """Get storage configuration as a dictionary."""
         return {
             "path": self.storage_path,
         }
 
 
 def validate_configuration() -> tuple[bool, list[str]]:
-    """Validate all required configuration and return errors if any."""
     logger = structlog.get_logger()
     errors: list[str] = []
     warnings: list[str] = []
@@ -217,7 +206,6 @@ def validate_configuration() -> tuple[bool, list[str]]:
 
 
 def get_configuration_help() -> dict[str, str]:
-    """Get help information for common configuration issues."""
     return {
         "DATABASE_URL": """
             PostgreSQL connection URL.

@@ -1,5 +1,3 @@
-"""Discovery application that handles feed discovery and subscription."""
-
 from typing import TYPE_CHECKING, Literal, cast
 from uuid import UUID
 
@@ -25,15 +23,12 @@ logger = structlog.get_logger(__name__)
 
 
 class DiscoveryApplication:
-    """Discovery application that handles feed discovery."""
-
     def __init__(
         self,
         db: AsyncSession,
         discovery_publisher: DiscoveryPublisher | None = None,
         feed_application: "FeedApplication | None" = None,
     ):
-        """Initialize the discovery application."""
         self.db = db
         self.feed_repository = FeedRepository(db)
         self.user_feed_repository = UserFeedRepository(db)
@@ -44,7 +39,6 @@ class DiscoveryApplication:
     async def discover_feeds(
         self, url: str, user_id: UUID, folder_id: UUID | None = None
     ) -> FeedDiscoveryResponse:
-        """Discover feeds from a URL and check subscription status."""
         logger.info("Discovering feeds", url=url, user_id=str(user_id))
 
         existing_feed = await self.feed_repository.get_feed_by_url(url)

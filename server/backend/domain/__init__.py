@@ -1,5 +1,3 @@
-"""Core business logic without infrastructure dependencies."""
-
 from backend.domain.auth import (
     AuthDomain,
     AuthenticationError,

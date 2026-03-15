@@ -1,5 +1,3 @@
-"""User session model for authentication tracking."""
-
 from datetime import datetime
 from ipaddress import IPv4Address, IPv6Address
 from uuid import UUID
@@ -12,8 +10,6 @@ from backend.models.base import Base, PostgresUUID, sa_text
 
 
 class UserSession(Base):
-    """User session model for tracking active authentication sessions."""
-
     __tablename__ = "user_sessions"
     __table_args__ = (
         CheckConstraint(

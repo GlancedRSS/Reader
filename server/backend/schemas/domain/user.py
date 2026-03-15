@@ -1,5 +1,3 @@
-"""Schemas for user profile and preferences."""
-
 from datetime import datetime
 
 from pydantic import Field

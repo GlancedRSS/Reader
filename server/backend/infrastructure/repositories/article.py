@@ -1,5 +1,3 @@
-"""Repository for article state management and queries."""
-
 from collections import namedtuple
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time
@@ -53,8 +51,6 @@ ArticleRow = namedtuple(
 
 @dataclass
 class ArticleMetadata:
-    """Metadata for an article from the query result."""
-
     subscription_id: UUID
     subscription_title: str
     subscription_website: str | None
@@ -65,8 +61,6 @@ class ArticleMetadata:
 
 @dataclass
 class ArticlesQueryResult:
-    """Result from articles query execution."""
-
     articles: list[ArticleRow]
     metadata: dict[UUID, ArticleMetadata]
     next_cursor: str | None
@@ -74,16 +68,12 @@ class ArticlesQueryResult:
 
 
 class ArticleRepository:
-    """Repository for article state management and query operations."""
-
     def __init__(self, db: AsyncSession):
-        """Initialize the article repository."""
         self.db = db
 
     async def get_user_article_state(
         self, article_id: UUID, current_user: User
     ) -> UserArticle:
-        """Get user article state, raising NotFoundError if missing."""
         state_query = select(UserArticle).where(
             UserArticle.user_id == current_user.id,
             UserArticle.article_id == article_id,
@@ -102,7 +92,6 @@ class ArticleRepository:
     async def find_by_id(
         self, article_id: UUID, user_id: UUID
     ) -> UserArticle | None:
-        """Get user article by ID with user filtering."""
         state_query = select(UserArticle).where(
             UserArticle.user_id == user_id,
             UserArticle.article_id == article_id,
@@ -113,7 +102,6 @@ class ArticleRepository:
     async def mark_article_as_read(
         self, article_id: UUID, current_user: User
     ) -> None:
-        """Mark an article as read and update user's last_active timestamp."""
         state = await self.get_user_article_state(article_id, current_user)
 
         if not state.is_read:
@@ -128,7 +116,6 @@ class ArticleRepository:
         state_update_data: dict[str, Any],
         current_user: User,
     ) -> bool:
-        """Update article read state (is_read, read_later)."""
         if not state_update_data:
             return False
 
@@ -148,7 +135,6 @@ class ArticleRepository:
         article_ids: list[UUID],
         is_read: bool,
     ) -> int:
-        """Bulk mark articles as read or unread."""
         if not article_ids:
             return 0
 
@@ -184,7 +170,6 @@ class ArticleRepository:
         from_date: date | None = None,
         to_date: date | None = None,
     ) -> Select[tuple[Any, ...]]:
-        """Build base query for articles with filters applied."""
         has_search_query = q and q != "*"
 
         if has_search_query:
@@ -337,7 +322,6 @@ class ArticleRepository:
         has_search: bool = False,
         q: str | None = None,
     ) -> Select[tuple[Any, ...]]:
-        """Apply cursor filtering to articles query."""
         from sqlalchemy import ClauseList
 
         if has_search and q:
@@ -503,7 +487,6 @@ class ArticleRepository:
         limit: int,
         has_search: bool = False,
     ) -> ArticlesQueryResult:
-        """Execute the articles query with cursor pagination."""
         query = query.limit(limit + 1)
         result = await self.db.execute(query)
         article_rows = result.all()
@@ -580,7 +563,6 @@ class ArticleRepository:
         from_date: date | None = None,
         to_date: date | None = None,
     ) -> int:
-        """Get total count of articles matching the criteria."""
         count_query = (
             select(func.count(distinct(Article.id)))
             .select_from(UserArticle)
@@ -663,7 +645,6 @@ class ArticleRepository:
     async def get_article_by_id(
         self, article_id: UUID, current_user: User
     ) -> tuple[Article, UUID, str, str | None] | None:
-        """Get a specific article by ID with access verification."""
         query = (
             select(
                 Article,
@@ -700,7 +681,6 @@ class ArticleRepository:
     async def get_article_tags(
         self, article_ids: list[UUID], current_user: User
     ) -> dict[UUID, list[UserTag]]:
-        """Get tags for multiple articles."""
         if not article_ids:
             return {}
 
@@ -755,7 +735,6 @@ class ArticleRepository:
         from_date: date | None = None,
         to_date: date | None = None,
     ) -> Select[tuple[UUID]]:
-        """Build query for mark-all operations."""
         base_query = (
             select(Article.id)
             .join(UserArticle, Article.id == UserArticle.article_id)

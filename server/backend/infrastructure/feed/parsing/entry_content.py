@@ -1,5 +1,3 @@
-"""RSS/ATOM feed entry extraction utilities."""
-
 from datetime import UTC, datetime
 from typing import Any
 
@@ -14,12 +12,9 @@ import structlog
 
 
 class EntryExtractor:
-    """Extracts structured content from individual RSS/ATOM feed entries."""
-
     def extract_content_from_entry(
         self, entry: Any
     ) -> tuple[str | None, str | None]:
-        """Extract content from dedicated content XML tags only."""
         if hasattr(entry, "media_group") and entry.media_group:
             for group in entry.media_group:
                 if isinstance(group, dict):
@@ -57,7 +52,6 @@ class EntryExtractor:
         return None, None
 
     def extract_author_from_entry(self, entry: Any) -> str | None:
-        """Extract author from RSS/ATOM entry."""
         if hasattr(entry, "author"):
             author = getattr(entry, "author", "")
             if author:
@@ -97,7 +91,6 @@ class EntryExtractor:
         return None
 
     def extract_categories_from_entry(self, entry: Any) -> list[str]:
-        """Extract categories from RSS/ATOM entry."""
         categories = []
 
         if hasattr(entry, "tags") and entry.tags:
@@ -139,7 +132,6 @@ class EntryExtractor:
         return list(dict.fromkeys(categories))
 
     def extract_publish_date(self, entry: Any) -> datetime | None:
-        """Extract publish date from RSS/ATOM entry."""
         import time
 
         def time_struct_to_dt(time_struct: Any) -> datetime | None:

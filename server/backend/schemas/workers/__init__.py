@@ -1,5 +1,3 @@
-"""Job request and response schemas."""
-
 from .auto_read import (
     AutoMarkReadJobRequest,
     AutoMarkReadJobResponse,

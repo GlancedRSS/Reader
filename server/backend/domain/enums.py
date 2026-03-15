@@ -1,11 +1,7 @@
-"""Status enumerations for feeds, subscriptions, users, and OPML imports."""
-
 from enum import StrEnum
 
 
 class FeedStatus(StrEnum):
-    """Feed health status values."""
-
     ACTIVE = "active"
     INACTIVE = "inactive"
     ERROR = "error"
@@ -13,8 +9,6 @@ class FeedStatus(StrEnum):
 
 
 class SubscriptionStatus(StrEnum):
-    """Subscription status values."""
-
     ACTIVE = "active"
     PAUSED = "paused"
     ERROR = "error"
@@ -23,8 +17,6 @@ class SubscriptionStatus(StrEnum):
 
 
 class OpmlImportStatus(StrEnum):
-    """OPML import job status values."""
-
     UPLOADED = "uploaded"
     PENDING = "pending"
     PROCESSING = "processing"

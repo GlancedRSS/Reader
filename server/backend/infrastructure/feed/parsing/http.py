@@ -1,5 +1,3 @@
-"""HTTP client service for centralized HTTP operations."""
-
 from importlib.metadata import version as get_version
 from typing import Any
 
@@ -11,11 +9,8 @@ _VERSION = get_version("glanced-reader-server")
 
 
 class HttpClient:
-    """Configuration provider for secure HTTP client."""
-
     @staticmethod
     def get_secure_client_config() -> dict[str, Any]:
-        """Return configuration for secure HTTP client with timeouts, size limits, and headers."""
         return {
             "timeout_config": httpx.Timeout(
                 connect=5.0,
@@ -36,10 +31,7 @@ class HttpClient:
 
 
 class SecureHTTPClient:
-    """HTTP client with security hardening for resource-constrained environments."""
-
     def __init__(self) -> None:
-        """Initialize the HTTP client with secure configuration."""
         config = HttpClient.get_secure_client_config()
         self.timeout_config = config["timeout_config"]
         self.max_response_size = config["max_response_size"]
@@ -47,7 +39,6 @@ class SecureHTTPClient:
         self.default_headers = config["default_headers"]
 
     def create_client(self) -> httpx.AsyncClient:
-        """Create a secure HTTP client with connection limits and timeouts."""
         limits = httpx.Limits(
             max_keepalive_connections=5,
             max_connections=10,

@@ -1,5 +1,3 @@
-"""Server-Sent Events (SSE) endpoint for real-time notifications."""
-
 import json
 from collections.abc import AsyncGenerator
 from typing import Any
@@ -13,7 +11,6 @@ router = APIRouter()
 
 
 async def _error_stream(message: str) -> AsyncGenerator[dict[str, Any]]:
-    """Yield a single error event and close."""
     yield {"event": "error", "data": json.dumps({"message": message})}
 
 
@@ -27,7 +24,6 @@ async def notifications_stream(
     request: Request,
     notification_app=Depends(get_notification_application),
 ) -> EventSourceResponse:
-    """SSE endpoint for real-time notifications."""
     user_id = getattr(request.state, "user_id", None)
     if not user_id:
         return EventSourceResponse(

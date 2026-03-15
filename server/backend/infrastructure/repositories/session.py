@@ -1,5 +1,3 @@
-"""Session data access layer for user session management."""
-
 import secrets
 import uuid
 from datetime import UTC, datetime, timedelta
@@ -17,7 +15,6 @@ logger = structlog.get_logger()
 
 
 def _extract_session_id(session_token: str) -> str | None:
-    """Extract session ID from session token."""
     try:
         return session_token.split(".")[0]
     except (IndexError, AttributeError):
@@ -31,7 +28,6 @@ async def create_user_session_with_cookie(
     user_agent: str | None = None,
     ip_address: str | None = None,
 ) -> tuple[UserSession, str]:
-    """Create a new user session with cookie token."""
     secret_token = secrets.token_urlsafe(32)
     session_token = f"{session_id}.{secret_token}"
     cookie_hash = hash_token(session_token)
@@ -56,7 +52,6 @@ async def create_user_session_with_cookie(
 async def verify_session_cookie(
     session_token: str, db: AsyncSession
 ) -> UserSession | None:
-    """Verify a session cookie and return the session."""
     if not session_token:
         return None
 
@@ -90,7 +85,6 @@ async def verify_session_cookie(
 
 
 async def revoke_session_cookie(session_token: str, db: AsyncSession) -> bool:
-    """Revoke a session cookie."""
     if not session_token:
         return False
 
@@ -122,7 +116,6 @@ async def revoke_session_cookie(session_token: str, db: AsyncSession) -> bool:
 async def get_current_user_from_cookie(
     session_token: str, db: AsyncSession
 ) -> User | None:
-    """Get current user from session cookie."""
     try:
         session = await verify_session_cookie(session_token, db)
         if not session:
@@ -143,14 +136,10 @@ async def get_current_user_from_cookie(
 
 
 class SessionRepository:
-    """Data access layer for session operations."""
-
     def __init__(self, db: AsyncSession):
-        """Initialize the session repository."""
         self.db = db
 
     async def get_active_session_count(self, user_id: UUID) -> int:
-        """Get count of active sessions for a user."""
         session_count_query = select(func.count(UserSession.session_id)).where(
             UserSession.user_id == user_id,
             UserSession.expires_at > datetime.now(UTC),
@@ -159,7 +148,6 @@ class SessionRepository:
         return count_result.scalar() or 0
 
     async def get_oldest_session(self, user_id: UUID) -> UserSession | None:
-        """Get the oldest active session for a user."""
         oldest_session_query = (
             select(UserSession)
             .where(
@@ -176,7 +164,6 @@ class SessionRepository:
     async def create_session(
         self, user_id: UUID, user_agent: str | None, ip_address: str | None
     ) -> tuple[UserSession, str]:
-        """Create a new user session and return session info with token."""
         session_id = uuid.uuid4()
         session, session_token = await create_user_session_with_cookie(
             user_id=user_id,
@@ -188,7 +175,6 @@ class SessionRepository:
         return session, session_token
 
     async def revoke_all_user_sessions(self, user_id: UUID) -> int:
-        """Revoke all sessions for a user."""
         stmt = delete(UserSession).where(UserSession.user_id == user_id)
         result = await self.db.execute(stmt)
         return result.rowcount or 0
@@ -196,7 +182,6 @@ class SessionRepository:
     async def revoke_session_by_id(
         self, user_id: UUID, session_id: UUID
     ) -> int:
-        """Revoke a specific session by ID."""
         delete_stmt = delete(UserSession).where(
             UserSession.user_id == user_id,
             UserSession.session_id == session_id,
@@ -206,7 +191,6 @@ class SessionRepository:
         return result.rowcount or 0
 
     async def revoke_oldest_session(self, user_id: UUID) -> bool:
-        """Revoke the oldest active session for a user."""
         oldest = await self.get_oldest_session(user_id)
         if not oldest:
             return False
@@ -219,7 +203,6 @@ class SessionRepository:
         return (result.rowcount or 0) > 0
 
     async def get_user_sessions(self, user_id: UUID) -> list[UserSession]:
-        """Get all active sessions for a user."""
         stmt = (
             select(UserSession)
             .where(

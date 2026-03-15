@@ -1,5 +1,3 @@
-"""ArticleTag model for junction table linking articles to user tags."""
-
 from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
@@ -15,8 +13,6 @@ if TYPE_CHECKING:
 
 
 class ArticleTag(Base):
-    """Junction table linking articles to user tags."""
-
     __tablename__ = "tags"
     __table_args__ = (
         UniqueConstraint("user_article_id", "user_tag_id"),

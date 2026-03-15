@@ -1,5 +1,3 @@
-"""SQLAlchemy ORM models for database tables."""
-
 from .article import Article
 from .article_source import ArticleSource
 from .article_tag import ArticleTag

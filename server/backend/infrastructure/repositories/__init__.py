@@ -1,5 +1,3 @@
-"""Data access repositories for all domain entities."""
-
 from backend.infrastructure.repositories.article import (
     ArticleRepository,
     ArticlesQueryResult,

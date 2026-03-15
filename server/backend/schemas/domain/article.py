@@ -1,5 +1,3 @@
-"""Schemas for article management, including listing, details, and state updates."""
-
 from datetime import date, datetime
 from typing import Any
 from uuid import UUID

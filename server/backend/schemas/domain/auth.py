@@ -1,5 +1,3 @@
-"""Schemas for authentication endpoints."""
-
 from datetime import datetime
 from uuid import UUID
 
@@ -9,8 +7,6 @@ from backend.schemas.core import BaseSchema
 
 
 class RegistrationRequest(BaseSchema):
-    """Request schema for user registration."""
-
     username: str = Field(
         ...,
         min_length=3,
@@ -26,15 +22,11 @@ class RegistrationRequest(BaseSchema):
 
 
 class LoginRequest(BaseSchema):
-    """Request schema for user login."""
-
     username: str = Field(..., description="Username")
     password: str = Field(..., description="User password")
 
 
 class PasswordChangeRequest(BaseSchema):
-    """Request schema for changing password."""
-
     current_password: str = Field(
         ..., description="Current password for verification"
     )
@@ -47,8 +39,6 @@ class PasswordChangeRequest(BaseSchema):
 
 
 class SessionResponse(BaseSchema):
-    """Response schema for a user session."""
-
     session_id: UUID = Field(..., description="Unique session identifier")
     created_at: datetime = Field(..., description="When session was created")
     last_used: datetime = Field(..., description="When session was last used")

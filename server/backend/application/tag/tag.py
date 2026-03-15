@@ -1,5 +1,3 @@
-"""Application service for tag management and article-tag relationships."""
-
 from typing import TYPE_CHECKING
 from uuid import UUID
 
@@ -33,17 +31,13 @@ logger = structlog.get_logger(__name__)
 
 
 class TagApplication:
-    """Application service for tag management and article-tag relationships."""
-
     def __init__(self, db: AsyncSession):
-        """Initialize the tag application with database session."""
         self.db = db
 
         self.repository = UserTagRepository(db)
 
     @staticmethod
     def _build_tag_response(tag: "UserTag") -> TagListResponse:
-        """Build TagListResponse from tag model."""
         return TagListResponse(
             id=tag.id,
             name=tag.name,
@@ -53,7 +47,6 @@ class TagApplication:
     async def get_user_tag(
         self, user_id: UUID, tag_id: UUID
     ) -> TagListResponse:
-        """Get a specific tag for a user."""
         tag = await self.repository.find_by_id(tag_id, user_id)
         if not tag:
             raise NotFoundError("Tag not found")
@@ -66,7 +59,6 @@ class TagApplication:
         limit: int = DEFAULT_LIMIT,
         offset: int = 0,
     ) -> PaginatedResponse[TagListResponse]:
-        """Get tags for a user with pagination."""
         tags, total = await self.repository.get_user_tags_paginated(
             user_id, limit, offset
         )
@@ -89,7 +81,6 @@ class TagApplication:
     async def create_user_tag(
         self, user_id: UUID, tag_data: TagCreateRequest
     ) -> TagListResponse:
-        """Create a new user tag with validation and business rules."""
         try:
             sanitized_name = TagValidationDomain.validate_tag_name(
                 tag_data.name
@@ -125,7 +116,6 @@ class TagApplication:
     async def update_user_tag(
         self, user_id: UUID, tag_id: UUID, tag_data: TagUpdateRequest
     ) -> ResponseMessage:
-        """Update a user tag with validation."""
         tag = await self.repository.find_by_id(tag_id, user_id)
         if not tag:
             raise NotFoundError("Tag not found")
@@ -153,7 +143,6 @@ class TagApplication:
     async def delete_user_tag(
         self, user_id: UUID, tag_id: UUID
     ) -> ResponseMessage:
-        """Delete a user tag."""
         tag = await self.repository.find_by_id(tag_id, user_id)
         if not tag:
             raise NotFoundError("Tag not found")
@@ -165,7 +154,6 @@ class TagApplication:
     async def sync_article_tags(
         self, user_id: UUID, article_id: UUID, desired_tag_ids: list[UUID]
     ) -> dict[str, list[UUID]]:
-        """Sync article tags to match desired state, adding missing and removing extra tags."""
         current_tags = await self.repository.get_article_tags(
             article_id, user_id
         )

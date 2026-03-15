@@ -1,5 +1,3 @@
-"""OPML content structure validation and security checks."""
-
 import re
 
 from backend.domain import (
@@ -13,11 +11,8 @@ from backend.domain.opml.parser import OpmlParser
 
 
 class OpmlValidation:
-    """OPML content structure validation and security checks."""
-
     @classmethod
     def validate_opml_content(cls, content: str) -> None:
-        """Validate OPML structure, security (no scripts), attribute lengths, nesting depth, outline count."""
         if not content or content.strip() == "":
             raise ValueError("OPML file is empty")
 
@@ -96,7 +91,6 @@ class OpmlValidation:
     def validate_opml_file_metadata(
         cls, file_content: bytes, filename: str
     ) -> tuple[str, int, str | None]:
-        """Validate OPML file metadata and return decoded content."""
         from backend.utils.validators import (
             validate_file_size,
             validate_opml_filename,
@@ -143,7 +137,6 @@ class OpmlValidation:
 
     @classmethod
     def validate_file_age(cls, file_age_seconds: int) -> None:
-        """Check if file has expired based on age."""
         max_age = OPML_FILE_EXPIRY_HOURS * 60 * 60
         if file_age_seconds > max_age:
             raise ValueError(

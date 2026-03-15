@@ -1,5 +1,3 @@
-"""Authentication middleware for httpOnly cookie-based session verification."""
-
 import re
 import time
 from collections.abc import Awaitable, Callable
@@ -26,7 +24,6 @@ CSRF_PROTECTED_METHODS = {"POST", "PUT", "DELETE", "PATCH"}
 
 
 def _normalize_path(path: str) -> str:
-    """Normalize URL path to prevent authentication bypass attempts."""
     normalized = unquote(path)
     normalized = re.sub(r"/+", "/", normalized)
     if normalized != "/" and normalized.endswith("/"):
@@ -35,7 +32,6 @@ def _normalize_path(path: str) -> str:
 
 
 def _verify_csrf_token(request: Request) -> None:
-    """Verify CSRF token from header matches cookie value."""
     csrf_cookie = request.cookies.get(settings.csrf_cookie_name)
     csrf_header = request.headers.get("X-CSRF-Token")
 
@@ -59,7 +55,6 @@ def _verify_csrf_token(request: Request) -> None:
 
 
 def _is_public_endpoint(normalized_path: str, request_method: str) -> bool:
-    """Check if the endpoint is public and doesn't require authentication."""
     public_paths = {
         "/health",
         "/health/detailed",
@@ -94,13 +89,11 @@ def _is_public_endpoint(normalized_path: str, request_method: str) -> bool:
 
 
 def add_auth_middleware(app: "FastAPI") -> None:
-    """Add authentication middleware to FastAPI app."""
 
     @app.middleware("http")
     async def authentication_middleware(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """Verify httpOnly cookie session and set user context."""
         normalized_path = _normalize_path(request.url.path)
 
         if _is_public_endpoint(normalized_path, request.method):
@@ -126,7 +119,6 @@ def add_auth_middleware(app: "FastAPI") -> None:
 
 
 async def _verify_session_cookie(request: Request) -> None:
-    """Verify httpOnly cookie session and extract user ID."""
     start_time = time.time()
 
     session_token = request.cookies.get(settings.session_cookie_name)

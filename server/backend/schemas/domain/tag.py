@@ -1,5 +1,3 @@
-"""Schemas for user tag management, including creation and updates."""
-
 from uuid import UUID
 
 from pydantic import Field

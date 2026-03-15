@@ -1,5 +1,3 @@
-"""Schemas for feed discovery operations."""
-
 from typing import Literal
 from uuid import UUID
 

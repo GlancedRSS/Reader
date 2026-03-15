@@ -1,5 +1,3 @@
-"""Tag management for article categorization and organization."""
-
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -39,7 +37,6 @@ async def get_user_tags(
         description="Number of tags to skip (for alphabetical pagination)",
     ),
 ) -> PaginatedResponse[TagListResponse]:
-    """Get tags for the current user with pagination."""
     return await tag_app.get_user_tags(current_user.id, limit, offset)
 
 
@@ -55,7 +52,6 @@ async def create_user_tag(
     current_user: User = Depends(get_user_from_request_state),
     tag_app=Depends(get_tag_application),
 ) -> TagListResponse:
-    """Create a new user tag (get-or-create pattern to handle unique constraint)."""
     return await tag_app.create_user_tag(current_user.id, tag_data)
 
 
@@ -71,7 +67,6 @@ async def get_user_tag(
     current_user: User = Depends(get_user_from_request_state),
     tag_app=Depends(get_tag_application),
 ) -> TagListResponse:
-    """Get a specific tag for the current user."""
     return await tag_app.get_user_tag(current_user.id, tag_id)
 
 
@@ -88,7 +83,6 @@ async def update_user_tag(
     current_user: User = Depends(get_user_from_request_state),
     tag_app=Depends(get_tag_application),
 ) -> ResponseMessage:
-    """Update a user tag."""
     return await tag_app.update_user_tag(current_user.id, tag_id, tag_data)
 
 
@@ -104,5 +98,4 @@ async def delete_user_tag(
     current_user: User = Depends(get_user_from_request_state),
     tag_app=Depends(get_tag_application),
 ) -> ResponseMessage:
-    """Delete a user tag."""
     return await tag_app.delete_user_tag(current_user.id, tag_id)

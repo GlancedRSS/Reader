@@ -1,5 +1,3 @@
-"""User folder model for feed organization."""
-
 from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
@@ -23,8 +21,6 @@ if TYPE_CHECKING:
 
 
 class UserFolder(Base):
-    """User-created folders for hierarchical feed organization."""
-
     __tablename__ = "user_folders"
     __table_args__ = (
         Index("idx_personalization_user_folders_user_id", "user_id"),

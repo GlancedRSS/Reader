@@ -1,5 +1,3 @@
-"""Search application service using Postgres full-text search."""
-
 import asyncio
 from typing import Any, Literal, cast
 from uuid import UUID
@@ -30,10 +28,7 @@ logger = structlog.get_logger()
 
 
 class SearchApplication:
-    """Application service for Postgres-based universal search."""
-
     def __init__(self, db: AsyncSession) -> None:
-        """Initialize the search application."""
         self.db = db
         self.repository = SearchRepository(db)
 
@@ -42,7 +37,6 @@ class SearchApplication:
         request: UnifiedSearchRequest,
         current_user: User,
     ) -> UnifiedSearchResponse:
-        """Execute union search across all content types with custom type weights."""
         query = request.query
 
         type_weights = {
@@ -123,7 +117,6 @@ class SearchApplication:
         request: FeedSearchRequest,
         current_user: User,
     ) -> FeedSearchResponse:
-        """Search feeds."""
         raw_result = await self.repository.search_feeds(
             query=request.query,
             user_id=current_user.id,
@@ -151,7 +144,6 @@ class SearchApplication:
         request: TagSearchRequest,
         current_user: User,
     ) -> TagSearchResponse:
-        """Search tags."""
         raw_result = await self.repository.search_tags(
             query=request.query,
             user_id=current_user.id,
@@ -179,7 +171,6 @@ class SearchApplication:
         request: FolderSearchRequest,
         current_user: User,
     ) -> FolderSearchResponse:
-        """Search folders."""
         raw_result = await self.repository.search_folders(
             query=request.query,
             user_id=current_user.id,
@@ -208,7 +199,6 @@ class SearchApplication:
         user_id: UUID,
         limit: int,
     ) -> list[dict[str, Any]]:
-        """Search articles and return hits with scores."""
         from backend.infrastructure.repositories.article import (
             ArticleRepository,
         )
@@ -274,7 +264,6 @@ class SearchApplication:
         user_id: UUID,
         limit: int,
     ) -> list[dict[str, Any]]:
-        """Search feeds and return hits with scores."""
         raw_result = await self.repository.search_feeds(
             query=query,
             user_id=user_id,
@@ -303,7 +292,6 @@ class SearchApplication:
         user_id: UUID,
         limit: int,
     ) -> list[dict[str, Any]]:
-        """Search tags and return hits with scores."""
         raw_result = await self.repository.search_tags(
             query=query,
             user_id=user_id,
@@ -332,7 +320,6 @@ class SearchApplication:
         user_id: UUID,
         limit: int,
     ) -> list[dict[str, Any]]:
-        """Search folders and return hits with scores."""
         raw_result = await self.repository.search_folders(
             query=query,
             user_id=user_id,
@@ -358,7 +345,6 @@ class SearchApplication:
     def _dict_to_unified_hit(
         self, hit_dict: dict[str, Any], result_type: str
     ) -> UnifiedSearchHit:
-        """Convert a dict result to UnifiedSearchHit."""
         data = hit_dict.get("data", {})
 
         if result_type == "article":
@@ -389,7 +375,6 @@ class SearchApplication:
     def _normalize_scores(
         self, hits: list[dict[str, Any]]
     ) -> list[dict[str, Any]]:
-        """Normalize relevance scores to 0-1 range using min-max normalization."""
         if not hits:
             return []
 

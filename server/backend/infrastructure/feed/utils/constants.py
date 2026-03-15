@@ -1,5 +1,3 @@
-"""Shared constants and utility functions for feed infrastructure."""
-
 import html
 
 IMAGE_EXTENSIONS = {
@@ -15,7 +13,6 @@ IMAGE_EXTENSIONS = {
 
 
 def decode_html_entities(text: str) -> str:
-    """Decode HTML entities in text content with double-encoding fix."""
     if not text:
         return text
 

@@ -1,5 +1,3 @@
-"""Scheduled maintenance job handlers."""
-
 import asyncio
 import time
 from typing import TYPE_CHECKING, Any
@@ -27,12 +25,9 @@ logger = get_logger(__name__)
 
 
 class FeedCleanupHandler:
-    """Handler for feed cleanup job."""
-
     async def execute(
         self, request: FeedCleanupJobRequest
     ) -> FeedCleanupJobResponse:
-        """Execute the feed cleanup job."""
         from backend.core.database import AsyncSessionLocal
 
         logger.info("Starting feed cleanup", job_id=request.job_id)
@@ -62,10 +57,7 @@ class ScheduledFeedRefreshCycleHandler(
         ScheduledFeedRefreshCycleJobResponse,
     ]
 ):
-    """Handler for scheduled feed refresh cycle job."""
-
     def __init__(self, _feed_application: "FeedApplication") -> None:
-        """Initialize the handler."""
         from backend.core.app import settings
 
         self._settings = settings
@@ -73,7 +65,6 @@ class ScheduledFeedRefreshCycleHandler(
     async def execute(
         self, request: ScheduledFeedRefreshCycleJobRequest
     ) -> ScheduledFeedRefreshCycleJobResponse:
-        """Execute the feed refresh cycle job."""
         from backend.core.app import settings
         from backend.models import Feed
 
@@ -175,7 +166,6 @@ class ScheduledFeedRefreshCycleHandler(
         )
 
     async def _process_feed_with_session(self, feed_id: UUID) -> dict[str, Any]:
-        """Process a single feed refresh with its own database session."""
         async with AsyncSessionLocal() as db:
             try:
                 from backend.infrastructure.feed.processing.feed_processor import (

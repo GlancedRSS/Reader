@@ -1,5 +1,3 @@
-"""Authentication infrastructure modules."""
-
 from backend.infrastructure.auth.security import (
     PasswordHasher,
     generate_csrf_token,

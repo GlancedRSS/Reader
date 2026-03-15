@@ -1,5 +1,3 @@
-"""Schemas for folder management, including hierarchical organization and feed assignment."""
-
 from typing import Any
 from uuid import UUID
 
@@ -9,8 +7,6 @@ from backend.schemas.core import BaseSchema
 
 
 class FeedInFolderResponse(BaseSchema):
-    """Feed within a folder context for tree response."""
-
     id: UUID
     title: str
     unread_count: int = 0

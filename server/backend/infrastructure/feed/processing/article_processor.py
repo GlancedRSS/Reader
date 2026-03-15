@@ -1,5 +1,3 @@
-"""Article processing infrastructure for article deduplication and processing operations."""
-
 import re
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -23,10 +21,7 @@ logger = structlog.get_logger()
 
 
 class ArticleProcessor:
-    """Infrastructure for processing articles with deduplication."""
-
     def __init__(self, db: AsyncSession):
-        """Initialize the article processor."""
         self.db = db
         self.partition_service = Partition(db)
         self.tag_repository = UserTagRepository(db)
@@ -36,7 +31,6 @@ class ArticleProcessor:
         feed_id: UUID,
         articles_data: list[dict[str, Any]],
     ) -> tuple[int, list[UUID], list[UUID]]:
-        """Process feed articles with deduplication and create junction relationships."""
         created_count = 0
         relationship_count = 0
         new_article_ids: list[UUID] = []
@@ -286,7 +280,6 @@ class ArticleProcessor:
     async def _create_user_states_for_subscribers(
         self, feed_id: UUID, article_ids: list[UUID]
     ) -> None:
-        """Create user_article_states for all active subscribers of a feed."""
         subscribers_stmt = select(UserFeed.user_id).where(
             and_(
                 UserFeed.feed_id == feed_id,
@@ -324,7 +317,6 @@ class ArticleProcessor:
     async def _create_tags_for_subscribers(
         self, feed_id: UUID, article_id: UUID, source_tags: list[str]
     ) -> None:
-        """Create tags for all subscribers of a feed from article source_tags."""
         if not source_tags:
             return
 

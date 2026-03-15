@@ -1,5 +1,3 @@
-"""OPML import model for feed subscription imports."""
-
 from datetime import datetime
 from typing import Any
 from uuid import UUID
@@ -19,8 +17,6 @@ from backend.models.base import Base, PostgresUUID, sa_text
 
 
 class OpmlImport(Base):
-    """OPML import job tracking model."""
-
     __tablename__ = "opml_imports"
     __table_args__ = (
         CheckConstraint(

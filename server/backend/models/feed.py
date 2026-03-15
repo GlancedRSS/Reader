@@ -1,5 +1,3 @@
-"""Feed model for unified feed definitions (RSS/Atom feeds)."""
-
 from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
@@ -23,8 +21,6 @@ if TYPE_CHECKING:
 
 
 class Feed(Base):
-    """Unified feed definitions for RSS/Atom feeds."""
-
     __tablename__ = "feeds"
     __table_args__ = (
         CheckConstraint(

@@ -1,5 +1,3 @@
-"""Universal search endpoints using Postgres full-text search."""
-
 from fastapi import APIRouter, Depends, Query
 
 from backend.application.search.search import SearchApplication
@@ -37,7 +35,6 @@ async def universal_search(
     search_app: SearchApplication = Depends(get_search_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> UnifiedSearchResponse:
-    """Search across all content types with relevance ranking."""
     request = UnifiedSearchRequest(query=q)
     return await search_app.universal_search(request, current_user)
 
@@ -70,7 +67,6 @@ async def search_feeds(
     search_app: SearchApplication = Depends(get_search_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> FeedSearchResponse:
-    """Search user's feed subscriptions."""
     request = FeedSearchRequest(
         query=q,
         limit=limit,
@@ -107,7 +103,6 @@ async def search_tags(
     search_app: SearchApplication = Depends(get_search_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> TagSearchResponse:
-    """Search user's tags."""
     request = TagSearchRequest(
         query=q,
         limit=limit,
@@ -144,7 +139,6 @@ async def search_folders(
     search_app: SearchApplication = Depends(get_search_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> FolderSearchResponse:
-    """Search user's folders."""
     request = FolderSearchRequest(
         query=q,
         limit=limit,

@@ -1,5 +1,3 @@
-"""UserArticle model for user-specific article states (read/unread, read later)."""
-
 from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
@@ -21,8 +19,6 @@ if TYPE_CHECKING:
 
 
 class UserArticle(Base):
-    """User-specific article states (read status, read later, etc.)."""
-
     __tablename__ = "user_articles"
     __table_args__ = (
         Index("idx_content_user_articles_article_id", "article_id"),

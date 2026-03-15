@@ -1,5 +1,3 @@
-"""FastAPI application entry point and configuration."""
-
 import asyncio
 import time
 import uuid
@@ -44,14 +42,12 @@ logger = structlog.get_logger()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Manage application lifecycle."""
     await lifespan_init()
     yield
     await lifespan_shutdown()
 
 
 def _remove_422_from_openapi(openapi_schema: dict[str, Any]) -> dict[str, Any]:
-    """Remove 422 validation error responses from OpenAPI schema."""
     if "paths" in openapi_schema:
         for _, method_item in openapi_schema["paths"].items():
             for _, param in method_item.items():
@@ -65,7 +61,6 @@ _openapi = FastAPI.openapi
 
 
 def openapi(self: FastAPI) -> dict[str, Any]:
-    """Generate OpenAPI schema with 422 errors removed."""
     original_schema = _openapi(self)
     return _remove_422_from_openapi(original_schema)
 
@@ -87,7 +82,6 @@ add_auth_middleware(app)
 @app.get("/health")
 @app.head("/health")
 async def health() -> JSONResponse:
-    """Health check endpoint for docker healthcheck and load balancers."""
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"status": "healthy", "version": settings.version},
@@ -96,7 +90,6 @@ async def health() -> JSONResponse:
 
 @app.middleware("http")
 async def add_request_id(request: Request, call_next: Any) -> Any:
-    """Add a unique X-Request-ID header to responses for tracing."""
     request_id = uuid.uuid4()
     request.state.request_id = request_id
 
@@ -107,7 +100,6 @@ async def add_request_id(request: Request, call_next: Any) -> Any:
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next: Any) -> Any:
-    """Add security headers to responses."""
     response = await call_next(request)
 
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -148,7 +140,6 @@ async def add_security_headers(request: Request, call_next: Any) -> Any:
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next: Any) -> Any:
-    """Log incoming requests with timing and status codes."""
     start_time = time.time()
     request_id = getattr(request.state, "request_id", None)
 
@@ -208,7 +199,6 @@ async def log_requests(request: Request, call_next: Any) -> Any:
 async def http_exception_handler(
     request: Request, exc: HTTPException
 ) -> JSONResponse:
-    """Handle HTTP exceptions."""
     logger.warning(
         "HTTP exception",
         status_code=exc.status_code,
@@ -235,7 +225,6 @@ async def http_exception_handler(
 async def general_exception_handler(
     request: Request, exc: Exception
 ) -> JSONResponse:
-    """Handle unexpected exceptions."""
     logger.error(
         "Unhandled exception",
         error=str(exc),
@@ -264,7 +253,6 @@ async def general_exception_handler(
 async def validation_exception_handler(
     request: Request, exc: RequestValidationError
 ) -> JSONResponse:
-    """Handle Pydantic validation errors with user-friendly messages."""
     logger.warning(
         "Validation error",
         errors=exc.errors(),
@@ -404,7 +392,6 @@ async def validation_exception_handler(
 async def application_exception_handler(
     request: Request, exc: ApplicationException
 ) -> JSONResponse:
-    """Handle domain-specific application exceptions."""
     status_codes = {
         ValidationError: status.HTTP_400_BAD_REQUEST,
         AccessDeniedError: status.HTTP_403_FORBIDDEN,

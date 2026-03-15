@@ -1,5 +1,3 @@
-"""ArticleSource model for article-feed junction table."""
-
 from typing import TYPE_CHECKING
 from uuid import UUID
 
@@ -14,8 +12,6 @@ if TYPE_CHECKING:
 
 
 class ArticleSource(Base):
-    """Junction table linking articles to feeds."""
-
     __tablename__ = "article_sources"
     __table_args__ = (
         UniqueConstraint("article_id", "feed_id"),

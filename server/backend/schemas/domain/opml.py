@@ -1,5 +1,3 @@
-"""Schemas for OPML feed import/export operations and file management."""
-
 from datetime import datetime
 from typing import Any, Literal
 from uuid import UUID
@@ -46,8 +44,6 @@ class OpmlUploadResponse(BaseSchema):
 
 
 class OpmlImport(BaseSchema):
-    """Utilised after OPML file upload."""
-
     import_id: UUID = Field(...)
     folder_id: UUID | None = Field(None)
 

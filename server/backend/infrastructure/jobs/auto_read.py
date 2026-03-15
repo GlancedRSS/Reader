@@ -1,5 +1,3 @@
-"""Auto-mark read job handlers."""
-
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -20,21 +18,17 @@ logger = get_logger(__name__)
 class AutoMarkReadJobHandler(
     BaseJobHandler[AutoMarkReadJobRequest, AutoMarkReadJobResponse]
 ):
-    """Handler for auto-mark as read job."""
-
     def __init__(
         self,
         user_repository: Any,
         subscription_repository: SubscriptionRepository,
     ) -> None:
-        """Initialize the handler."""
         self._user_repo = user_repository
         self._subscription_repo = subscription_repository
 
     async def execute(
         self, request: AutoMarkReadJobRequest
     ) -> AutoMarkReadJobResponse:
-        """Execute the auto-mark as read job."""
         logger.info(
             "Starting auto-mark as read",
             job_id=request.job_id,

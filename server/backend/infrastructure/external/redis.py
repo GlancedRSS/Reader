@@ -1,5 +1,3 @@
-"""Redis client using redis-py for caching, pubsub, and notifications."""
-
 import asyncio
 import json
 import time
@@ -15,7 +13,6 @@ logger = structlog.get_logger()
 
 
 def _json_serializer(obj: Any) -> str:
-    """Serialize UUID and datetime objects to JSON strings."""
     from datetime import datetime
     from uuid import UUID
 
@@ -35,7 +32,6 @@ _RETRY_COOLDOWN_SECONDS = 30
 
 
 async def get_redis_client() -> redis.Redis:
-    """Get the global Redis client."""
     global _redis_client, _redis_pool, _last_failed_at
 
     if _last_failed_at is not None:
@@ -86,7 +82,6 @@ async def get_redis_client() -> redis.Redis:
 
 
 async def close_redis() -> None:
-    """Close the Redis client and connection pool."""
     global _redis_client, _redis_pool
 
     if _redis_pool:
@@ -97,14 +92,10 @@ async def close_redis() -> None:
 
 
 class RedisCache:
-    """Redis cache wrapper."""
-
     def __init__(self, redis_client: redis.Redis) -> None:
-        """Initialize the Redis cache wrapper."""
         self.redis = redis_client
 
     async def get(self, key: str) -> Any | None:
-        """Get a value from cache."""
         try:
             value = await self.redis.get(key)
             if value is not None:
@@ -117,7 +108,6 @@ class RedisCache:
     async def set(
         self, key: str, value: Any, expire: int | None = None
     ) -> bool:
-        """Set a value in cache with optional expiration."""
         try:
             serialized = json.dumps(value, default=_json_serializer)
             await self.redis.set(key, serialized, ex=expire)
@@ -127,7 +117,6 @@ class RedisCache:
             return False
 
     async def delete(self, key: str) -> bool:
-        """Delete a key from cache."""
         try:
             await self.redis.delete(key)
             return True
@@ -136,7 +125,6 @@ class RedisCache:
             return False
 
     async def exists(self, key: str) -> bool:
-        """Check if a key exists."""
         try:
             return await self.redis.exists(key) > 0
         except Exception as e:
@@ -144,7 +132,6 @@ class RedisCache:
             return False
 
     async def get_keys_by_pattern(self, pattern: str) -> list[str]:
-        """Get keys matching a pattern."""
         try:
             keys = await self.redis.keys(pattern)
             return [
@@ -159,7 +146,6 @@ class RedisCache:
             return []
 
     async def delete_multiple(self, keys: list[str]) -> int:
-        """Delete multiple keys."""
         try:
             if not keys:
                 return 0
@@ -175,7 +161,6 @@ _cache: RedisCache | None = None
 
 
 async def get_cache() -> RedisCache:
-    """Get the global Redis cache instance."""
     global _cache
     if _cache is None:
         redis_client = await get_redis_client()

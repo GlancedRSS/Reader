@@ -1,5 +1,3 @@
-"""Publisher for discovery-related background jobs."""
-
 from typing import Any
 from uuid import UUID
 
@@ -8,8 +6,6 @@ from backend.infrastructure.publishers.base import BaseJobPublisher
 
 
 class DiscoveryPublisher(BaseJobPublisher):
-    """Publisher for feed onboarding jobs (create and subscribe to new feeds)."""
-
     async def publish_create_and_subscribe_with_job(
         self,
         url: str,
@@ -17,7 +13,6 @@ class DiscoveryPublisher(BaseJobPublisher):
         folder_id: UUID | None = None,
         delay_seconds: int = 0,
     ) -> dict[str, Any]:
-        """Create job and publish feed creation + subscription to worker."""
         payload = {
             "url": url,
             "user_id": str(user_id),

@@ -1,5 +1,3 @@
-"""OPML job handlers."""
-
 from datetime import UTC, datetime
 from uuid import UUID
 from xml.etree import ElementTree as ET
@@ -36,14 +34,11 @@ logger = get_logger(__name__)
 class OpmlImportJobHandler(
     BaseJobHandler[OpmlImportJobRequest, OpmlImportJobResponse]
 ):
-    """Handler for OPML import job."""
-
     MAX_FOLDER_DEPTH = 9
 
     async def execute(
         self, request: OpmlImportJobRequest
     ) -> OpmlImportJobResponse:
-        """Execute the OPML import job."""
         logger.info(
             "Starting OPML import",
             job_id=request.job_id,
@@ -243,7 +238,6 @@ class OpmlImportJobHandler(
         import_id: UUID,
         folder_id: UUID | None,
     ) -> str:
-        """Import a single feed using feed processor and user feed repository."""
         logger.info(
             "Importing feed",
             feed_url=feed_url,
@@ -310,7 +304,6 @@ class OpmlImportJobHandler(
         folder_path: list[str],
         default_parent_id: UUID | None,
     ) -> UUID | None:
-        """Resolve or create folders from path."""
         if not folder_path:
             return default_parent_id
 
@@ -350,7 +343,6 @@ class OpmlImportJobHandler(
         current: int,
         total: int,
     ) -> None:
-        """Send SSE progress update via Redis pub/sub."""
         from backend.infrastructure.notifications.notifications import (
             publish_notification,
         )
@@ -370,12 +362,9 @@ class OpmlImportJobHandler(
 class OpmlExportJobHandler(
     BaseJobHandler[OpmlExportJobRequest, OpmlExportJobResponse]
 ):
-    """Handler for OPML export job."""
-
     async def execute(
         self, request: OpmlExportJobRequest
     ) -> OpmlExportJobResponse:
-        """Execute the OPML export job."""
         logger.info(
             "Starting OPML export",
             job_id=request.job_id,
