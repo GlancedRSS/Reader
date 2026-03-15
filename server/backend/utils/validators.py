@@ -1,11 +1,8 @@
-"""Reusable validation utilities for schemas and controllers."""
-
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
 
 
 def validate_url(url: str) -> None:
-    """Validate URL format."""
     if not url or not url.strip():
         raise ValueError("URL is required")
 
@@ -38,7 +35,6 @@ def validate_url(url: str) -> None:
 def validate_date_range(
     date_from: datetime | None, date_to: datetime | None
 ) -> None:
-    """Validate date range constraints."""
     now = datetime.now()
     two_years_ago = now - timedelta(days=730)
 
@@ -60,7 +56,6 @@ def validate_date_range(
 
 
 def validate_folder_name(name: str, max_length: int = 100) -> str:
-    """Validate folder name."""
     if not name or not name.strip():
         raise ValueError("Folder name cannot be empty")
 
@@ -72,7 +67,6 @@ def validate_folder_name(name: str, max_length: int = 100) -> str:
 
 
 def validate_opml_filename(filename: str) -> str:
-    """Validate OPML filename."""
     if not filename:
         raise ValueError("No filename provided")
 
@@ -88,14 +82,12 @@ def validate_opml_filename(filename: str) -> str:
 def validate_file_size(
     file_size: int, max_size: int, file_type: str = "File"
 ) -> None:
-    """Validate file size against maximum allowed."""
     if file_size > max_size:
         max_mb = max_size // (1024 * 1024)
         raise ValueError(f"{file_type} too large. Maximum size is {max_mb}MB")
 
 
 def validate_batch_size(batch_size: int, max_size: int) -> None:
-    """Validate batch operation size."""
     if batch_size > max_size:
         raise ValueError(
             f"Batch size ({batch_size}) exceeds maximum allowed ({max_size})"

@@ -1,9 +1,6 @@
-"""User profile and preferences management endpoints."""
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.core.app import settings
 from backend.core.database import get_db
 from backend.core.dependencies import get_user_preferences_application
 from backend.core.fastapi import get_user_from_request_state
@@ -20,17 +17,6 @@ router = APIRouter()
 
 
 @router.get(
-    "/version",
-    summary="Get API version",
-    description="Retrieve the current API version.",
-    tags=["User"],
-)
-async def get_version() -> dict[str, str]:
-    """Retrieve the current API version."""
-    return {"version": settings.version}
-
-
-@router.get(
     "",
     response_model=UserResponse,
     summary="Get current user",
@@ -40,7 +26,6 @@ async def get_version() -> dict[str, str]:
 async def get_me(
     current_user: User = Depends(get_user_from_request_state),
 ) -> UserResponse:
-    """Retrieve the authenticated user's profile."""
     return UserResponse(
         username=current_user.username,
         first_name=current_user.first_name,
@@ -63,7 +48,6 @@ async def update_profile(
     current_user: User = Depends(get_user_from_request_state),
     db: AsyncSession = Depends(get_db),
 ) -> UserResponse:
-    """Update the authenticated user's profile."""
     update_data = profile_update.model_dump(exclude_unset=True)
 
     if update_data:
@@ -94,7 +78,6 @@ async def get_user_preferences(
     current_user: User = Depends(get_user_from_request_state),
     user_preferences_app=Depends(get_user_preferences_application),
 ) -> PreferencesResponse:
-    """Retrieve all current user preferences."""
     return await user_preferences_app.get_user_preferences(current_user)
 
 
@@ -110,7 +93,6 @@ async def update_user_preferences(
     current_user: User = Depends(get_user_from_request_state),
     user_preferences_app=Depends(get_user_preferences_application),
 ) -> ResponseMessage:
-    """Update user preferences with partial validation."""
     return await user_preferences_app.update_user_preferences(
         current_user,
         preferences_update,

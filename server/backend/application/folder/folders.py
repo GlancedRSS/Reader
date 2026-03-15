@@ -1,5 +1,3 @@
-"""Application service for folder operations."""
-
 import logging
 from collections.abc import Sequence
 from typing import Any
@@ -33,16 +31,12 @@ logger = logging.getLogger(__name__)
 
 
 class FolderApplication:
-    """Application service for folder operations."""
-
     def __init__(self, db: AsyncSession):
-        """Initialize the folder application with database session."""
         self.db = db
         self.repository = FolderRepository(db)
 
     @staticmethod
     def _calculate_total_feed_count(folder_row: Row[Any]) -> int:
-        """Calculate total feed count from folder row."""
         return folder_row.feed_count or 0
 
     async def get_folder_details(
@@ -52,7 +46,6 @@ class FolderApplication:
         limit: int = 20,
         offset: int = 0,
     ) -> FolderResponse:
-        """Get folder details with paginated subfolders."""
         folder_details = (
             await self.repository.get_folder_details_with_feed_count(
                 folder_id, user_id
@@ -111,7 +104,6 @@ class FolderApplication:
         folder_data: FolderCreateRequest,
         user_id: UUID,
     ) -> FolderListResponse:
-        """Create a new folder."""
         try:
             FolderValidationDomain.validate_folder_name(folder_data.name)
 
@@ -161,7 +153,6 @@ class FolderApplication:
         folder_data: FolderUpdateRequest,
         user_id: UUID,
     ) -> ResponseMessage:
-        """Update folder."""
         folder = await self.repository.get_folder_by_id_and_user(
             folder_id, user_id
         )
@@ -229,7 +220,6 @@ class FolderApplication:
     async def delete_folder(
         self, folder_id: UUID, user_id: UUID
     ) -> ResponseMessage:
-        """Delete folder."""
         folder = await self.repository.get_folder_by_id_and_user(
             folder_id, user_id
         )
@@ -243,7 +233,6 @@ class FolderApplication:
     async def get_folder_tree(
         self, user_id: UUID, max_depth: int = 3
     ) -> list[FolderTreeResponse]:
-        """Get complete folder hierarchy with feeds."""
         from sqlalchemy import select
 
         from backend.models import UserPreferences
@@ -312,7 +301,6 @@ class FolderApplication:
         max_depth: int,
         user_id: UUID,
     ) -> list[FolderTreeResponse]:
-        """Build folder tree in-memory from flat folder list."""
         children_by_parent: dict[UUID | None, list[Row[Any]]] = {}
         for folder in all_folders:
             parent_id = folder.parent_id
@@ -368,7 +356,6 @@ class FolderApplication:
 
     @staticmethod
     def _map_feed_to_response(feed: Row[Any]) -> FeedInFolderResponse:
-        """Map a feed row to FeedInFolderResponse."""
         return FeedInFolderResponse(
             id=feed.id,
             title=feed.title,

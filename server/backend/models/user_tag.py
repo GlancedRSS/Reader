@@ -1,5 +1,3 @@
-"""UserTag model for user-defined tags."""
-
 from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
@@ -22,8 +20,6 @@ if TYPE_CHECKING:
 
 
 class UserTag(Base):
-    """User-defined tag model for categorizing articles."""
-
     __tablename__ = "user_tags"
     __table_args__ = (
         UniqueConstraint("user_id", "name", name="unique_user_tag_name"),

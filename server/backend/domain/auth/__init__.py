@@ -1,5 +1,3 @@
-"""Authentication, session management, and credential verification."""
-
 from backend.domain.auth.auth import AuthDomain
 from backend.domain.auth.exceptions import (
     AuthenticationError,

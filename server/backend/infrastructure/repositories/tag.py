@@ -1,5 +1,3 @@
-"""Tag data access layer for tag and article-tag relationship operations."""
-
 from typing import Any
 from uuid import UUID
 
@@ -13,16 +11,12 @@ logger = structlog.get_logger(__name__)
 
 
 class UserTagRepository:
-    """Repository for tag and article-tag relationship database operations."""
-
     def __init__(self, db: AsyncSession):
-        """Initialize the tag repository."""
         self.db = db
 
     async def find_by_user_and_name(
         self, user_id: UUID, name: str
     ) -> UserTag | None:
-        """Find a tag by user and name."""
         query = select(UserTag).where(
             (UserTag.user_id == user_id) & (UserTag.name == name)
         )
@@ -30,7 +24,6 @@ class UserTagRepository:
         return result.scalar_one_or_none()
 
     async def find_by_id(self, tag_id: UUID, user_id: UUID) -> UserTag | None:
-        """Find a tag by ID and user."""
         query = select(UserTag).where(
             (UserTag.id == tag_id) & (UserTag.user_id == user_id)
         )
@@ -38,7 +31,6 @@ class UserTagRepository:
         return result.scalar_one_or_none()
 
     async def get_user_tags(self, user_id: UUID) -> list[UserTag]:
-        """Get tags for a user ordered by name."""
         query = select(UserTag).where(UserTag.user_id == user_id)
         query = query.order_by(UserTag.name)
         result = await self.db.execute(query)
@@ -47,7 +39,6 @@ class UserTagRepository:
     async def get_user_tags_paginated(
         self, user_id: UUID, limit: int, offset: int
     ) -> tuple[list[UserTag], int]:
-        """Get tags for a user with pagination."""
         count_query = select(func.count(UserTag.id)).where(
             UserTag.user_id == user_id
         )
@@ -67,7 +58,6 @@ class UserTagRepository:
         user_id: UUID,
         name: str,
     ) -> UserTag:
-        """Create a new tag."""
         tag = UserTag(
             user_id=user_id,
             name=name,
@@ -80,7 +70,6 @@ class UserTagRepository:
     async def update_tag(
         self, tag: UserTag, update_data: dict[str, Any]
     ) -> None:
-        """Update an existing tag."""
         for field, value in update_data.items():
             if hasattr(tag, field):
                 setattr(tag, field, value)
@@ -88,12 +77,10 @@ class UserTagRepository:
         await self.db.flush()
 
     async def delete_tag(self, tag: UserTag) -> None:
-        """Delete a tag (CASCADE will handle ArticleTag entries)."""
         await self.db.delete(tag)
         await self.db.flush()
 
     async def get_or_create_tag(self, user_id: UUID, name: str) -> UserTag:
-        """Get or create a tag."""
         existing = await self.find_by_user_and_name(user_id, name)
         if existing:
             return existing
@@ -103,7 +90,6 @@ class UserTagRepository:
     async def get_article_tags(
         self, article_id: UUID, user_id: UUID
     ) -> list[UUID]:
-        """Get all tag IDs for an article, filtered by user."""
         user_article_query = select(UserArticle.id).where(
             (UserArticle.user_id == user_id)
             & (UserArticle.article_id == article_id)
@@ -128,7 +114,6 @@ class UserTagRepository:
     async def add_tags_to_article(
         self, article_id: UUID, tag_ids: list[UUID], user_id: UUID
     ) -> list[UUID]:
-        """Add multiple tags to an article, filtered by user."""
         added_tags = []
 
         try:
@@ -192,7 +177,6 @@ class UserTagRepository:
     async def remove_tags_from_article(
         self, article_id: UUID, tag_ids: list[UUID], user_id: UUID
     ) -> list[UUID]:
-        """Remove multiple tags from an article, filtered by user."""
         if not tag_ids:
             return []
 
@@ -258,7 +242,6 @@ class UserTagRepository:
     async def remove_articles_from_all_tags(
         self, article_ids: list[UUID], user_id: UUID
     ) -> int:
-        """Remove multiple articles from all tags efficiently, filtered by user."""
         if not article_ids:
             return 0
 

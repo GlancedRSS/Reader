@@ -1,5 +1,3 @@
-"""Server-Sent Events (SSE) notifications infrastructure using Redis pub/sub."""
-
 from backend.infrastructure.notifications.notifications import (
     DEBOUNCE_SECONDS,
     event_stream,

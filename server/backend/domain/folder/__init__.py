@@ -1,5 +1,3 @@
-"""Folder validation, capacity management, and business rules."""
-
 from .validation import (
     CircularReferenceError,
     FolderDepthExceededError,

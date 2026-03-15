@@ -1,5 +1,3 @@
-"""Partition management service for database partition operations."""
-
 import re
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -19,16 +17,12 @@ PARTITION_FORMAT = "%Y_%m"
 
 
 class Partition:
-    """Service for managing database partitions."""
-
     def __init__(self, db: Any) -> None:
-        """Initialize the partition service."""
         self.db = db
 
     async def analyze_and_create_partitions(
         self, articles_data: list[dict[str, Any]]
     ) -> set[str]:
-        """Analyze article dates and create all necessary partitions before processing."""
         try:
             partition_check_sql = text(
                 """

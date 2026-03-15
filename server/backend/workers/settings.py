@@ -1,5 +1,3 @@
-"""Arq worker settings configuration."""
-
 from arq.connections import RedisSettings
 from arq.cron import CronJob
 from arq.worker import func
@@ -16,15 +14,12 @@ from backend.workers.functions import (
 
 
 def get_redis_settings() -> RedisSettings:
-    """Get Redis settings for Arq worker."""
     redis_url = settings.redis_url or "redis://localhost:6379"
     host, port = _parse_redis_url(redis_url)
     return RedisSettings(host=host, port=port, database=0)
 
 
 class WorkerSettings:
-    """Arq worker configuration."""
-
     redis_settings = get_redis_settings()
 
     functions = [

@@ -1,5 +1,3 @@
-"""Arq worker functions for background job processing."""
-
 import uuid
 from typing import Any
 from uuid import UUID
@@ -33,12 +31,10 @@ logger = get_logger(__name__)
 
 
 async def startup(ctx: dict[str, Any]) -> None:
-    """Initialize resources when Arq worker starts."""
     logger.info("Arq worker starting up")
 
 
 async def shutdown(ctx: dict[str, Any]) -> None:
-    """Clean up resources when Arq worker shuts down."""
     logger.info("Arq worker initiating graceful shutdown...")
 
     try:
@@ -70,7 +66,6 @@ async def opml_import(
     filename: str,
     folder_id: str | None = None,
 ) -> dict[str, Any]:
-    """Process OPML import job."""
     job_id = str(uuid.uuid4())
     logger.info(
         "Processing OPML import",
@@ -100,7 +95,6 @@ async def opml_export(
     export_id: str,
     folder_id: str | None = None,
 ) -> dict[str, Any]:
-    """Process OPML export job."""
     job_id = str(uuid.uuid4())
     logger.info(
         "Processing OPML export",
@@ -127,7 +121,6 @@ async def feed_create_and_subscribe(
     user_id: str,
     folder_id: str | None = None,
 ) -> dict[str, Any]:
-    """Create feed and subscribe user."""
     job_id = ctx.get("job_id", "unknown")
 
     logger.info(
@@ -237,7 +230,6 @@ async def scheduled_feed_refresh(
     ctx: dict[str, Any],
     job_id: str | None = None,
 ) -> dict[str, Any]:
-    """Refresh all active feeds on a schedule."""
     if job_id is None:
         job_id = str(uuid.uuid4())
 
@@ -265,7 +257,6 @@ async def scheduled_feed_cleanup(
     ctx: dict[str, Any],
     job_id: str | None = None,
 ) -> dict[str, Any]:
-    """Mark orphaned feeds inactive on a schedule."""
     if job_id is None:
         job_id = str(uuid.uuid4())
 
@@ -282,7 +273,6 @@ async def scheduled_auto_mark_read(
     ctx: dict[str, Any],
     job_id: str | None = None,
 ) -> dict[str, Any]:
-    """Mark old articles as read on a schedule."""
     if job_id is None:
         job_id = str(uuid.uuid4())
 

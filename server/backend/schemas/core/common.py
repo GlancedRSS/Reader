@@ -1,5 +1,3 @@
-"""Common schema patterns and base classes."""
-
 from datetime import datetime
 from typing import Any, TypeVar
 from uuid import UUID
@@ -12,8 +10,6 @@ T = TypeVar("T")
 
 
 class PaginationMetadata(BaseModel):
-    """Pagination metadata for list responses."""
-
     total: int | None = Field(
         None,
         description="Total number of items available (optional for cursor-based)",
@@ -33,14 +29,10 @@ class PaginationMetadata(BaseModel):
 
 
 class ResponseMessage(BaseModel):
-    """Generic response for simple success messages across multiple endpoints."""
-
     message: str = Field(..., description="Success message")
 
 
 class PaginatedResponse[T](BaseSchema):
-    """Standard response for paginated list endpoints."""
-
     data: list[T] = Field(..., description="List of items for current page")
     pagination: PaginationMetadata = Field(
         ..., description="Pagination metadata"
@@ -48,22 +40,16 @@ class PaginatedResponse[T](BaseSchema):
 
 
 class ListResponse[T](BaseSchema):
-    """Standard response for non-paginated list endpoints."""
-
     data: list[T] = Field(..., description="List of items")
 
 
 class ArticleFeedList(BaseSchema):
-    """Feed info for an article (used in search and article lists)."""
-
     id: UUID
     title: str
     website: str
 
 
 class ErrorResponse(BaseSchema):
-    """Standard API error response with consistent error reporting."""
-
     error: str = Field(..., description="Error type/code")
     message: str = Field(..., description="Human-readable error message")
     details: dict[str, Any] | None = Field(

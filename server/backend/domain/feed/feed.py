@@ -1,5 +1,3 @@
-"""Feed health status calculation."""
-
 from datetime import UTC, datetime, timedelta
 from typing import Any, Literal
 
@@ -9,13 +7,10 @@ logger = structlog.get_logger()
 
 
 class FeedDomain:
-    """Feed health status calculation."""
-
     @staticmethod
     def calculate_feed_status(
         feed: Any,
     ) -> Literal["healthy", "error", "stale"]:
-        """Calculate feed health: error (error after fetch), stale (no fetch >1hr), healthy."""
         now = datetime.now(UTC)
         status: Literal["healthy", "error", "stale"] = "healthy"
 

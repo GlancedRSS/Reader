@@ -1,5 +1,3 @@
-"""Application layer for OPML operations."""
-
 from .opml import OpmlApplication
 
 __all__ = [

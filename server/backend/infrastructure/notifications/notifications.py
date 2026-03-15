@@ -1,5 +1,3 @@
-"""Server-Sent Events (SSE) notifications using Redis pub/sub and keyspace notifications."""
-
 import asyncio
 import json
 from collections.abc import AsyncIterator, Awaitable, Callable
@@ -21,7 +19,6 @@ DEBOUNCE_SECONDS = 60
 async def publish_notification(
     user_id: UUID, event_type: str, data: dict[str, Any]
 ) -> bool:
-    """Publish a notification to a user's Redis channel."""
     try:
         redis_client = await get_redis_client()
         channel = f"{CHANNEL_PREFIX}{user_id}"
@@ -57,7 +54,6 @@ async def queue_new_articles_notification(
     article_count: int,
     debounce_seconds: int = DEBOUNCE_SECONDS,
 ) -> None:
-    """Queue a notification for new articles (debounced)."""
     redis_client = await get_redis_client()
 
     pending_key = f"{PENDING_PREFIX}{user_id}"
@@ -81,7 +77,6 @@ async def queue_new_articles_notification(
 async def event_stream(
     user_id: UUID, is_disconnect: Callable[[], Awaitable[bool]] | None = None
 ) -> AsyncIterator[dict[str, str]]:
-    """Subscribe to a user's notification channel and yield SSE events."""
     redis_client = await get_redis_client()
     channel = f"{CHANNEL_PREFIX}{user_id}"
 
@@ -146,7 +141,6 @@ async def event_stream(
 
 
 async def flush_pending_notifications(user_id: UUID) -> None:
-    """Flush all pending notifications for a user and publish aggregated SSE event."""
     redis_client = await get_redis_client()
 
     pending_key = f"{PENDING_PREFIX}{user_id}"
@@ -181,7 +175,6 @@ async def flush_pending_notifications(user_id: UUID) -> None:
 
 
 async def listen_for_timer_expirations() -> None:
-    """Listen for Redis keyspace expiration events and flush pending notifications."""
     from backend.core.app import settings
 
     redis_client = await get_redis_client()
@@ -223,7 +216,6 @@ async def listen_for_timer_expirations() -> None:
 
 
 async def listen_for_timer_expirations_with_restart() -> None:
-    """Run the keyspace listener and restart it on crash."""
     import traceback
 
     while True:

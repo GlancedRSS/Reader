@@ -1,5 +1,3 @@
-"""OPML parser for feed extraction and structure analysis."""
-
 import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
@@ -12,8 +10,6 @@ if TYPE_CHECKING:
 
 @dataclass
 class OpmlFeed:
-    """Represents a single feed found in OPML."""
-
     title: str | None
     url: str
     html_url: str | None = None
@@ -23,8 +19,6 @@ class OpmlFeed:
 
 @dataclass
 class FolderNode:
-    """Represents a folder in the OPML structure."""
-
     name: str
     path: list[str]
     feeds: list[OpmlFeed] = field(default_factory=list)
@@ -33,8 +27,6 @@ class FolderNode:
 
 @dataclass
 class OpmlValidationResult:
-    """Result of OPML validation and parsing."""
-
     is_valid: bool
     total_feeds: int
     folder_structure: list[dict[str, Any]]
@@ -47,15 +39,12 @@ class OpmlValidationResult:
 
 
 class OpmlParser:
-    """OPML parser: encoding detection, XML parsing, feed extraction, URL validation, duplicate detection."""
-
     MAX_DEPTH = 9
     ENCODINGS = ["utf-8", "windows-1252", "iso-8859-1", "utf-16"]
     VALID_SCHEMES = {"http", "https"}
 
     @classmethod
     def detect_encoding(cls, content: bytes) -> tuple[str, str]:
-        """Detect character encoding of OPML content."""
         for encoding in cls.ENCODINGS:
             try:
                 target_encoding = (
@@ -78,7 +67,6 @@ class OpmlParser:
 
     @classmethod
     def preprocess_content(cls, content: str) -> str:
-        """Preprocess OPML content to handle common issues."""
         return re.sub(
             r'(<outline[^>]*(?:xmlUrl|htmlUrl)="[^"]*)&(?=[a-z0-9]+)([^"]*")',
             r"\1&amp;\2",
@@ -88,7 +76,6 @@ class OpmlParser:
 
     @classmethod
     def validate_url(cls, url: str | None) -> tuple[bool, str | None]:
-        """Validate that a URL is http/https and well-formed."""
         if not url or not url.strip():
             return False, "URL is empty"
 
@@ -118,7 +105,6 @@ class OpmlParser:
     def parse_feeds_with_folders(
         cls, content: str, max_depth: int = MAX_DEPTH
     ) -> list[OpmlFeed]:
-        """Parse OPML content and extract feeds with folder paths."""
         content = (
             content.split("?>", 1)[-1] if "?>" in content[:100] else content
         )
@@ -173,7 +159,6 @@ class OpmlParser:
     def _find_parent_outline(
         cls, root: ET.Element, element: ET.Element
     ) -> ET.Element | None:
-        """Find the parent outline element of a given element."""
         for outline in root.findall(".//outline"):
             if element in list(outline):
                 return outline
@@ -183,7 +168,6 @@ class OpmlParser:
     def build_folder_structure(
         cls, feeds: list[OpmlFeed], max_depth: int = MAX_DEPTH
     ) -> list[dict[str, Any]]:
-        """Build folder structure from feeds with folder paths."""
         root_folders: dict[str, FolderNode] = {}
 
         for feed in feeds:
@@ -212,7 +196,6 @@ class OpmlParser:
 
     @classmethod
     def _folder_node_to_dict(cls, node: FolderNode) -> dict[str, Any]:
-        """Convert FolderNode to dictionary."""
         return {
             "name": node.name,
             "path": "/".join(node.path),
@@ -230,7 +213,6 @@ class OpmlParser:
         filename: str,
         existing_urls: set[str] | None = None,
     ) -> OpmlValidationResult:
-        """Main entry point: detect encoding, parse, validate URLs, extract feeds, build folder structure."""
         errors: list[str] = []
         warnings: list[str] = []
         feeds: list[OpmlFeed] = []

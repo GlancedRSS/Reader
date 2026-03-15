@@ -1,5 +1,3 @@
-"""Shared utilities for media extraction and validation."""
-
 from typing import Any
 from urllib.parse import urlparse
 
@@ -20,7 +18,6 @@ logger = structlog.get_logger()
 
 
 def validate_logo_url(logo_url: str) -> bool:
-    """Validate logo URL for security and format."""
     if not logo_url or not isinstance(logo_url, str):
         return False
 
@@ -43,7 +40,6 @@ def validate_logo_url(logo_url: str) -> bool:
 
 
 def is_valid_image_url(url: str) -> bool:
-    """Check if URL is a valid image URL."""
     if not url or not url.startswith(("http://", "https://")):
         return False
 
@@ -55,7 +51,6 @@ def is_valid_image_url(url: str) -> bool:
 
 
 def detect_feed_type(feed: Any) -> str:
-    """Detect feed type (RSS, Atom, RDF) from feedparser feed object."""
     feed_type = "rss"
     if hasattr(feed, "version") and feed.version:
         if "atom" in feed.version.lower():

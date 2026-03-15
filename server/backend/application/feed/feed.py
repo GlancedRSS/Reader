@@ -1,5 +1,3 @@
-"""Application service for feed subscription operations."""
-
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -34,13 +32,10 @@ logger = structlog.get_logger()
 
 
 class FeedApplication:
-    """Application service for feed subscription operations."""
-
     def __init__(
         self,
         db: AsyncSession,
     ):
-        """Initialize the feed application with database session and services."""
         self.db = db
         self.repository = UserFeedRepository(db)
         self.feed_repository = FeedRepository(db)
@@ -57,7 +52,6 @@ class FeedApplication:
         cursor: str | None = None,
         all: bool = False,
     ) -> PaginatedResponse[UserFeedListResponse]:
-        """Get user's subscriptions with filtering and pagination."""
         result = []
         total = 0
         has_more = False
@@ -137,7 +131,6 @@ class FeedApplication:
     async def get_user_feed_by_id(
         self, user_feed_id: UUID, user_id: UUID
     ) -> UserFeedResponse:
-        """Get detailed user feed information by ID."""
         user_feed = await self.repository.get_user_feed_by_id(user_feed_id)
 
         if not user_feed or user_feed.user_id != user_id:
@@ -173,7 +166,6 @@ class FeedApplication:
         user_feed_data: UserFeedUpdateRequest,
         user_id: UUID,
     ) -> ResponseMessage:
-        """Update user's feed by user feed ID."""
         user_feed = await self.repository.get_user_feed_by_id(user_feed_id)
 
         if not user_feed or user_feed.user_id != user_id:
@@ -286,7 +278,6 @@ class FeedApplication:
     async def unsubscribe_from_feed(
         self, user_feed_id: UUID, user_id: UUID
     ) -> ResponseMessage:
-        """Unsubscribe from feed, deleting UserFeed and orphaned UserArticles."""
         user_feed = await self.repository.get_user_feed_by_id(user_feed_id)
 
         if not user_feed or user_feed.user_id != user_id:
@@ -345,7 +336,6 @@ class FeedApplication:
     async def _backfill_tags_for_articles(
         self, user_id: UUID, article_ids: list[UUID]
     ) -> int:
-        """Backfill tags for a user from specific articles based on their source_tags field."""
         if not article_ids:
             return 0
 

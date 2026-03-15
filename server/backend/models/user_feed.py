@@ -1,5 +1,3 @@
-"""UserFeed model for user feed subscriptions."""
-
 from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
@@ -24,8 +22,6 @@ if TYPE_CHECKING:
 
 
 class UserFeed(Base):
-    """User subscriptions to feeds."""
-
     __tablename__ = "user_feeds"
     __table_args__ = (
         CheckConstraint(

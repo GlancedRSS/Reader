@@ -1,5 +1,3 @@
-"""Application lifecycle management for startup and shutdown."""
-
 import asyncio
 from typing import Any
 
@@ -11,7 +9,6 @@ background_tasks: set[asyncio.Task[None]] = set()
 
 
 async def graceful_shutdown() -> None:
-    """Handle graceful shutdown by cancelling tasks and closing connections."""
     import structlog
 
     global logger
@@ -68,7 +65,6 @@ async def graceful_shutdown() -> None:
 
 
 async def lifespan_init() -> None:
-    """Initialize application services during startup."""
     import structlog
 
     global logger
@@ -154,7 +150,6 @@ async def lifespan_init() -> None:
 
 
 async def lifespan_shutdown() -> None:
-    """Shutdown callback for application lifespan."""
     global logger
     if logger is None:
         import structlog

@@ -1,5 +1,3 @@
-"""Domain-specific schemas for business logic, API endpoints, and data models."""
-
 from .article import (
     ArticleFeedList,
     ArticleListResponse,

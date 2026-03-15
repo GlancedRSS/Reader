@@ -1,5 +1,3 @@
-"""Application service for user preferences operations."""
-
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,17 +11,13 @@ from backend.schemas.domain import PreferencesUpdateRequest
 
 
 class UserPreferencesApplication:
-    """Application service for user preferences operations."""
-
     def __init__(self, db: AsyncSession):
-        """Initialize the user preferences application with database session."""
         self.db = db
         self.repository = UserRepository(db)
 
     async def _ensure_preferences_exist(
         self, user: User
     ) -> UserPreferencesModel:
-        """Ensure user preferences exist, creating defaults if needed."""
         prefs_model = await self.repository.find_preferences_by_user_id(user.id)
 
         if not prefs_model:
@@ -42,13 +36,11 @@ class UserPreferencesApplication:
         return prefs_model
 
     async def get_user_preferences(self, user: User) -> UserPreferencesModel:
-        """Get user preferences, creating defaults if needed."""
         return await self._ensure_preferences_exist(user)
 
     async def update_user_preferences(
         self, user: User, preferences_update: PreferencesUpdateRequest
     ) -> ResponseMessage:
-        """Update user preferences with validation."""
         prefs_model = await self._ensure_preferences_exist(user)
 
         update_data = preferences_update.model_dump(exclude_unset=True)

@@ -1,5 +1,3 @@
-"""HTML cleaning and sanitization utilities for RSS feed content."""
-
 import re
 from html import unescape
 
@@ -8,13 +6,10 @@ from bs4 import BeautifulSoup
 
 
 def decode_html_entities(text: str) -> str:
-    """Decode HTML entities in text."""
     return unescape(text)
 
 
 class HTMLCleaner:
-    """Cleans and sanitizes HTML content while preserving safe structure."""
-
     TRUSTED_IFRAME_DOMAINS = {
         "youtube.com",
         "www.youtube.com",
@@ -28,7 +23,6 @@ class HTMLCleaner:
     }
 
     def __init__(self) -> None:
-        """Initialize the HTML cleaner with allowed tags and attributes."""
         self.allowed_tags = {
             "p",
             "br",
@@ -147,7 +141,6 @@ class HTMLCleaner:
         )
 
     def _is_trusted_iframe_domain(self, src: str) -> bool:
-        """Check if iframe src URL is from a trusted domain."""
         if not src or not isinstance(src, str):
             return False
 
@@ -166,7 +159,6 @@ class HTMLCleaner:
             return False
 
     def clean_html(self, html_content: str) -> str:
-        """Clean HTML content while preserving safe structure and formatting."""
         if not html_content:
             return ""
 
@@ -288,7 +280,6 @@ class HTMLCleaner:
             return re.sub(r"\s+", " ", text).strip()
 
     def html_to_text(self, html_content: str) -> str:
-        """Clean HTML content to plain text for search indexing."""
         if not html_content:
             return ""
 
@@ -315,7 +306,6 @@ class HTMLCleaner:
             return re.sub(r"\s+", " ", text).strip()
 
     def clean_html_content(self, html_content: str) -> tuple[str, str | None]:
-        """Clean HTML content and extract first image."""
         if not html_content or not html_content.strip():
             return "", None
 

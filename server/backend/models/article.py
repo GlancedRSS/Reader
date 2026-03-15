@@ -1,5 +1,3 @@
-"""Article model for unified articles from feeds."""
-
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 from uuid import UUID
@@ -22,8 +20,6 @@ if TYPE_CHECKING:
 
 
 class Article(Base):
-    """Unified articles from feeds, deduplicated by canonical URL."""
-
     __tablename__ = "articles"
     __table_args__ = (
         CheckConstraint(

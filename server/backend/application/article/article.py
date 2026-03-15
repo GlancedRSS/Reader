@@ -1,5 +1,3 @@
-"""Application service orchestrating article operations."""
-
 from datetime import date
 from typing import TYPE_CHECKING, Any, cast
 from uuid import UUID
@@ -44,12 +42,9 @@ logger = structlog.get_logger()
 
 
 class ArticleApplication:
-    """Application service for article operations."""
-
     def __init__(
         self, db: AsyncSession, tag_management: TagApplication | None = None
     ):
-        """Initialize the article application with database and optional tag service."""
         self.db = db
         self.repository = ArticleRepository(db)
         self.folder_repository = FolderRepository(db)
@@ -59,7 +54,6 @@ class ArticleApplication:
 
     @property
     def tag_management(self) -> TagApplication:
-        """Get TagApplication instance, creating if not injected."""
         if self._tag_management is None:
             self._tag_management = TagApplication(self.db)
         return self._tag_management
@@ -78,7 +72,6 @@ class ArticleApplication:
         to_date: date | None = None,
         limit: int = DEFAULT_LIMIT,
     ) -> PaginatedResponse[ArticleListResponse]:
-        """Get user's articles with optional filters using cursor-based pagination."""
         if folder_ids:
             for folder_id in folder_ids:
                 folder = await self.folder_repository.find_by_id(
@@ -162,7 +155,6 @@ class ArticleApplication:
     async def get_article(
         self, article_id: UUID, current_user: User
     ) -> ArticleResponse:
-        """Get specific article details and mark it as read."""
         article_result = await self.repository.get_article_by_id(
             article_id, current_user
         )
@@ -201,7 +193,6 @@ class ArticleApplication:
         state_data: ArticleStateUpdateRequest,
         current_user: User,
     ) -> ResponseMessage:
-        """Update user's article state and tags."""
         article_exists = await self.repository.find_by_id(
             article_id, current_user.id
         )
@@ -230,7 +221,6 @@ class ArticleApplication:
     async def mark_all_as_read(
         self, request_data: MarkAllReadRequest, current_user: User
     ) -> ResponseMessage:
-        """Mark all articles as read or unread with optional filtering."""
         user_id = current_user.id
 
         if request_data.folder_ids:
@@ -299,7 +289,6 @@ class ArticleApplication:
         state_data: ArticleStateUpdateRequest,
         current_user: User,
     ) -> None:
-        """Update article tags based on state data."""
         if state_data.tag_ids is None:
             return
 
@@ -313,7 +302,6 @@ class ArticleApplication:
         metadata: dict[UUID, "ArticleMetadata"],
         tags_by_article: dict[UUID, list[Any]],
     ) -> list[ArticleListResponse]:
-        """Build article list responses from raw data."""
         from backend.schemas.domain import ArticleFeedList
 
         response = []
@@ -354,7 +342,6 @@ class ArticleApplication:
         state: "UserArticle | None",
         article_tags: list[Any],
     ) -> ArticleResponse:
-        """Build single article response."""
         from backend.models import Article
         from backend.schemas.domain import ArticleFeedList
 
@@ -408,7 +395,6 @@ class ArticleApplication:
         has_more: bool | None = None,
         next_cursor: str | None = None,
     ) -> PaginatedResponse[Any]:
-        """Build paginated response with metadata."""
         if has_more is None:
             has_more = len(data) == limit and total > limit
 

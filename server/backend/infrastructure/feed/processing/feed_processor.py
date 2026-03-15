@@ -1,5 +1,3 @@
-"""Feed parsing and article creation infrastructure for RSS/Atom feeds."""
-
 import html
 from datetime import UTC, datetime
 from typing import Any
@@ -25,10 +23,7 @@ logger = structlog.get_logger()
 
 
 class FeedProcessor:
-    """Infrastructure for parsing RSS/Atom feeds and creating articles."""
-
     def __init__(self, db: AsyncSession) -> None:
-        """Initialize the feed processor."""
         self.db = db
         self.html_cleaner = HTMLCleaner()
         self.media_extractor = MediaExtractor()
@@ -47,7 +42,6 @@ class FeedProcessor:
         str | None,
         dict[str, Any],
     ]:
-        """Extract content, image, author, categories, and platform_metadata from RSS feed entry."""
         content, content_source = (
             self.entry_extractor.extract_content_from_entry(entry)
         )
@@ -71,7 +65,7 @@ class FeedProcessor:
         )
 
         if image_url:
-            logger.info(
+            logger.debug(
                 "Extracted media_url from feed entry",
                 link=entry.get("link", ""),
                 media_url=image_url,
@@ -102,7 +96,6 @@ class FeedProcessor:
         )
 
     async def create_feed(self, feed_data: DiscoveryFeedCreateRequest) -> Any:
-        """Create a new feed using unified feed parsing approach."""
         logger.info("Starting feed creation", url=feed_data.url)
         try:
             existing = await self.repository.get_feed_by_url(feed_data.url)
@@ -193,7 +186,6 @@ class FeedProcessor:
     async def update_feed(
         self, feed_id: UUID, feed_data: FeedUpdateRequest
     ) -> Any | None:
-        """Update feed metadata."""
         logger.info("Starting feed update", feed_id=feed_id)
 
         try:
@@ -228,7 +220,6 @@ class FeedProcessor:
             raise
 
     async def delete_feed(self, feed_id: UUID) -> bool:
-        """Delete a feed and all its articles."""
         logger.info("Starting feed deletion", feed_id=feed_id)
 
         try:
@@ -251,11 +242,9 @@ class FeedProcessor:
             raise
 
     async def get_feed_by_id(self, feed_id: UUID) -> Any | None:
-        """Get feed by ID."""
         return await self.repository.get_feed_by_id(feed_id)
 
     async def refresh_feed(self, feed_id: UUID) -> dict[str, Any]:
-        """Refresh feed articles."""
         logger.info("Starting feed refresh", feed_id=feed_id)
 
         try:
@@ -338,7 +327,6 @@ class FeedProcessor:
     async def _parse_feed_content(
         self, url: str, timeout: float | None = None
     ) -> dict[str, Any]:
-        """Parse RSS/Atom feed content and extract articles."""
         logger.info("Parsing feed content", url=url)
 
         async with httpx.AsyncClient(
@@ -383,7 +371,6 @@ class FeedProcessor:
             }
 
     def _parse_feed_entries(self, feed: Any) -> list[dict[str, Any]]:
-        """Parse articles from feed entries."""
         articles_data = []
         max_articles = 50
 

@@ -1,5 +1,3 @@
-"""Core infrastructure schemas and base classes."""
-
 from .base import (
     BaseSchema,
     TimestampedSchema,

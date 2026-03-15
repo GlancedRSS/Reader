@@ -1,5 +1,3 @@
-"""Utility functions for IP address extraction."""
-
 import ipaddress
 from typing import Any
 
@@ -11,11 +9,8 @@ logger = structlog.get_logger()
 
 
 class IPUtils:
-    """Utility functions for IP address extraction."""
-
     @staticmethod
     def _validate_ip(ip_str: str) -> str | None:
-        """Validate and normalize an IP address."""
         try:
             ip = ipaddress.ip_address(ip_str.strip())
             return str(ip)
@@ -24,7 +19,6 @@ class IPUtils:
 
     @staticmethod
     def get_client_ip(request: Any) -> str:
-        """Get the real client IP address, checking for proxy headers."""
         direct_ip = request.client.host if request.client else None
         trusted_proxies = getattr(settings, "trusted_proxies", None)
 

@@ -1,19 +1,13 @@
-"""Scheduled maintenance job schemas."""
-
 from pydantic import Field
 
 from backend.schemas.workers.base import BaseJobRequest, BaseJobResponse
 
 
 class FeedCleanupJobRequest(BaseJobRequest):
-    """Request for feed cleanup job."""
-
     pass
 
 
 class FeedCleanupJobResponse(BaseJobResponse):
-    """Response for feed cleanup job."""
-
     orphaned_subscriptions: int = Field(
         ..., description="Orphaned subscriptions cleaned"
     )
@@ -21,14 +15,10 @@ class FeedCleanupJobResponse(BaseJobResponse):
 
 
 class ScheduledFeedRefreshCycleJobRequest(BaseJobRequest):
-    """Request for scheduled feed refresh cycle job."""
-
     pass
 
 
 class ScheduledFeedRefreshCycleJobResponse(BaseJobResponse):
-    """Response for scheduled feed refresh cycle job."""
-
     feeds_total: int = Field(..., description="Total feeds to refresh")
     feeds_processed: int = Field(
         ..., description="Feeds processed (success + failed)"

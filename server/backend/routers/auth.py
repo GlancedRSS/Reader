@@ -1,5 +1,3 @@
-"""User authentication and session management endpoints."""
-
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request, Response, status
@@ -33,7 +31,6 @@ async def register(
     user_data: RegistrationRequest,
     db=Depends(get_db),
 ) -> ResponseMessage:
-    """Register a new user account."""
     auth_app = AuthApplication(db)
     return await auth_app.register(user_data)
 
@@ -51,7 +48,6 @@ async def login(
     response: Response,
     db=Depends(get_db),
 ) -> ResponseMessage:
-    """Login with username and password to start a session."""
     auth_app = AuthApplication(db)
     cookie_manager = CookieManager()
 
@@ -78,7 +74,6 @@ async def logout(
     response: Response,
     db=Depends(get_db),
 ) -> ResponseMessage:
-    """Logout from current session and clear authentication cookies."""
     auth_app = AuthApplication(db)
     cookie_manager = CookieManager()
 
@@ -103,7 +98,6 @@ async def change_password(
     current_user: User = Depends(get_user_from_request_state),
     db=Depends(get_db),
 ) -> ResponseMessage:
-    """Change password after verifying current password."""
     auth_app = AuthApplication(db)
     return await auth_app.change_password(password_data, current_user)
 
@@ -120,7 +114,6 @@ async def get_user_sessions(
     current_user: User = Depends(get_user_from_request_state),
     db=Depends(get_db),
 ) -> ListResponse[SessionResponse]:
-    """List your active sessions across all devices."""
     auth_app = AuthApplication(db)
     session_token = request.cookies.get(settings.session_cookie_name)
     if not session_token:
@@ -148,6 +141,5 @@ async def revoke_session(
     current_user: User = Depends(get_user_from_request_state),
     db=Depends(get_db),
 ) -> ResponseMessage:
-    """Revoke a specific active session on another device."""
     auth_app = AuthApplication(db)
     return await auth_app.revoke_session(session_id, current_user)

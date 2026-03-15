@@ -1,5 +1,3 @@
-"""Postgres-based full-text search using pg_trgm and tsvector."""
-
 from collections import namedtuple
 from dataclasses import dataclass
 from typing import Any
@@ -42,18 +40,13 @@ SearchRow = namedtuple(
 
 @dataclass
 class SearchResult:
-    """Result from articles search query execution."""
-
     articles: list[SearchRow]
     next_cursor: str | None
     has_more: bool
 
 
 class SearchRepository:
-    """Postgres-native search repository using full-text search and trigrams."""
-
     def __init__(self, db: AsyncSession) -> None:
-        """Initialize search repository."""
         self.db = db
 
     async def search_feeds(
@@ -63,7 +56,6 @@ class SearchRepository:
         limit: int = 20,
         offset: int = 0,
     ) -> dict[str, Any]:
-        """Search user's feed subscriptions using trigram similarity."""
         ts_vector = func.to_tsvector("simple", UserFeed.title)
 
         words = query.strip().split()
@@ -149,7 +141,6 @@ class SearchRepository:
         limit: int = 20,
         offset: int = 0,
     ) -> dict[str, Any]:
-        """Search user's tags using trigram similarity."""
         article_count_subq = (
             select(
                 ArticleTag.user_tag_id,
@@ -244,7 +235,6 @@ class SearchRepository:
         limit: int = 20,
         offset: int = 0,
     ) -> dict[str, Any]:
-        """Search user's folders using trigram similarity."""
         unread_count_subq = (
             select(
                 UserFeed.folder_id,

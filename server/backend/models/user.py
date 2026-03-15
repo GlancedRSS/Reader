@@ -1,5 +1,3 @@
-"""User model for cookie-based authentication."""
-
 from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
@@ -20,8 +18,6 @@ if TYPE_CHECKING:
 
 
 class User(Base):
-    """User account model for authentication and preferences."""
-
     __tablename__ = "users"
     __table_args__ = (
         CheckConstraint(

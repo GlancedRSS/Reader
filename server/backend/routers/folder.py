@@ -1,5 +1,3 @@
-"""Folder management for hierarchical feed organization."""
-
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -31,7 +29,6 @@ async def get_folder_tree(
     current_user: User = Depends(get_user_from_request_state),
     folder_app=Depends(get_folder_application),
 ) -> list[FolderTreeResponse]:
-    """Get complete folder hierarchy with feeds."""
     return await folder_app.get_folder_tree(user_id=current_user.id)
 
 
@@ -54,7 +51,6 @@ async def get_folder_details(
     current_user: User = Depends(get_user_from_request_state),
     folder_app=Depends(get_folder_application),
 ) -> FolderResponse:
-    """Get folder details with paginated subfolders."""
     return await folder_app.get_folder_details(
         folder_id=folder_id,
         user_id=current_user.id,
@@ -75,7 +71,6 @@ async def create_folder(
     current_user: User = Depends(get_user_from_request_state),
     folder_app=Depends(get_folder_application),
 ) -> FolderListResponse:
-    """Create a new folder."""
     return await folder_app.create_folder(folder_data, current_user.id)
 
 
@@ -92,7 +87,6 @@ async def update_folder(
     current_user: User = Depends(get_user_from_request_state),
     folder_app=Depends(get_folder_application),
 ) -> ResponseMessage:
-    """Update folder."""
     return await folder_app.update_folder(
         folder_id, folder_data, current_user.id
     )
@@ -110,5 +104,4 @@ async def delete_folder(
     current_user: User = Depends(get_user_from_request_state),
     folder_app=Depends(get_folder_application),
 ) -> ResponseMessage:
-    """Delete folder."""
     return await folder_app.delete_folder(folder_id, current_user.id)

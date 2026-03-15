@@ -1,5 +1,3 @@
-"""Repository for user feed (subscription) data access operations and queries."""
-
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
@@ -29,22 +27,16 @@ logger = structlog.get_logger()
 
 @dataclass
 class UserFeedsQueryResult:
-    """Result from cursor-based paginated user feeds query."""
-
     user_feeds: Sequence[UserFeed]
     next_cursor: str | None
     has_more: bool
 
 
 class UserFeedRepository:
-    """Repository for user feed and article-tag relationship data access."""
-
     def __init__(self, db: AsyncSession):
-        """Initialize the user feed repository."""
         self.db = db
 
     async def _get_sort_order(self, user_id: UUID) -> tuple[Any, bool]:
-        """Get sort order for feeds based on user preferences."""
         prefs_query = select(UserPreferences).where(
             UserPreferences.user_id == user_id
         )
@@ -68,7 +60,6 @@ class UserFeedRepository:
         folder_id: UUID | None = None,
         all: bool = False,
     ) -> Sequence[UserFeed]:
-        """Get user's feed subscriptions with pagination and optional folder filtering."""
         base_conditions = [UserFeed.user_id == user_id]
 
         if not all:
@@ -121,7 +112,6 @@ class UserFeedRepository:
         folder_id: UUID | None = None,
         all: bool = False,
     ) -> UserFeedsQueryResult:
-        """Get user's feed subscriptions with cursor-based pagination (recent ordering)."""
         base_conditions = [UserFeed.user_id == user_id]
 
         if not all:
@@ -216,7 +206,6 @@ class UserFeedRepository:
     async def get_user_subscription(
         self, user_id: UUID, feed_id: UUID
     ) -> UserFeed | None:
-        """Get user's subscription to a specific feed."""
         stmt = select(UserFeed).where(
             and_(
                 UserFeed.user_id == user_id,
@@ -227,7 +216,6 @@ class UserFeedRepository:
         return result.scalar_one_or_none()
 
     async def get_user_feed_by_id(self, user_feed_id: UUID) -> UserFeed | None:
-        """Get user feed by ID with eager loaded feed and folder."""
         from sqlalchemy.orm import selectinload
 
         result = await self.db.execute(
@@ -243,7 +231,6 @@ class UserFeedRepository:
     async def find_by_id(
         self, user_feed_id: UUID, user_id: UUID
     ) -> UserFeed | None:
-        """Get user feed by ID with user filtering."""
         stmt = select(UserFeed).where(
             and_(
                 UserFeed.id == user_feed_id,
@@ -256,7 +243,6 @@ class UserFeedRepository:
     async def validate_folder_for_user(
         self, user_id: UUID, folder_id: UUID
     ) -> UserFolder | None:
-        """Validate that a folder exists and belongs to the user."""
         stmt = select(UserFolder).where(
             and_(
                 UserFolder.id == folder_id,
@@ -269,7 +255,6 @@ class UserFeedRepository:
     async def get_user_feeds_count(
         self, user_id: UUID, folder_id: UUID | None = None, all: bool = False
     ) -> int:
-        """Get total count of user's feed subscriptions with optional folder filtering."""
         base_conditions = [UserFeed.user_id == user_id]
 
         if not all:
@@ -291,7 +276,6 @@ class UserFeedRepository:
         title: str,
         folder_id: UUID | None = None,
     ) -> UserFeed:
-        """Create a new user feed subscription."""
         user_feed = UserFeed(
             user_id=user_id,
             feed_id=feed_id,
@@ -308,7 +292,6 @@ class UserFeedRepository:
     async def update_user_feed(
         self, user_feed: UserFeed, update_data: dict[str, Any]
     ) -> UserFeed:
-        """Update a user feed with the provided data."""
         for field, value in update_data.items():
             if hasattr(user_feed, field):
                 setattr(user_feed, field, value)
@@ -319,13 +302,11 @@ class UserFeedRepository:
         return user_feed
 
     async def delete_user_feed(self, user_feed: UserFeed) -> None:
-        """Delete a user feed."""
         await self.db.delete(user_feed)
 
     async def get_recent_article_ids_for_feed(
         self, feed_id: UUID, since_timestamp: datetime
     ) -> list[UUID]:
-        """Get article IDs from a feed's latest_articles array."""
         logger.info(
             "Getting recent article IDs for feed",
             feed_id=str(feed_id),
@@ -352,7 +333,6 @@ class UserFeedRepository:
     async def bulk_upsert_user_article_states(
         self, user_id: UUID, article_ids: list[UUID]
     ) -> int:
-        """Bulk insert UserArticle records with conflict handling."""
         if not article_ids:
             return 0
 
@@ -376,7 +356,6 @@ class UserFeedRepository:
     async def recalculate_user_feed_unread_count(
         self, user_feed_id: UUID
     ) -> int | None:
-        """Call stored procedure to recalculate user feed unread count."""
         try:
             recalc_result = await self.db.execute(
                 text(
@@ -394,7 +373,6 @@ class UserFeedRepository:
             return None
 
     async def get_article_ids_for_feed(self, feed_id: UUID) -> list[UUID]:
-        """Get all article IDs for a feed via article_sources junction table."""
         stmt = select(ArticleSource.article_id).where(
             ArticleSource.feed_id == feed_id
         )
@@ -404,7 +382,6 @@ class UserFeedRepository:
     async def get_article_ids_for_feeds(
         self, feed_ids: list[UUID]
     ) -> list[UUID]:
-        """Get all article IDs for multiple feeds via article_sources junction table."""
         if not feed_ids:
             return []
 
@@ -417,7 +394,6 @@ class UserFeedRepository:
     async def delete_user_articles(
         self, user_id: UUID, article_ids: list[UUID]
     ) -> int:
-        """Delete UserArticle records for specific articles."""
         if not article_ids:
             return 0
 
@@ -435,7 +411,6 @@ class UserFeedRepository:
     async def get_subscribed_user_ids_for_feed(
         self, feed_id: UUID
     ) -> list[UUID]:
-        """Get all user IDs subscribed to a feed."""
         stmt = select(UserFeed.user_id).where(
             and_(
                 UserFeed.feed_id == feed_id,
@@ -451,7 +426,6 @@ class UserFeedRepository:
         article_ids: list[UUID],
         exclude_feed_ids: list[UUID],
     ) -> set[UUID]:
-        """Get article IDs that are accessible via other user subscriptions."""
         if not article_ids:
             return set()
 

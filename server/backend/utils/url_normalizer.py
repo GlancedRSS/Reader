@@ -1,5 +1,3 @@
-"""URL normalization for article deduplication."""
-
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 TRACKING_PARAMS = {
@@ -27,7 +25,6 @@ GA_PATTERNS = ("_ga", "_gid")
 
 
 def normalize_url(url: str) -> str:
-    """Normalize URL by removing tracking params and standardizing format."""
     if not url:
         return ""
 
@@ -77,7 +74,6 @@ def normalize_url(url: str) -> str:
 
 
 def extract_domain(url: str) -> str:
-    """Extract domain from URL, removing www prefix."""
     try:
         parsed = urlparse(url.lower())
         domain = parsed.netloc

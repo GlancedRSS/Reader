@@ -1,13 +1,9 @@
-"""OPML job schemas."""
-
 from pydantic import Field
 
 from backend.schemas.workers.base import BaseJobRequest, BaseJobResponse
 
 
 class OpmlImportJobRequest(BaseJobRequest):
-    """Request for OPML import job."""
-
     user_id: str = Field(..., description="User ID (UUID)")
     import_id: str = Field(..., description="Import record ID (UUID)")
     storage_key: str = Field(..., description="Local storage key for OPML file")
@@ -18,8 +14,6 @@ class OpmlImportJobRequest(BaseJobRequest):
 
 
 class OpmlImportJobResponse(BaseJobResponse):
-    """Response for OPML import job."""
-
     total_feeds: int = Field(default=0, description="Total feeds in OPML")
     imported_feeds: int = Field(
         default=0, description="Successfully imported feeds"
@@ -33,8 +27,6 @@ class OpmlImportJobResponse(BaseJobResponse):
 
 
 class OpmlExportJobRequest(BaseJobRequest):
-    """Request for OPML export job."""
-
     user_id: str = Field(..., description="User ID (UUID)")
     export_id: str = Field(..., description="Export record ID")
     folder_id: str | None = Field(
@@ -43,8 +35,6 @@ class OpmlExportJobRequest(BaseJobRequest):
 
 
 class OpmlExportJobResponse(BaseJobResponse):
-    """Response for OPML export job."""
-
     total_feeds: int = Field(..., description="Number of feeds exported")
     file_size: int = Field(..., description="OPML file size in bytes")
     download_url: str | None = Field(

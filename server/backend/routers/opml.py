@@ -1,5 +1,3 @@
-"""OPML import/export for feed subscription management."""
-
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -43,7 +41,6 @@ async def upload_opml(
     current_user: User = Depends(get_user_from_request_state),
     opml_app=Depends(get_opml_application),
 ) -> ResponseMessage:
-    """Upload and import OPML file in one step."""
     file_content = await file.read()
     upload_response = await opml_app.upload_opml_file(
         file_content=file_content,
@@ -72,7 +69,6 @@ async def export_opml(
     current_user: User = Depends(get_user_from_request_state),
     opml_app=Depends(get_opml_application),
 ) -> ResponseMessage:
-    """Export user's feeds as OPML using background processing."""
     return await opml_app.export_opml(request, current_user.id)
 
 
@@ -88,7 +84,6 @@ async def get_opml_status(
     current_user: User = Depends(get_user_from_request_state),
     opml_app=Depends(get_opml_application),
 ) -> OpmlOperationResponse:
-    """Get detailed OPML operation info by ID."""
     return await opml_app.get_opml_status_by_id(job_id, current_user.id)
 
 
@@ -104,7 +99,6 @@ async def rollback_opml_import(
     current_user: User = Depends(get_user_from_request_state),
     opml_app=Depends(get_opml_application),
 ) -> ResponseMessage:
-    """Rollback an OPML import by deleting all imported subscriptions."""
     deleted_count = await opml_app.rollback_import(import_id, current_user.id)
 
     return ResponseMessage(
@@ -122,7 +116,6 @@ async def download_opml_by_filename(
     filename: str,
     current_user: User = Depends(get_user_from_request_state),
 ) -> FileResponse:
-    """Download an exported OPML file by filename, verifying user ownership."""
     if "/" in filename or "\\" in filename:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid filename"

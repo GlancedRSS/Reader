@@ -1,5 +1,3 @@
-"""Article management endpoints for reading and organizing content."""
-
 from datetime import date
 from uuid import UUID
 
@@ -75,7 +73,6 @@ async def get_articles(
     article_app=Depends(get_article_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> PaginatedResponse[ArticleListResponse]:
-    """Get user's articles with optional filters and cursor-based pagination."""
     return await article_app.get_articles(
         current_user=current_user,
         cursor=cursor,
@@ -103,7 +100,6 @@ async def get_article(
     article_app=Depends(get_article_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> ArticleResponse:
-    """Get specific article details."""
     return await article_app.get_article(article_id, current_user)
 
 
@@ -120,7 +116,6 @@ async def update_article_state(
     article_app=Depends(get_article_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> ResponseMessage:
-    """Update user's article state (read/unread, bookmark/unbookmark) and tags."""
     return await article_app.update_article_state(
         article_id, state_data, current_user
     )
@@ -138,5 +133,4 @@ async def mark_all_as_read(
     article_app=Depends(get_article_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> ResponseMessage:
-    """Mark all articles as read or unread for the current user with optional filtering."""
     return await article_app.mark_all_as_read(request_data, current_user)

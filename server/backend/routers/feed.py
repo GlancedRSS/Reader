@@ -1,5 +1,3 @@
-"""User feed management endpoints."""
-
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -56,7 +54,6 @@ async def get_user_feeds(
     feed_app=Depends(get_feed_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> PaginatedResponse[UserFeedListResponse]:
-    """Get user's feeds with optional folder filtering and pagination."""
     user_id = current_user.id
     return await feed_app.get_user_feeds_paginated(
         user_id,
@@ -81,7 +78,6 @@ async def get_user_feed(
     feed_app=Depends(get_feed_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> UserFeedResponse:
-    """Get user feed details by user feed ID."""
     user_id = current_user.id
     return await feed_app.get_user_feed_by_id(
         user_feed_id,
@@ -102,7 +98,6 @@ async def update_user_feed(
     feed_app=Depends(get_feed_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> ResponseMessage:
-    """Update user's feed by user feed ID."""
     user_id = current_user.id
     return await feed_app.update_user_feed(
         user_feed_id,
@@ -123,7 +118,6 @@ async def unsubscribe(
     feed_app=Depends(get_feed_application),
     current_user: User = Depends(get_user_from_request_state),
 ) -> ResponseMessage:
-    """Unsubscribe by user feed ID."""
     user_id = current_user.id
     return await feed_app.unsubscribe_from_feed(
         user_feed_id,

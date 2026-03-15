@@ -1,5 +1,3 @@
-"""External service integrations."""
-
 from backend.infrastructure.external.arq_client import (
     ArqClient,
     JobTracker,

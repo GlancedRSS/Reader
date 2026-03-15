@@ -1,5 +1,3 @@
-"""RSS/ATOM feed metadata extraction utilities."""
-
 from typing import Any
 
 import structlog
@@ -8,11 +6,8 @@ logger = structlog.get_logger()
 
 
 class FeedExtractor:
-    """Extracts structured metadata from RSS/Atom/RDF feed objects."""
-
     @staticmethod
     def detect_feed_type(feed: Any) -> str:
-        """Detect feed type (RSS, Atom, RDF) from feedparser feed object."""
         feed_type = "rss"
         if hasattr(feed, "version") and feed.version:
             if "atom" in feed.version.lower():
@@ -26,13 +21,11 @@ class FeedExtractor:
 
     @staticmethod
     def extract_title(feed: Any) -> str:
-        """Extract feed title with fallback handling."""
         title = feed.feed.get("title", "")
         return str(title) if title else ""
 
     @staticmethod
     def extract_description(feed: Any) -> str | None:
-        """Extract feed description with reasonable length limit."""
         raw_description = feed.feed.get("description", "")
 
         if raw_description and len(str(raw_description)) < 500:
@@ -42,7 +35,6 @@ class FeedExtractor:
 
     @staticmethod
     def extract_language(feed: Any) -> str | None:
-        """Extract feed language with Dublin Core support."""
         try:
             if hasattr(feed, "feed") and feed.feed:
                 if hasattr(feed.feed, "language") and feed.feed.language:
@@ -72,7 +64,6 @@ class FeedExtractor:
 
     @staticmethod
     def _normalize_language_code(language: str) -> str:
-        """Normalize language code to match database constraint."""
         if not language:
             return language
 
@@ -86,7 +77,6 @@ class FeedExtractor:
 
     @staticmethod
     def extract_website(feed: Any) -> str | None:
-        """Extract the website URL from the feed."""
         try:
             if hasattr(feed, "feed") and feed.feed:
                 if hasattr(feed.feed, "link") and feed.feed.link:
@@ -110,7 +100,6 @@ class FeedExtractor:
 
     @staticmethod
     def extract_feed_metadata(feed: Any) -> dict[str, str | None]:
-        """Extract all feed metadata in a single call."""
         return {
             "title": FeedExtractor.extract_title(feed),
             "description": FeedExtractor.extract_description(feed),
@@ -120,7 +109,6 @@ class FeedExtractor:
 
     @staticmethod
     def validate_feed_structure(feed: Any) -> tuple[bool, str | None]:
-        """Validate that a feed has the minimum required structure."""
         if not feed.feed:
             return False, "no_feed_data"
 
@@ -131,7 +119,6 @@ class FeedExtractor:
 
     @staticmethod
     def check_bozo_flags(feed: Any) -> tuple[bool, str | None]:
-        """Check feedparser bozo flags for parsing errors."""
         if feed.bozo and feed.bozo_exception:
             error_msg = str(feed.bozo_exception)
             logger.debug(

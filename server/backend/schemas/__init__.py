@@ -1,5 +1,3 @@
-"""Pydantic schemas for API requests and responses."""
-
 from .core import (
     BaseSchema,
     ErrorResponse,

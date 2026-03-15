@@ -1,5 +1,3 @@
-"""User preferences model for application settings."""
-
 from datetime import datetime
 from uuid import UUID
 
@@ -11,8 +9,6 @@ from backend.models.base import Base, PostgresUUID, sa_text
 
 
 class UserPreferences(Base):
-    """User preferences model for configurable settings."""
-
     __tablename__ = "user_preferences"
     __table_args__ = (
         *[

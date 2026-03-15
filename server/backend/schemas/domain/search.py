@@ -1,5 +1,3 @@
-"""Request and response schemas for universal search."""
-
 from typing import Literal
 from uuid import UUID
 
@@ -27,8 +25,6 @@ MAX_SEARCH_PER_TYPE = 20
 
 
 class UnifiedSearchRequest(BaseSchema):
-    """Request for universal search across all content types."""
-
     query: str = Field(
         ...,
         min_length=MIN_SEARCH_QUERY_LENGTH,
@@ -37,8 +33,6 @@ class UnifiedSearchRequest(BaseSchema):
 
 
 class FeedSearchRequest(BaseSchema):
-    """Request for feed-specific search."""
-
     query: str = Field(
         ...,
         min_length=MIN_SEARCH_QUERY_LENGTH,
@@ -49,8 +43,6 @@ class FeedSearchRequest(BaseSchema):
 
 
 class TagSearchRequest(BaseSchema):
-    """Request for tag-specific search."""
-
     query: str = Field(
         ...,
         min_length=MIN_SEARCH_QUERY_LENGTH,
@@ -61,8 +53,6 @@ class TagSearchRequest(BaseSchema):
 
 
 class FolderSearchRequest(BaseSchema):
-    """Request for folder-specific search."""
-
     query: str = Field(
         ...,
         min_length=MIN_SEARCH_QUERY_LENGTH,
@@ -73,8 +63,6 @@ class FolderSearchRequest(BaseSchema):
 
 
 class FeedSearchHit(BaseSchema):
-    """Single feed search result."""
-
     id: UUID = Field(...)
     title: str = Field(...)
     website: str | None = Field(None)
@@ -84,16 +72,12 @@ class FeedSearchHit(BaseSchema):
 
 
 class TagSearchHit(BaseSchema):
-    """Single tag search result."""
-
     id: UUID = Field(...)
     name: str = Field(...)
     article_count: int = Field(0)
 
 
 class FolderSearchHit(BaseSchema):
-    """Single folder search result."""
-
     id: UUID = Field(...)
     name: str = Field(...)
     unread_count: int = Field(0)
@@ -101,8 +85,6 @@ class FolderSearchHit(BaseSchema):
 
 
 class UnifiedSearchHit(BaseSchema):
-    """Single hit from universal search with type discriminator."""
-
     type: Literal["article", "feed", "tag", "folder"] = Field(...)
     data: (
         ArticleListResponse | FeedSearchHit | TagSearchHit | FolderSearchHit
@@ -110,22 +92,16 @@ class UnifiedSearchHit(BaseSchema):
 
 
 class UnifiedSearchResponse(ListResponse[UnifiedSearchHit]):
-    """Response from universal search endpoint."""
+    pass
 
 
 class FeedSearchResponse(PaginatedResponse[FeedSearchHit]):
-    """Response from feed-specific search."""
-
     pass
 
 
 class TagSearchResponse(PaginatedResponse[TagSearchHit]):
-    """Response from tag-specific search."""
-
     pass
 
 
 class FolderSearchResponse(PaginatedResponse[FolderSearchHit]):
-    """Response from folder-specific search."""
-
     pass
