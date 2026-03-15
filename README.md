@@ -56,6 +56,19 @@ docker compose up -d
 | `COOKIE_SECURE`                 | `true`     | Set secure flag on cookies |
 | `FEED_REFRESH_INTERVAL_MINUTES` | `30`       | Feed refresh interval      |
 
+#### Password Reset
+
+Reset a user's password via CLI:
+
+```bash
+docker exec -it <backend-container> python -m backend.cli.reset_password <username>
+```
+
+Find your backend container name:
+```bash
+docker ps --filter "ancestor=glanced/reader:latest" --format "{{.Names}}"
+```
+
 Image available on [Docker Hub](https://hub.docker.com/r/glanced/reader).
 
 ### Option 2: Bundled Container
