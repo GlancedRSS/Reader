@@ -87,18 +87,8 @@ export function useSessions() {
 	return useStaticSWR<ListResponse<SessionResponse>>('/auth/sessions')
 }
 
-export async function clearLocalData() {
-	localStorage.clear()
+export function clearLocalData() {
 	sessionStorage.clear()
-
-	const databases = await indexedDB.databases()
-	await Promise.all(
-		databases
-			.map((db) => db.name)
-			.filter((name): name is string => name !== undefined)
-			.map((name) => indexedDB.deleteDatabase(name))
-	)
-
 	useLayoutStore.getState().reset()
 	useArticlesPaginationStore.getState().reset()
 	useArticlesPaginationStore.getState().resetFilters()
@@ -119,7 +109,7 @@ export function useLogout() {
 			}
 
 			await performLogout()
-			await clearLocalData()
+			clearLocalData()
 			router.push('/sign-in')
 		} catch {
 			throw new Error('Failed to sign out')

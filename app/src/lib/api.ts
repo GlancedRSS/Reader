@@ -49,7 +49,16 @@ class UnifiedApiClient {
 
 		this.client.interceptors.response.use(
 			(response) => response,
-			(error: AxiosError) => Promise.reject(this.formatError(error))
+			(error: AxiosError) => {
+				if (error.response?.status === 401 || error.response?.status === 403) {
+					const pathname = window.location.pathname
+					if (!pathname.startsWith('/sign-')) {
+						sessionStorage.clear()
+						window.location.href = '/sign-in'
+					}
+				}
+				return Promise.reject(this.formatError(error))
+			}
 		)
 	}
 
