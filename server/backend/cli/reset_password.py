@@ -2,16 +2,25 @@ import asyncio
 import getpass
 import sys
 
+import structlog
+
 from backend.core.database import AsyncSessionLocal
+from backend.domain.auth.validation import AuthValidationDomain
 from backend.infrastructure.auth.security import PasswordHasher
-from backend.infrastructure.repositories import UserRepository
+from backend.infrastructure.repositories import (
+    SessionRepository,
+    UserRepository,
+)
 
 
 async def reset_password(username: str) -> None:
-    async with AsyncSessionLocal() as db:
-        repo = UserRepository(db)
+    logger = structlog.get_logger()
 
-        user = await repo.find_by_username(username)
+    async with AsyncSessionLocal() as db:
+        user_repo = UserRepository(db)
+        session_repo = SessionRepository(db)
+
+        user = await user_repo.find_by_username(username)
         if not user:
             print(f"User '{username}' not found")
             sys.exit(1)
@@ -28,17 +37,26 @@ async def reset_password(username: str) -> None:
             print("Passwords do not match")
             sys.exit(1)
 
-        if len(password) < 8:
-            print("Password must be at least 8 characters")
+        try:
+            AuthValidationDomain.validate_password_format(password)
+        except ValueError as e:
+            print(str(e))
             sys.exit(1)
 
         hasher = PasswordHasher()
         password_hash = hasher.hash_password(password)
 
-        await repo.update_user(user, {"password_hash": password_hash})
+        await user_repo.update_user(user, {"password_hash": password_hash})
+        await session_repo.revoke_all_user_sessions(user.id)
         await db.commit()
 
-        print("Password updated successfully")
+        logger.info(
+            "Password reset via CLI",
+            user_id=user.id,
+            username=user.username,
+        )
+
+        print("Password updated successfully. All sessions have been revoked.")
 
 
 def main() -> None:
