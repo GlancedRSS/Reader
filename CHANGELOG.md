@@ -1,3 +1,13 @@
+## [1.1.0](https://github.com/GlancedRSS/Reader/compare/v1.0.5...v1.1.0) (2026-03-23)
+
+### Features
+
+* **auth:** add password reset CLI with session invalidation ([#15](https://github.com/GlancedRSS/Reader/issues/15)) ([2bf5787](https://github.com/GlancedRSS/Reader/commit/2bf57878e5af5354efd4b3eccca9ccb0ee6bd6ce))
+
+### Style
+
+* **colors:** use green-tinged neutrals and compress dark range ([#14](https://github.com/GlancedRSS/Reader/issues/14)) ([928c582](https://github.com/GlancedRSS/Reader/commit/928c5821538888622f58c23c2235667c2214bfda))
+
 ## [1.0.5](https://github.com/GlancedRSS/Reader/compare/v1.0.4...v1.0.5) (2026-03-15)
 
 ### Bug Fixes
